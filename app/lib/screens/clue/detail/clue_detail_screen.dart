@@ -682,18 +682,74 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
     HapticFeedback.mediumImpact();
     final userId = ref.read(currentUserIdProvider);
     if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('로그인이 필요합니다')),
+      );
       context.go('/auth');
       return;
     }
     try {
       final service = ref.read(participationServiceProvider);
-      await service.joinClue(clueId: widget.clueId, userId: userId);
+      final participation =
+          await service.joinClue(clueId: widget.clueId, userId: userId);
+      // ID 검증 — joinClue가 빈 응답이거나 RLS로 막혔을 때 대비
+      if (participation['id'] == null) {
+        throw Exception('참여 응답에 ID 없음 — DB 권한 또는 RLS 문제 의심');
+      }
       ref.invalidate(myParticipationsProvider);
-      if (mounted) context.push('/clue/${widget.clueId}/play');
+      ref.invalidate(currentParticipationProvider(widget.clueId));
+      if (mounted) {
+        // 햅틱 + 토스트로 진행 신호
+        HapticFeedback.heavyImpact();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ 참여 시작! 미션 화면으로 이동합니다'),
+            duration: Duration(seconds: 1),
+            backgroundColor: AppColors.brandGreen,
+          ),
+        );
+        context.push('/clue/${widget.clueId}/play');
+      }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('참여 실패: $e')),
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Row(
+              children: [
+                const Icon(Icons.error_outline, color: AppColors.brandRed),
+                const SizedBox(width: 8),
+                const Text('참여 실패'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SelectableText(
+                  e.toString(),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.brandRed,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  '💡 PGRST204 = participations 테이블 컬럼 누락 → STEP 0 SQL 실행\n'
+                  '💡 23503 = clue_id 외래키 위반 → 클루가 진짜 존재하는지 확인\n'
+                  '💡 401/403 = RLS 차단 → ALTER TABLE participations DISABLE ROW LEVEL SECURITY',
+                  style: TextStyle(fontSize: 11, color: AppColors.brandBlue, height: 1.5),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('닫기'),
+              ),
+            ],
+          ),
         );
       }
     }

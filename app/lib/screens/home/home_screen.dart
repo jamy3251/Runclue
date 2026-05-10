@@ -42,9 +42,87 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
             SliverToBoxAdapter(child: _buildLiveSection()),
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            SliverToBoxAdapter(child: _buildCreateInviteCard()),
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
             SliverToBoxAdapter(child: _buildPersonaSection()),
             const SliverToBoxAdapter(child: SizedBox(height: 120)),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ─────────────────────── 내 클루 만들기 안내 카드 ───────────────────────
+  Widget _buildCreateInviteCard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.mediumImpact();
+          context.push('/create');
+        },
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.brandPurple.withValues(alpha: 0.18),
+                AppColors.brandBlue.withValues(alpha: 0.10),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppColors.brandPurple.withValues(alpha: 0.4),
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: AppColors.brandYellow,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.brandYellow.withValues(alpha: 0.4),
+                      blurRadius: 16,
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.add, size: 32, color: Colors.black),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '나도 클루 만들기',
+                      style: GoogleFonts.blackHanSans(
+                        fontSize: 22,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '5분이면 첫 클루 등록 완료\n탐험가가 매장으로 직접 찾아옵니다',
+                      style: GoogleFonts.notoSansKr(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios,
+                  size: 16, color: AppColors.textSecondary),
+            ],
+          ),
         ),
       ),
     );

@@ -217,7 +217,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         ),
       ),
       ),
-      floatingActionButton: _buildFab(),
+      // FAB가 바텀 nav에 안 가리도록 위로 띄움
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 80),
+        child: _buildFab(),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 

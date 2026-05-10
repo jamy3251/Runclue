@@ -163,6 +163,61 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
     );
   }
 
+  /// 긴 에러 메시지를 dialog로 — 사용자가 메시지 통째로 복사해서 신고 가능
+  void _showErrorDetails(String title, String detail) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.error_outline, color: AppColors.brandRed),
+            const SizedBox(width: 8),
+            Text(title,
+                style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SelectableText(
+              detail,
+              style: GoogleFonts.firaMono(
+                fontSize: 12,
+                color: AppColors.brandRed,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.brandBlue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '💡 PGRST204 = 컬럼 누락 → Supabase SQL Editor에서 GOLDEN_PATH_TEST.md STEP 0 실행\n'
+                '💡 23502 = NOT NULL 위반 → 빈 칸 확인\n'
+                '💡 PGRST301 = 권한 부족 → RLS 비활성화 SQL 실행',
+                style: GoogleFonts.notoSansKr(
+                  fontSize: 11,
+                  color: AppColors.brandBlue,
+                  height: 1.6,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('닫기'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _pickThumbnail() async {
     try {
       final picker = ImagePicker();
@@ -295,7 +350,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
       _showSubmitSuccess(clueId);
     } catch (e) {
       if (!mounted) return;
-      _toast('제출 실패: $e');
+      _showErrorDetails('제출 실패', e.toString());
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
