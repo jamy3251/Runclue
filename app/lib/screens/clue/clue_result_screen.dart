@@ -327,7 +327,8 @@ class _DetailPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reward = participation?['total_points_earned'] ?? 0;
+    final rewardRaw = participation?['total_points_earned'] ?? 0;
+    final int reward = (rewardRaw is num) ? rewardRaw.toInt() : 0;
     final rank = participation?['rank'];
     final completedAt = participation?['completed_at'];
     final startedAt =
