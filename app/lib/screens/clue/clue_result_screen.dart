@@ -382,8 +382,90 @@ class _DetailPanel extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
+            // 보상 강조 카드
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    (reward as num) > 0
+                        ? AppColors.brandGreen.withValues(alpha: 0.15)
+                        : AppColors.bgSurface,
+                    (reward) > 0
+                        ? AppColors.brandYellow.withValues(alpha: 0.08)
+                        : AppColors.bgSurface,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: (reward) > 0
+                      ? AppColors.brandGreen.withValues(alpha: 0.4)
+                      : AppColors.borderDefault,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        (reward) > 0
+                            ? Icons.celebration
+                            : Icons.info_outline,
+                        size: 18,
+                        color: (reward) > 0
+                            ? AppColors.brandGreen
+                            : AppColors.textMuted,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        (reward) > 0 ? '보상 획득!' : '아쉬워요',
+                        style: GoogleFonts.notoSansKr(
+                          fontSize: 13,
+                          color: (reward) > 0
+                              ? AppColors.brandGreen
+                              : AppColors.textMuted,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _rewardDisplay(reward, participation, clue),
+                    style: GoogleFonts.notoSansKr(
+                      fontSize: 14,
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                      height: 1.4,
+                    ),
+                  ),
+                  if (_distributionExplanation(participation, clue) != null) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      _distributionExplanation(participation, clue)!,
+                      style: GoogleFonts.notoSansKr(
+                        fontSize: 11,
+                        color: AppColors.textMuted,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
             _DetailRow(label: '최종 순위', value: rank != null ? '🏆 $rank위' : '—'),
-            _DetailRow(label: '획득 금액', value: '₩$reward'),
+            _DetailRow(
+              label: '분배 방식',
+              value: _distModeLabel(
+                  (clue?['distribution_mode'] ?? participation?['_clue_distribution_mode'])
+                      ?.toString()),
+            ),
             _DetailRow(label: '완료 시간', value: elapsed),
 
             const SizedBox(height: 20),
@@ -418,6 +500,72 @@ class _DetailPanel extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+String _rewardDisplay(
+  int reward,
+  Map<String, dynamic>? participation,
+  Map<String, dynamic>? clue,
+) {
+  if (reward > 0) {
+    final label = clue?['reward_label'] ?? participation?['_clue_reward_label'];
+    if (label is String && label.isNotEmpty) {
+      return '$label\n(₩$reward 상당)';
+    }
+    return '₩$reward 적립';
+  }
+  // reward == 0
+  final status = participation?['reward_status']?.toString();
+  if (status == 'pending_lottery') {
+    return '추첨 대기 중\n클루 마감 후 추첨 결과 알림으로 안내';
+  }
+  return '이번엔 보상 대상에서 제외됐어요\n다음 클루에 도전해보세요';
+}
+
+String? _distributionExplanation(
+  Map<String, dynamic>? participation,
+  Map<String, dynamic>? clue,
+) {
+  final mode = (clue?['distribution_mode'] ??
+          participation?['_clue_distribution_mode'])
+      ?.toString();
+  final maxWinners = clue?['max_participants'] ??
+      participation?['_clue_max_winners'];
+  final rank = participation?['rank'];
+
+  switch (mode) {
+    case 'first_come':
+      if (maxWinners != null && rank != null) {
+        return '선착순 $maxWinners명 대상 · 당신은 $rank번째 완료';
+      }
+      return '선착순 분배';
+    case 'rank':
+      if (maxWinners != null) {
+        return '등수별 차등 ($maxWinners등까지 차등 지급)';
+      }
+      return '등수별 분배';
+    case 'random':
+      return '랜덤 추첨 — 클루 마감 후 무작위 선정';
+    case 'all':
+      return '완료자 전원 지급';
+    default:
+      return null;
+  }
+}
+
+String _distModeLabel(String? mode) {
+  switch (mode) {
+    case 'first_come':
+      return '선착순';
+    case 'rank':
+      return '등수별';
+    case 'random':
+      return '랜덤 추첨';
+    case 'all':
+      return '전원 지급';
+    default:
+      return '—';
   }
 }
 
