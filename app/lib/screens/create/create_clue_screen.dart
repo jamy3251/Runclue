@@ -238,13 +238,18 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
     HapticFeedback.mediumImpact();
     setState(() => _isSubmitting = true);
 
+    // 시작 신호 — 사용자가 버튼 동작 확인용
+    _toast('🚀 제출 시작...');
+
     try {
       final userId = ref.read(currentUserIdProvider);
       if (userId == null) {
-        context.go('/auth');
+        _showErrorDetails('로그인 필요',
+            'currentUserIdProvider가 null입니다.\n세션이 만료됐을 수 있어요.\n다시 로그인 후 시도해주세요.');
         return;
       }
 
+      _toast('userId OK (${userId.substring(0, 8)}) — INSERT 시도');
       final clueService = ClueService();
       final stepService = StepService();
 
@@ -279,8 +284,10 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         countBefore = (r as List).length;
       } catch (_) {/* 실패해도 무시 */}
 
+      _toast('INSERT 호출 중...');
       final created = await clueService.createClue(clueData);
       final clueId = created['id'] as String;
+      _toast('✓ INSERT 응답 받음 (id=${clueId.substring(0, 8)})');
 
       // INSERT 후 개수 (진단용 — 진짜 +1 됐는지)
       int? countAfter;
