@@ -81,6 +81,8 @@ MY_SECRETS.local
 
 # 임시 파일
 KakaoTalk_*.jpg
+KO*.jpg
+*.tmp.jpg
 
 # 디자인 원본 (큰 바이너리)
 *.pptx
