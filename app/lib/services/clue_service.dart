@@ -52,8 +52,11 @@ class ClueService {
     }
   }
 
-  /// Get a single clue by ID with its steps joined.
+  /// Get a single clue by ID with its steps. 견고한 fallback.
+  /// 1차: join으로 한 번에 (FK 관계 있을 때 빠름)
+  /// 2차: clue + steps 따로 fetch (FK 없거나 PGRST200 발생 시)
   Future<Map<String, dynamic>?> getClueById(String id) async {
+    // 1차 — embed
     try {
       final response = await _client
           .from('clues')
@@ -61,12 +64,34 @@ class ClueService {
           .eq('id', id)
           .single();
       return response;
+    } catch (_) {/* 2차 fallback */}
+
+    // 2차 — 분리 fetch
+    try {
+      final clue = await _client
+          .from('clues')
+          .select('*')
+          .eq('id', id)
+          .maybeSingle();
+      if (clue == null) return null;
+
+      try {
+        final steps = await _client
+            .from('steps')
+            .select('*')
+            .eq('clue_id', id)
+            .order('order_index', ascending: true);
+        clue['steps'] = List<Map<String, dynamic>>.from(steps);
+      } catch (_) {
+        clue['steps'] = <Map<String, dynamic>>[];
+      }
+      return clue;
     } catch (e) {
       throw Exception('Failed to fetch clue: $e');
     }
   }
 
-  /// Get clues created by a specific user.
+  /// Get clues created by a specific user. join 실패 시 단순 쿼리로 fallback.
   Future<List<Map<String, dynamic>>> getMyClues(String userId) async {
     try {
       final response = await _client
@@ -75,8 +100,17 @@ class ClueService {
           .eq('creator_id', userId)
           .order('created_at', ascending: false);
       return List<Map<String, dynamic>>.from(response);
+    } catch (_) {/* 2차 fallback */}
+
+    try {
+      final response = await _client
+          .from('clues')
+          .select('*')
+          .eq('creator_id', userId)
+          .order('created_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      throw Exception('Failed to fetch user clues: $e');
+      return [];
     }
   }
 

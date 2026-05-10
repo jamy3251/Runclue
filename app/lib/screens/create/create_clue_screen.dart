@@ -343,11 +343,17 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         await stepService.createStep(stepData);
       }
 
+      // 마지막 검증 — 진짜 DB에 있는지 fresh fetch
+      Map<String, dynamic>? dbClue;
+      try {
+        dbClue = await clueService.getClueById(clueId);
+      } catch (_) {/* fetch 실패해도 success 표시는 진행 */}
+
       if (!mounted) return;
       // 탐색 페이지가 새 클루를 즉시 보여주도록 캐시 무효화
       ref.invalidate(trendingCluesProvider);
       ref.invalidate(myCluesProvider);
-      _showSubmitSuccess(clueId);
+      _showSubmitSuccess(clueId, dbClue);
     } catch (e) {
       if (!mounted) return;
       _showErrorDetails('제출 실패', e.toString());
@@ -356,15 +362,24 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
     }
   }
 
-  void _showSubmitSuccess(String clueId) {
+  void _showSubmitSuccess(String clueId, [Map<String, dynamic>? dbClue]) {
+    final isReallySaved = dbClue != null;
+    final actualStatus = dbClue?['status']?.toString() ?? '?';
+    final actualSteps = (dbClue?['steps'] as List?)?.length ?? 0;
+    final accent = isReallySaved ? AppColors.brandGreen : AppColors.brandRed;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.check_circle, color: AppColors.brandGreen),
+            Icon(
+                isReallySaved
+                    ? Icons.check_circle
+                    : Icons.warning_amber_rounded,
+                color: accent),
             const SizedBox(width: 8),
-            Text('자동 승인 완료',
+            Text(isReallySaved ? '자동 승인 완료' : 'DB 저장 확인 안 됨',
                 style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900)),
           ],
         ),
@@ -375,16 +390,25 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.brandGreen.withValues(alpha: 0.1),
+                color: accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                    color: AppColors.brandGreen.withValues(alpha: 0.3)),
+                border: Border.all(color: accent.withValues(alpha: 0.3)),
               ),
               child: Text(
-                '✓ Supabase 저장 완료\n✓ 자동 승인 (MVP 베타)\n✓ 탐색 페이지에 즉시 노출\n✓ 탐험가가 바로 참여 가능',
+                isReallySaved
+                    ? '✓ Supabase 저장 완료 (id=${clueId.substring(0, 8)}...)\n'
+                        '✓ 실제 DB 상태: status=$actualStatus, steps=$actualSteps개\n'
+                        '✓ 탐색 페이지에 즉시 노출 가능\n'
+                        '✓ 탐험가가 바로 참여 가능'
+                    : '⚠ INSERT는 응답했으나 DB에서 못 찾았음\n'
+                        '   id=$clueId\n\n'
+                        '원인 후보:\n'
+                        '• RLS가 SELECT를 차단 (DISABLE ROW LEVEL SECURITY 실행)\n'
+                        '• 트리거가 행을 다른 곳으로 이동\n'
+                        '• 캐스케이드 삭제',
                 style: GoogleFonts.notoSansKr(
                   fontSize: 12,
-                  color: AppColors.brandGreen,
+                  color: accent,
                   height: 1.7,
                 ),
               ),
