@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../config/supabase_safe.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/clue_provider.dart';
@@ -80,6 +81,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
   // ── 썸네일 + 제출 ──
   File? _thumbnail;
   bool _isSubmitting = false;
+  String? _diagInfo; // 진단 정보 (INSERT 전후 count 등)
 
   @override
   void dispose() {
@@ -270,8 +272,25 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         'current_participants': 0,
       };
 
+      // INSERT 전 전체 클루 개수 (진단용)
+      int? countBefore;
+      try {
+        final r = await safeClient.from('clues').select('id');
+        countBefore = (r as List).length;
+      } catch (_) {/* 실패해도 무시 */}
+
       final created = await clueService.createClue(clueData);
       final clueId = created['id'] as String;
+
+      // INSERT 후 개수 (진단용 — 진짜 +1 됐는지)
+      int? countAfter;
+      try {
+        final r = await safeClient.from('clues').select('id');
+        countAfter = (r as List).length;
+      } catch (_) {/* 무시 */}
+
+      _diagInfo =
+          'count: ${countBefore ?? "?"} → ${countAfter ?? "?"}\nuserId: ${userId.substring(0, 8)}\nclueId: ${clueId.substring(0, 8)}';
 
       // 썸네일
       if (_thumbnail != null) {
@@ -413,6 +432,24 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                 ),
               ),
             ),
+            if (_diagInfo != null) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.bgSurface,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: SelectableText(
+                  '🔬 진단:\n$_diagInfo',
+                  style: GoogleFonts.firaMono(
+                    fontSize: 10,
+                    color: AppColors.textMuted,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 12),
             Text(
               '※ 정식 출시 후에는 운영진 검수(약 24시간)를 거치게 됩니다.',
