@@ -48,8 +48,38 @@ storeFile=$($secrets['KEYSTORE_PATH'])
 Set-Content -Path $keyPropsPath -Value $keyPropsContent -Encoding utf8
 Write-Host "[OK] $keyPropsPath 생성" -ForegroundColor Green
 
+# ─── 3) iOS Secrets.xcconfig (iOS 폴더가 있을 때만) ───
+$iosFlutterDir = Join-Path $root 'app\ios\Flutter'
+if (Test-Path $iosFlutterDir) {
+    $xcconfigPath = Join-Path $iosFlutterDir 'Secrets.xcconfig'
+    $xcconfigContent = @"
+// Auto-generated. DO NOT EDIT.
+GOOGLE_MAPS_API_KEY=$($secrets['GOOGLE_MAPS_API_KEY'])
+SUPABASE_URL=$($secrets['SUPABASE_URL'])
+SUPABASE_ANON_KEY=$($secrets['SUPABASE_ANON_KEY'])
+"@
+    Set-Content -Path $xcconfigPath -Value $xcconfigContent -Encoding utf8
+    Write-Host "[OK] $xcconfigPath 생성" -ForegroundColor Green
+
+    # Debug/Release.xcconfig에 include 추가
+    foreach ($cfgName in @('Debug.xcconfig', 'Release.xcconfig')) {
+        $cfgPath = Join-Path $iosFlutterDir $cfgName
+        if (Test-Path $cfgPath) {
+            $content = Get-Content $cfgPath -Raw
+            if ($content -notmatch 'Secrets\.xcconfig') {
+                Add-Content -Path $cfgPath -Value "`n#include `"Secrets.xcconfig`""
+                Write-Host "[OK] $cfgPath에 Secrets.xcconfig include 추가" -ForegroundColor Green
+            }
+        }
+    }
+}
+
 Write-Host ""
 Write-Host "다음 단계:" -ForegroundColor Cyan
 Write-Host "  cd app" -ForegroundColor White
 Write-Host "  flutter pub get" -ForegroundColor White
 Write-Host "  flutter run --dart-define-from-file=.env" -ForegroundColor White
+Write-Host ""
+Write-Host "  # Mac에서 iOS 빌드:" -ForegroundColor Cyan
+Write-Host "  cd app/ios && pod install && cd .." -ForegroundColor White
+Write-Host "  flutter run -d <iphone_id> --dart-define-from-file=.env" -ForegroundColor White

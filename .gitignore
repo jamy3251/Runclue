@@ -7,6 +7,17 @@
 MY_SECRETS.local
 **/SECRETS.local
 *.local.env
+**/Secrets.xcconfig
+
+# iOS 빌드 산출물
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/.last_build_id
+**/ios/Runner.xcworkspace/xcuserdata/
+**/ios/Runner.xcodeproj/xcuserdata/
+**/ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
 
 # Flutter / Dart
 **/.dart_tool/
