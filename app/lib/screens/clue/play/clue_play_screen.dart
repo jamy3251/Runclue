@@ -1238,7 +1238,10 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
         HapticFeedback.heavyImpact();
         await participationService
             .completeParticipation(participationId);
+        // Result 화면이 최신 랭킹·보상 데이터 읽도록 캐시 무효화
         ref.invalidate(myParticipationsProvider);
+        ref.invalidate(currentParticipationProvider(widget.clueId));
+        ref.invalidate(leaderboardProvider(widget.clueId));
         if (mounted) {
           context.go('/clue/${widget.clueId}/result');
         }

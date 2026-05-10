@@ -13,19 +13,38 @@ class EvidenceService {
         _locationService = locationService ?? LocationService();
 
   /// Submit a new evidence record.
+  /// 견고한 INSERT — 스키마에 없는 컬럼은 자동으로 빼고 재시도.
   Future<Map<String, dynamic>> submitEvidence(
     Map<String, dynamic> evidenceData,
   ) async {
-    try {
-      final response = await _client
-          .from('evidences')
-          .insert(evidenceData)
-          .select()
-          .single();
-      return response;
-    } catch (e) {
-      throw Exception('Failed to submit evidence: $e');
+    var payload = Map<String, dynamic>.from(evidenceData);
+    final dropped = <String>[];
+
+    for (int attempt = 0; attempt < 12; attempt++) {
+      try {
+        final response = await _client
+            .from('evidences')
+            .insert(payload)
+            .select()
+            .single();
+        return response;
+      } on PostgrestException catch (e) {
+        if (e.code == 'PGRST204') {
+          final match = RegExp(r"'([^']+)' column").firstMatch(e.message);
+          final col = match?.group(1);
+          if (col != null && payload.containsKey(col)) {
+            payload.remove(col);
+            dropped.add(col);
+            continue;
+          }
+        }
+        throw Exception(
+            'evidence INSERT 실패 [code=${e.code}]: ${e.message} | drop=$dropped');
+      } catch (e) {
+        throw Exception('evidence INSERT 실패: $e');
+      }
     }
+    throw Exception('evidence 스키마 불일치: drop=$dropped');
   }
 
   /// Get evidences for a specific step and participation.
