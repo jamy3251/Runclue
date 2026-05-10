@@ -1,0 +1,336 @@
+engineVersion: 1
+name: runclue-submission-approval-engine
+defaultDecision: AUTO_APPROVE
+decisions:
+  - AUTO_APPROVE
+  - CONDITIONAL_APPROVE
+  - MANUAL_REVIEW
+  - AUTO_REJECT
+
+evaluationPipeline:
+  - normalizeFacts
+  - applyHardRejectRules
+  - computeRiskScore
+  - applyManualReviewRules
+  - applyConditionalPolicies
+  - finalizeDecision
+
+factModel:
+  submission:
+    fields:
+      - templateKey
+      - totalRewardKrw
+      - currency
+      - visibility
+      - expectedParticipants
+      - startAt
+      - endAt
+      - discoverability
+      - locationRiskLevel
+      - includesMediaCapture
+      - includesFacialCapture
+      - includesMinorAudience
+      - includesNightWindow
+      - exposesPreciseRealtimeLocation
+      - requiresHomeVisit
+      - isEducationOrAttendance
+      - isLiveBroadcastLinked
+      - geofenceRadiusMetersMin
+      - stepTypes
+  creator:
+    fields:
+      - userId
+      - trustTier            # NEW | NORMAL | TRUSTED | PARTNER
+      - lifetimePublishedCount
+      - reportRate30d
+      - chargebackRate90d
+      - lastManualReviewOutcome
+      - organizationVerified
+  derived:
+    fields:
+      - rewardBand           # NONE | SMALL | MEDIUM | HIGH | VERY_HIGH
+      - riskScore            # integer
+      - conditionalPolicies  # list
+      - reviewQueues         # list
+      - rejectReasons        # list
+
+normalizers:
+  - id: rewardBand
+    expression: |
+      if submission.totalRewardKrw == 0 then "NONE"
+      else if submission.totalRewardKrw <= 50000 then "SMALL"
+      else if submission.totalRewardKrw <= 500000 then "MEDIUM"
+      else if submission.totalRewardKrw <= 3000000 then "HIGH"
+      else "VERY_HIGH"
+  - id: includesNightWindow
+    expression: |
+      anyHourBetween(submission.startAt, submission.endAt, "22:00", "06:00", "Asia/Seoul")
+
+hardRejectRules:
+  - id: REJECT_PROHIBITED_LOCATION
+    when:
+      all:
+        - fact: submission.locationRiskLevel
+          op: in
+          value: ["PROHIBITED", "MILITARY", "PRIVATE_RESTRICTED", "HAZARDOUS"]
+    decision: AUTO_REJECT
+    reasonCode: PROHIBITED_LOCATION
+    message: "금지 또는 위험 지역이 포함된 클루입니다."
+
+  - id: REJECT_MINOR_WITH_REQUIRED_FACIAL
+    when:
+      all:
+        - fact: submission.includesMinorAudience
+          op: eq
+          value: true
+        - fact: submission.includesFacialCapture
+          op: eq
+          value: true
+    decision: AUTO_REJECT
+    reasonCode: MINOR_FACIAL_CAPTURE_FORBIDDEN
+    message: "미성년 대상에서 필수 얼굴 촬영은 허용하지 않습니다."
+
+  - id: REJECT_PRECISE_REALTIME_STREAMER_LOCATION
+    when:
+      all:
+        - fact: submission.isLiveBroadcastLinked
+          op: eq
+          value: true
+        - fact: submission.exposesPreciseRealtimeLocation
+          op: eq
+          value: true
+    decision: AUTO_REJECT
+    reasonCode: REALTIME_LOCATION_EXPOSURE_FORBIDDEN
+    message: "실시간 정밀 위치 공개는 스토킹/도킹 위험으로 허용하지 않습니다."
+
+manualReviewRules:
+  - id: REVIEW_HIGH_REWARD
+    when:
+      any:
+        - fact: derived.rewardBand
+          op: in
+          value: ["HIGH", "VERY_HIGH"]
+    add:
+      riskScore: 40
+      reviewQueues: ["FINANCE", "OPS"]
+      reasonCodes: ["HIGH_REWARD"]
+
+  - id: REVIEW_LARGE_EVENT
+    when:
+      all:
+        - fact: submission.expectedParticipants
+          op: gte
+          value: 300
+    add:
+      riskScore: 30
+      reviewQueues: ["OPS"]
+      reasonCodes: ["LARGE_EVENT"]
+
+  - id: REVIEW_NIGHT_PUBLIC
+    when:
+      all:
+        - fact: submission.includesNightWindow
+          op: eq
+          value: true
+        - fact: submission.visibility
+          op: in
+          value: ["PUBLIC", "UNLISTED_DISCOVERABLE"]
+    add:
+      riskScore: 35
+      reviewQueues: ["SAFETY", "OPS"]
+      reasonCodes: ["NIGHT_PUBLIC_EVENT"]
+
+  - id: REVIEW_MEDIA_CAPTURE
+    when:
+      all:
+        - fact: submission.includesMediaCapture
+          op: eq
+          value: true
+    add:
+      riskScore: 20
+      reviewQueues: ["CONTENT"]
+      reasonCodes: ["MEDIA_CAPTURE_INCLUDED"]
+
+  - id: REVIEW_HOME_VISIT
+    when:
+      all:
+        - fact: submission.requiresHomeVisit
+          op: eq
+          value: true
+    add:
+      riskScore: 45
+      reviewQueues: ["SAFETY", "CS"]
+      reasonCodes: ["HOME_VISIT_FLOW"]
+
+  - id: REVIEW_MINOR_PUBLIC
+    when:
+      all:
+        - fact: submission.includesMinorAudience
+          op: eq
+          value: true
+        - fact: submission.visibility
+          op: in
+          value: ["PUBLIC", "UNLISTED_DISCOVERABLE"]
+    add:
+      riskScore: 35
+      reviewQueues: ["EDU", "SAFETY"]
+      reasonCodes: ["MINOR_PUBLIC_FLOW"]
+
+  - id: REVIEW_LOW_TRUST_CREATOR
+    when:
+      any:
+        - fact: creator.trustTier
+          op: eq
+          value: "NEW"
+        - fact: creator.reportRate30d
+          op: gte
+          value: 0.03
+        - fact: creator.chargebackRate90d
+          op: gte
+          value: 0.01
+    add:
+      riskScore: 25
+      reviewQueues: ["OPS"]
+      reasonCodes: ["LOW_CREATOR_TRUST"]
+
+  - id: REVIEW_TIGHT_GEOFENCE_WITH_MINORS
+    when:
+      all:
+        - fact: submission.includesMinorAudience
+          op: eq
+          value: true
+        - fact: submission.geofenceRadiusMetersMin
+          op: lte
+          value: 20
+    add:
+      riskScore: 20
+      reviewQueues: ["EDU"]
+      reasonCodes: ["TIGHT_GEOFENCE_MINOR"]
+
+conditionalPolicies:
+  - id: POLICY_MEDIA_PRIVACY
+    when:
+      fact: submission.includesMediaCapture
+      op: eq
+      value: true
+    enforce:
+      - set: submission.mediaVisibilityDefault
+        value: OPERATOR_ONLY
+      - set: submission.maxMediaRetentionDays
+        value: 30
+      - set: submission.faceBlurDefault
+        value: AUTO_OR_SUGGEST
+      - requireCheckbox: MEDIA_COLLECTION_NOTICE
+      - requireText: "얼굴/차량번호 등 개인식별 정보가 보이지 않게 촬영해주세요."
+
+  - id: POLICY_EDU_ATTENDANCE_PRIVACY
+    when:
+      fact: submission.isEducationOrAttendance
+      op: eq
+      value: true
+    enforce:
+      - set: submission.storeRawPath
+        value: false
+      - set: submission.storeAttendanceResultOnly
+        value: true
+      - requireCheckbox: PURPOSE_RETENTION_NOTICE
+      - requireReviewQueue: EDU
+
+  - id: POLICY_STREAMER_LOCATION_DELAY
+    when:
+      fact: submission.isLiveBroadcastLinked
+      op: eq
+      value: true
+    enforce:
+      - set: submission.locationRevealDelayMinutes
+        value: 60
+      - set: submission.preciseLocationPublic
+        value: false
+      - requireText: "방송 연동 클루는 위치가 지연 공개됩니다."
+
+  - id: POLICY_NIGHT_SAFETY_BANNER
+    when:
+      fact: submission.includesNightWindow
+      op: eq
+      value: true
+    enforce:
+      - requireBanner: NIGHT_SAFETY_NOTICE
+      - requireField: emergencyContact
+      - set: submission.recommendTeamMode
+        value: true
+
+  - id: POLICY_HIGH_REWARD_ESCROW
+    when:
+      fact: derived.rewardBand
+      op: in
+      value: ["HIGH", "VERY_HIGH"]
+    enforce:
+      - requireEscrow: true
+      - requireReviewQueue: FINANCE
+      - set: submission.autoPayout
+        value: false
+
+decisionMatrix:
+  - id: AUTO_APPROVE_SMALL_PRIVATE
+    when:
+      all:
+        - fact: submission.visibility
+          op: eq
+          value: "INVITE_ONLY"
+        - fact: derived.rewardBand
+          op: in
+          value: ["NONE", "SMALL"]
+        - fact: submission.includesMediaCapture
+          op: eq
+          value: false
+        - fact: submission.includesNightWindow
+          op: eq
+          value: false
+        - fact: submission.includesMinorAudience
+          op: eq
+          value: false
+        - fact: creator.trustTier
+          op: in
+          value: ["NORMAL", "TRUSTED", "PARTNER"]
+    decision: AUTO_APPROVE
+
+  - id: MANUAL_REVIEW_THRESHOLD
+    when:
+      any:
+        - fact: derived.riskScore
+          op: gte
+          value: 40
+        - fact: derived.reviewQueues
+          op: count_gte
+          value: 2
+    decision: MANUAL_REVIEW
+
+  - id: CONDITIONAL_APPROVE_DEFAULT
+    when:
+      all:
+        - fact: derived.riskScore
+          op: gt
+          value: 0
+        - fact: derived.riskScore
+          op: lt
+          value: 40
+    decision: CONDITIONAL_APPROVE
+
+auditFields:
+  - submissionId
+  - evaluatedAt
+  - matchedRules
+  - finalDecision
+  - reasonCodes
+  - policyOverrides
+  - reviewerId
+
+pseudoCode: |
+  facts = normalize(submission, creator)
+  rejected = match(hardRejectRules, facts)
+  if rejected:
+      return AUTO_REJECT
+  facts.riskScore += accumulate(manualReviewRules, facts)
+  facts = applyPolicies(conditionalPolicies, facts)
+  decision = choose(decisionMatrix, facts, defaultDecision)
+  return decision

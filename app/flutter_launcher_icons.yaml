@@ -1,0 +1,19 @@
+# flutter_launcher_icons 설정
+# 사용법:
+#   1. assets/images/app_icon.png 를 1024x1024 크기로 준비
+#      - 배경: #111115 (다크)
+#      - 중앙: 노란색(#FACC15) "R" 로고 (Black Han Sans)
+#   2. dart run flutter_launcher_icons
+#
+# 아이콘 디자인 가이드:
+#   - 배경색: #111115 (앱 다크 테마)
+#   - 로고 색: #FACC15 (브랜드 옐로우)
+#   - 텍스트: "R" (Black Han Sans, centered)
+#   - Android adaptive icon: 배경 #111115, 포그라운드 "R"
+
+flutter_launcher_icons:
+  android: true
+  ios: false  # iOS 프로젝트 없음 (Windows 개발)
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#111115"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"

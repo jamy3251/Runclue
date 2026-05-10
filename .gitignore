@@ -1,0 +1,74 @@
+# Secrets — 절대 commit 금지
+**/.env
+**/.env.local
+**/key.properties
+**/*.jks
+**/*.keystore
+
+# Flutter / Dart
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/build/
+**/.metadata
+**/pubspec.lock
+
+# Symbolication / obfuscation
+**/app.*.symbols
+**/app.*.map.json
+
+# Android
+**/android/.gradle/
+**/android/local.properties
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/gradle/
+
+# iOS
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/.last_build_id
+
+# Web
+**/web/
+
+# IDE
+**/.idea/
+**/.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Misc
+*.log
+*.swp
+.DS_Store
+*.class
+*.pyc
+
+# Claude Code 로컬 설정 (개인 환경)
+.claude/
+
+# Generated APK는 GitHub Releases로 배포
+**/app-release.apk
+**/app-debug.apk
+**/app-arm64-v8a-release.apk
+**/app-armeabi-v7a-release.apk
+**/app-x86_64-release.apk
+*.apk.sha1
+
+# 임시 파일
+KakaoTalk_*.jpg
+
+# 디자인 원본 (큰 바이너리)
+*.pptx
+*.docx
+*.pdf

@@ -1,0 +1,833 @@
+[
+  {
+    "templateKey": "HIDE_AND_SEEK_FRIENDS_V1",
+    "version": 1,
+    "titleExample": "강성호를 잡아라",
+    "category": "OFFLINE_SOCIAL",
+    "discoverability": "INVITE_ONLY",
+    "intendedAudience": {
+      "minAge": 13,
+      "maxParticipants": 50,
+      "teamMode": "OPTIONAL"
+    },
+    "rewardPolicy": {
+      "kind": "POINTS_OR_SMALL_CASH",
+      "distribution": "FIRST_N_THEN_EQUAL_SPLIT",
+      "currency": "KRW",
+      "totalRewardKrw": 200000,
+      "platformFeeRate": 0.05,
+      "payoutRule": {
+        "firstPlaceRate": 0.5,
+        "secondPlaceRate": 0.25,
+        "thirdPlaceRate": 0.125,
+        "others": "remaining_equal_split"
+      }
+    },
+    "approvalHints": {
+      "expectedRisk": "LOW",
+      "manualReviewLikely": false,
+      "flags": [
+        "INVITE_ONLY",
+        "NO_FORCED_MEDIA",
+        "DAYTIME_RECOMMENDED"
+      ]
+    },
+    "steps": [
+      {
+        "order": 1,
+        "type": "CHECKPOINT",
+        "title": "출발지 인증",
+        "config": {
+          "location": {
+            "mode": "point",
+            "lat": 37.6053,
+            "lng": 127.1442,
+            "radiusMeters": 80
+          },
+          "arrivalPolicy": {
+            "minStaySeconds": 10,
+            "cooldownSeconds": 30
+          },
+          "antiCheat": {
+            "maxPlausibleSpeedKph": 80,
+            "requireForegroundLocation": true
+          },
+          "ui": {
+            "mapPinIcon": "flag_start",
+            "arrivalCta": "출발 인증하기"
+          },
+          "fallback": {
+            "enabled": true,
+            "methods": [
+              "HOST_QR"
+            ]
+          }
+        }
+      },
+      {
+        "order": 2,
+        "type": "OX_QUIZ",
+        "title": "힌트 잠금 해제",
+        "config": {
+          "question": "오늘 숨은 사람은 실내 상가 안으로 들어갈 수 없다.",
+          "choices": [
+            "O",
+            "X"
+          ],
+          "correctAnswer": "O",
+          "timeLimitSec": 20,
+          "attemptLimit": 1,
+          "scoring": {
+            "baseScore": 100,
+            "speedBonusMax": 30
+          },
+          "unlockOnSuccess": {
+            "hintText": "공원 북쪽 운동기구 근처를 확인해보세요."
+          }
+        }
+      },
+      {
+        "order": 3,
+        "type": "SNAPSHOT",
+        "title": "중간 단서 촬영",
+        "config": {
+          "capture": {
+            "source": "camera_only",
+            "maxFiles": 1,
+            "aspectRatio": "4:3",
+            "allowGallery": false
+          },
+          "validation": {
+            "mode": "manual_or_ai_assist",
+            "requiredObjects": [
+              "빨간 미끄럼틀"
+            ],
+            "minSharpness": 0.45
+          },
+          "privacy": {
+            "visibility": "operator_only",
+            "retainDays": 14,
+            "faceBlur": "suggest",
+            "plateBlur": "suggest"
+          },
+          "copy": {
+            "instruction": "주변 사람 얼굴이 나오지 않게 촬영해주세요.",
+            "successToast": "중간 단서를 확인 중이에요."
+          }
+        }
+      },
+      {
+        "order": 4,
+        "type": "CHECKPOINT",
+        "title": "최종 발견 인증",
+        "config": {
+          "location": {
+            "mode": "polygon",
+            "zoneId": "zone_final_seek_01",
+            "radiusMeters": 40
+          },
+          "arrivalPolicy": {
+            "minStaySeconds": 5,
+            "cooldownSeconds": 0
+          },
+          "validation": {
+            "successRequiresOneOf": [
+              {
+                "method": "HOST_QR",
+                "expiresInSec": 180
+              },
+              {
+                "method": "HOST_CODE",
+                "codeLength": 6
+              }
+            ]
+          },
+          "antiCheat": {
+            "maxPlausibleSpeedKph": 80,
+            "requireRecentStepProof": true
+          },
+          "ui": {
+            "mapPinIcon": "target",
+            "arrivalCta": "찾았다!"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "templateKey": "TREASURE_HUNT_PUBLIC_V1",
+    "version": 1,
+    "titleExample": "을왕리 보물을 찾아라",
+    "category": "OFFLINE_EXPLORATION",
+    "discoverability": "PUBLIC",
+    "intendedAudience": {
+      "minAge": 13,
+      "maxParticipants": 300,
+      "teamMode": "OPTIONAL"
+    },
+    "rewardPolicy": {
+      "kind": "POINTS_BADGE_OR_CASH",
+      "distribution": "TOP3_AND_LOTTERY",
+      "currency": "KRW",
+      "totalRewardKrw": 1000000,
+      "platformFeeRate": 0.05,
+      "payoutRule": {
+        "firstPlaceRate": 0.4,
+        "secondPlaceRate": 0.2,
+        "thirdPlaceRate": 0.1,
+        "lotteryPoolRate": 0.3
+      }
+    },
+    "approvalHints": {
+      "expectedRisk": "MEDIUM",
+      "manualReviewLikely": true,
+      "flags": [
+        "PUBLIC",
+        "MAP_MOVEMENT",
+        "MEDIA_CAPTURE",
+        "CROWD_POSSIBLE"
+      ]
+    },
+    "steps": [
+      {
+        "order": 1,
+        "type": "QUEST",
+        "title": "수수께끼 시작",
+        "config": {
+          "questionType": "short_answer",
+          "prompt": "바닷바람을 가장 먼저 맞는 장소의 이름은?",
+          "acceptableAnswers": [
+            "해변 입구",
+            "메인 비치 입구"
+          ],
+          "caseInsensitive": true,
+          "hint": {
+            "enabledAfterFailCount": 1,
+            "text": "주차장과 가장 가까운 입구를 생각해보세요."
+          },
+          "scoring": {
+            "baseScore": 80,
+            "failPenalty": 10
+          }
+        }
+      },
+      {
+        "order": 2,
+        "type": "CHECKPOINT",
+        "title": "첫 번째 지점 도착",
+        "config": {
+          "location": {
+            "mode": "point",
+            "lat": 37.4491,
+            "lng": 126.3729,
+            "radiusMeters": 70
+          },
+          "arrivalPolicy": {
+            "minStaySeconds": 15,
+            "cooldownSeconds": 60
+          },
+          "antiCheat": {
+            "maxPlausibleSpeedKph": 120,
+            "requireForegroundLocation": true
+          },
+          "ui": {
+            "mapPinIcon": "checkpoint",
+            "arrivalCta": "도착 인증"
+          }
+        }
+      },
+      {
+        "order": 3,
+        "type": "PANORAMA",
+        "title": "전경 단서 제출",
+        "config": {
+          "capture": {
+            "mode": "360_or_wide",
+            "minHorizontalCoverageDeg": 180,
+            "allowGallery": false
+          },
+          "validation": {
+            "mode": "manual_or_ai_assist",
+            "requiredSceneTags": [
+              "해변",
+              "파라솔",
+              "전망대"
+            ]
+          },
+          "privacy": {
+            "visibility": "operator_only",
+            "retainDays": 30,
+            "faceBlur": "auto"
+          },
+          "ui": {
+            "instruction": "사람보다 풍경이 중심이 되도록 촬영해 주세요."
+          }
+        }
+      },
+      {
+        "order": 4,
+        "type": "LIST",
+        "title": "보물 수집 체크리스트",
+        "config": {
+          "items": [
+            {
+              "key": "shell_photo",
+              "label": "조개껍질 근처 도착",
+              "required": true
+            },
+            {
+              "key": "blue_sign",
+              "label": "파란 안내판 확인",
+              "required": true
+            },
+            {
+              "key": "team_cheer",
+              "label": "팀 구호 외치기",
+              "required": false
+            }
+          ],
+          "completionRule": {
+            "requiredCount": 2,
+            "allowPartial": false
+          },
+          "scoring": {
+            "baseScore": 120
+          }
+        }
+      },
+      {
+        "order": 5,
+        "type": "CHECKPOINT",
+        "title": "최종 보물함 열기",
+        "config": {
+          "location": {
+            "mode": "point",
+            "lat": 37.4518,
+            "lng": 126.3763,
+            "radiusMeters": 35
+          },
+          "validation": {
+            "successRequiresOneOf": [
+              {
+                "method": "ROTATING_QR",
+                "rotationSec": 120
+              },
+              {
+                "method": "STATIC_QR"
+              }
+            ]
+          },
+          "antiCheat": {
+            "maxPlausibleSpeedKph": 120,
+            "requireRecentPhotoStep": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "templateKey": "WORKSHOP_TEAM_RACE_V1",
+    "version": 1,
+    "titleExample": "회사 워크샵 레벨업 레이스",
+    "category": "CORPORATE_EVENT",
+    "discoverability": "UNLISTED",
+    "intendedAudience": {
+      "minAge": 18,
+      "maxParticipants": 1000,
+      "teamMode": "REQUIRED"
+    },
+    "rewardPolicy": {
+      "kind": "POINTS_BADGE_OR_PRIZE",
+      "distribution": "TEAM_SCORE_RANKING",
+      "currency": "KRW",
+      "totalRewardKrw": 3000000,
+      "platformFeeRate": 0.05,
+      "teamPrizeRule": {
+        "firstTeamRate": 0.5,
+        "secondTeamRate": 0.3,
+        "thirdTeamRate": 0.2
+      }
+    },
+    "approvalHints": {
+      "expectedRisk": "MEDIUM",
+      "manualReviewLikely": true,
+      "flags": [
+        "LARGE_EVENT",
+        "TEAM_MODE",
+        "ONSITE_QR",
+        "OPTIONAL_MEDIA"
+      ]
+    },
+    "steps": [
+      {
+        "order": 1,
+        "type": "BOARD",
+        "title": "팀 소개 보드 작성",
+        "config": {
+          "boardKey": "team_intro",
+          "submissionType": "text_with_optional_image",
+          "minTextLength": 10,
+          "maxTextLength": 120,
+          "moderation": {
+            "profanityFilter": true,
+            "manualReviewIfReported": true
+          },
+          "scoring": {
+            "baseScore": 50
+          }
+        }
+      },
+      {
+        "order": 2,
+        "type": "CHECKPOINT",
+        "title": "Zone A 인증",
+        "config": {
+          "location": {
+            "mode": "point",
+            "lat": 37.5684,
+            "lng": 126.9771,
+            "radiusMeters": 40
+          },
+          "validation": {
+            "successRequiresOneOf": [
+              {
+                "method": "ROTATING_QR",
+                "rotationSec": 90
+              },
+              {
+                "method": "GEOFENCE"
+              }
+            ]
+          },
+          "antiCheat": {
+            "requireTeamMemberCountAtLeast": 3
+          }
+        }
+      },
+      {
+        "order": 3,
+        "type": "OX_QUIZ",
+        "title": "회사 퀴즈",
+        "config": {
+          "question": "우리 회사의 핵심 가치에는 '실험'이 포함된다.",
+          "choices": [
+            "O",
+            "X"
+          ],
+          "correctAnswer": "O",
+          "timeLimitSec": 15,
+          "attemptLimit": 1,
+          "scoring": {
+            "baseScore": 100,
+            "speedBonusMax": 25
+          }
+        }
+      },
+      {
+        "order": 4,
+        "type": "LIST",
+        "title": "협업 미션 체크리스트",
+        "config": {
+          "items": [
+            {
+              "key": "all_present",
+              "label": "팀원 전원 모이기",
+              "required": true
+            },
+            {
+              "key": "cheer",
+              "label": "팀 구호 1회",
+              "required": true
+            },
+            {
+              "key": "photo_pose",
+              "label": "단체 포즈",
+              "required": false
+            }
+          ],
+          "completionRule": {
+            "requiredCount": 2,
+            "allowPartial": false
+          },
+          "scoring": {
+            "baseScore": 130
+          }
+        }
+      },
+      {
+        "order": 5,
+        "type": "SNAPSHOT",
+        "title": "팀 미션 사진",
+        "config": {
+          "capture": {
+            "source": "camera_or_gallery",
+            "maxFiles": 1,
+            "allowGallery": true
+          },
+          "validation": {
+            "mode": "manual_or_ai_assist",
+            "requiredObjects": [
+              "행사 배너"
+            ],
+            "optionalPose": "team_jump"
+          },
+          "privacy": {
+            "visibility": "event_operator_only",
+            "retainDays": 14,
+            "faceBlur": "off_with_notice"
+          },
+          "consent": {
+            "requiresTeamRepresentativeConfirmation": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "templateKey": "ONLINE_LIVE_QUIZ_V1",
+    "version": 1,
+    "titleExample": "정모의 번개 퀴즈쇼",
+    "category": "ONLINE_LIVE_EVENT",
+    "discoverability": "PUBLIC",
+    "intendedAudience": {
+      "minAge": 13,
+      "maxParticipants": 50000,
+      "teamMode": "DISABLED"
+    },
+    "rewardPolicy": {
+      "kind": "POINTS_OR_CASH",
+      "distribution": "RANK_BY_SCORE_THEN_SPEED",
+      "currency": "KRW",
+      "totalRewardKrw": 500000,
+      "platformFeeRate": 0.05
+    },
+    "approvalHints": {
+      "expectedRisk": "MEDIUM",
+      "manualReviewLikely": true,
+      "flags": [
+        "LIVE_MODE",
+        "HIGH_CONCURRENCY",
+        "PUBLIC"
+      ]
+    },
+    "steps": [
+      {
+        "order": 1,
+        "type": "LIST",
+        "title": "입장 전 준비",
+        "config": {
+          "items": [
+            {
+              "key": "nickname_confirm",
+              "label": "방송용 닉네임 확인",
+              "required": true
+            },
+            {
+              "key": "latency_check",
+              "label": "지연시간 테스트 완료",
+              "required": true
+            }
+          ],
+          "completionRule": {
+            "requiredCount": 2,
+            "allowPartial": false
+          }
+        }
+      },
+      {
+        "order": 2,
+        "type": "QUEST",
+        "title": "Round 1 객관식",
+        "config": {
+          "deliveryMode": "live_broadcast",
+          "questionRef": "quiz_round_1_q1",
+          "questionType": "multiple_choice",
+          "choices": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": "3",
+          "openAt": "2026-03-06T20:00:00+09:00",
+          "answerWindowSec": 12,
+          "shuffleChoices": true,
+          "scoring": {
+            "baseScore": 100,
+            "speedBonusMax": 40,
+            "latePenaltyPerSec": 3
+          },
+          "fairness": {
+            "serverTimeAuthority": true,
+            "oneSubmissionOnly": true
+          }
+        }
+      },
+      {
+        "order": 3,
+        "type": "OX_QUIZ",
+        "title": "Round 2 OX",
+        "config": {
+          "deliveryMode": "live_broadcast",
+          "question": "RunClue의 기본 구조는 '탐색-참여-해결-보상'이다.",
+          "choices": [
+            "O",
+            "X"
+          ],
+          "correctAnswer": "O",
+          "openAt": "2026-03-06T20:02:00+09:00",
+          "answerWindowSec": 8,
+          "scoring": {
+            "baseScore": 120,
+            "speedBonusMax": 30
+          },
+          "fairness": {
+            "serverTimeAuthority": true,
+            "oneSubmissionOnly": true
+          }
+        }
+      },
+      {
+        "order": 4,
+        "type": "BOARD",
+        "title": "최종 한줄 코멘트",
+        "config": {
+          "boardKey": "live_quiz_reactions",
+          "submissionType": "text_only",
+          "minTextLength": 1,
+          "maxTextLength": 60,
+          "moderation": {
+            "profanityFilter": true,
+            "rateLimitPerUserPerMinute": 2
+          }
+        }
+      }
+    ]
+  },
+  {
+    "templateKey": "ERRAND_BUG_HELP_V1",
+    "version": 1,
+    "titleExample": "벌레잡기 도와주세요",
+    "category": "LIFE_HELP",
+    "discoverability": "NEARBY_REQUEST",
+    "intendedAudience": {
+      "minAge": 19,
+      "maxParticipants": 5,
+      "teamMode": "DISABLED"
+    },
+    "rewardPolicy": {
+      "kind": "FIXED_CASH",
+      "distribution": "REQUESTER_CONFIRMED",
+      "currency": "KRW",
+      "totalRewardKrw": 20000,
+      "platformFeeRate": 0.05
+    },
+    "approvalHints": {
+      "expectedRisk": "MEDIUM",
+      "manualReviewLikely": true,
+      "flags": [
+        "HOME_VISIT",
+        "APPROX_LOCATION_ONLY",
+        "REQUESTER_CONFIRMATION"
+      ]
+    },
+    "steps": [
+      {
+        "order": 1,
+        "type": "CHECKPOINT",
+        "title": "근처 도착 인증",
+        "config": {
+          "location": {
+            "mode": "coarse_point",
+            "lat": 37.5001,
+            "lng": 127.0367,
+            "radiusMeters": 150,
+            "hideExactUntilAccepted": true
+          },
+          "arrivalPolicy": {
+            "minStaySeconds": 10,
+            "cooldownSeconds": 60
+          },
+          "antiCheat": {
+            "maxPlausibleSpeedKph": 100
+          }
+        }
+      },
+      {
+        "order": 2,
+        "type": "LIST",
+        "title": "안전 확인",
+        "config": {
+          "items": [
+            {
+              "key": "wear_gloves",
+              "label": "장갑 착용",
+              "required": true
+            },
+            {
+              "key": "no_chemical",
+              "label": "유해 화학약품 사용 안함",
+              "required": true
+            },
+            {
+              "key": "requester_present",
+              "label": "요청자 확인 후 입장",
+              "required": true
+            }
+          ],
+          "completionRule": {
+            "requiredCount": 3,
+            "allowPartial": false
+          }
+        }
+      },
+      {
+        "order": 3,
+        "type": "SNAPSHOT",
+        "title": "완료 사진",
+        "config": {
+          "capture": {
+            "source": "camera_only",
+            "maxFiles": 2,
+            "allowGallery": false
+          },
+          "validation": {
+            "mode": "requester_manual_confirmation",
+            "requiredShots": [
+              "before_optional",
+              "after_required"
+            ]
+          },
+          "privacy": {
+            "visibility": "requester_and_operator_only",
+            "retainDays": 7,
+            "faceBlur": "auto",
+            "addressMasking": true
+          }
+        }
+      },
+      {
+        "order": 4,
+        "type": "BOARD",
+        "title": "작업 메모",
+        "config": {
+          "boardKey": "errand_completion_note",
+          "submissionType": "text_only",
+          "minTextLength": 5,
+          "maxTextLength": 100,
+          "moderation": {
+            "profanityFilter": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "templateKey": "ATTENDANCE_QR_GEOFENCE_V1",
+    "version": 1,
+    "titleExample": "3월 1주차 출석체크",
+    "category": "EDU_ADMIN",
+    "discoverability": "PRIVATE_ORG",
+    "intendedAudience": {
+      "minAge": 13,
+      "maxParticipants": 1000,
+      "teamMode": "DISABLED"
+    },
+    "rewardPolicy": {
+      "kind": "ATTENDANCE_ONLY",
+      "distribution": "NONE",
+      "currency": "KRW",
+      "totalRewardKrw": 0,
+      "platformFeeRate": 0.0
+    },
+    "approvalHints": {
+      "expectedRisk": "LOW",
+      "manualReviewLikely": true,
+      "flags": [
+        "MINOR_POSSIBLE",
+        "ORG_RESTRICTED",
+        "PRIVACY_SENSITIVE"
+      ]
+    },
+    "steps": [
+      {
+        "order": 1,
+        "type": "LIST",
+        "title": "개인정보 안내 확인",
+        "config": {
+          "items": [
+            {
+              "key": "purpose_notice",
+              "label": "출석 목적 수집 안내 확인",
+              "required": true
+            },
+            {
+              "key": "retention_notice",
+              "label": "보관기간 안내 확인",
+              "required": true
+            }
+          ],
+          "completionRule": {
+            "requiredCount": 2,
+            "allowPartial": false
+          },
+          "copy": {
+            "footer": "정밀 이동경로는 저장하지 않고 출석 결과만 남깁니다."
+          }
+        }
+      },
+      {
+        "order": 2,
+        "type": "CHECKPOINT",
+        "title": "출석 인증",
+        "config": {
+          "location": {
+            "mode": "point",
+            "lat": 37.5662,
+            "lng": 126.9784,
+            "radiusMeters": 50
+          },
+          "arrivalPolicy": {
+            "minStaySeconds": 5,
+            "cooldownSeconds": 0
+          },
+          "validation": {
+            "successRequiresOneOf": [
+              {
+                "method": "GEOFENCE"
+              },
+              {
+                "method": "ROTATING_QR",
+                "rotationSec": 60
+              }
+            ]
+          },
+          "privacy": {
+            "storeRawPath": false,
+            "storeResultOnly": true,
+            "locationPrecision": "coarse_after_validation"
+          },
+          "antiCheat": {
+            "maxPlausibleSpeedKph": 300,
+            "rejectMockLocationIfFlagged": true
+          }
+        }
+      },
+      {
+        "order": 3,
+        "type": "QUEST",
+        "title": "출석 후 한줄 체크",
+        "config": {
+          "questionType": "short_answer",
+          "prompt": "오늘 수업 키워드를 한 단어로 적어주세요.",
+          "minLength": 1,
+          "maxLength": 20,
+          "grading": {
+            "mode": "completion_only"
+          },
+          "optional": true
+        }
+      }
+    ]
+  }
+]
