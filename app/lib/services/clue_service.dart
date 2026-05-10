@@ -146,12 +146,27 @@ class ClueService {
         }
         return response;
       } on PostgrestException catch (e) {
-        // PGRST204: column not found in schema
+        // PGRST204: column not found in schema → 컬럼 자동 제거
         if (e.code == 'PGRST204') {
           final col = _extractMissingColumn(e.message);
           if (col != null && payload.containsKey(col)) {
             payload.remove(col);
             droppedCols.add(col);
+            continue;
+          }
+        }
+        // 23514: CHECK constraint 위반 → reward_type 자동 매핑 시도
+        if (e.code == '23514' && e.message.contains('reward_type')) {
+          final cur = payload['reward_type']?.toString() ?? '';
+          // menu_discount/gifticon/cash → coupon/coupon/prize 매핑
+          final mapped = switch (cur) {
+            'menu_discount' || 'gifticon' => 'coupon',
+            'cash' => 'prize',
+            _ => 'coupon',
+          };
+          if (mapped != cur) {
+            payload['reward_type'] = mapped;
+            droppedCols.add('reward_type:$cur→$mapped');
             continue;
           }
         }
