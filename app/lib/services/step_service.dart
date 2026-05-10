@@ -19,7 +19,7 @@ class StepService {
   }
 
   /// Create a new step.
-  /// 견고한 INSERT — 누락 컬럼 자동 제거 후 재시도 + 자세한 에러 정보
+  /// 견고한 INSERT — 누락 컬럼 + CHECK 제약 자동 매핑
   Future<Map<String, dynamic>> createStep(Map<String, dynamic> stepData) async {
     var payload = Map<String, dynamic>.from(stepData);
     final droppedCols = <String>[];
@@ -30,12 +30,31 @@ class StepService {
             await _client.from('steps').insert(payload).select().single();
         return response;
       } on PostgrestException catch (e) {
+        // PGRST204: 컬럼 누락 자동 제거
         if (e.code == 'PGRST204') {
           final match = RegExp(r"'([^']+)' column").firstMatch(e.message);
           final col = match?.group(1);
           if (col != null && payload.containsKey(col)) {
             payload.remove(col);
             droppedCols.add(col);
+            continue;
+          }
+        }
+        // 23514: type CHECK 제약 위반 → 호환 type으로 자동 매핑
+        if (e.code == '23514' && e.message.contains('type')) {
+          final cur = payload['type']?.toString() ?? '';
+          // PHOTO_SIM/MOTION_SIM은 SNAPSHOT으로 (사진 인증) 폴백
+          // 그 외 알 수 없는 값은 CHECKPOINT로
+          final mapped = switch (cur) {
+            'PHOTO_SIM' || 'MOTION_SIM' => 'SNAPSHOT',
+            _ => 'CHECKPOINT',
+          };
+          if (mapped != cur) {
+            payload['type'] = mapped;
+            // SNAPSHOT/CHECKPOINT는 manual/auto 검증
+            payload['validation_type'] =
+                mapped == 'CHECKPOINT' ? 'auto' : 'manual';
+            droppedCols.add('type:$cur→$mapped');
             continue;
           }
         }

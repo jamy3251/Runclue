@@ -242,10 +242,25 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
     _toast('🚀 제출 시작...');
 
     try {
-      final userId = ref.read(currentUserIdProvider);
+      // 세션 강제 새로고침 시도 — 만료됐을 수 있음
+      String? userId = ref.read(currentUserIdProvider);
       if (userId == null) {
-        _showErrorDetails('로그인 필요',
-            'currentUserIdProvider가 null입니다.\n세션이 만료됐을 수 있어요.\n다시 로그인 후 시도해주세요.');
+        _toast('세션 새로고침 시도...');
+        try {
+          // Supabase 세션 강제 refresh
+          await safeClient.auth.refreshSession();
+        } catch (_) {/* refresh 실패 시 아래에서 처리 */}
+        // 다시 읽기
+        userId = safeClient.auth.currentUser?.id;
+      }
+
+      if (userId == null) {
+        // 진짜 로그아웃 상태 — 로그인 화면으로
+        _toast('로그인이 필요합니다 — 로그인 화면으로 이동');
+        if (mounted) {
+          await Future.delayed(const Duration(milliseconds: 800));
+          if (mounted) context.go('/auth/login');
+        }
         return;
       }
 
