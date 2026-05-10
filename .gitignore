@@ -4,6 +4,9 @@
 **/key.properties
 **/*.jks
 **/*.keystore
+MY_SECRETS.local
+**/SECRETS.local
+*.local.env
 
 # Flutter / Dart
 **/.dart_tool/
