@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/profile_provider.dart';
+import '../../providers/reward_provider.dart';
 import '../../widgets/common/error_widget.dart' as app;
 import '../../widgets/common/loading_widget.dart';
 
@@ -16,6 +17,7 @@ class ProfileScreen extends ConsumerWidget {
     final profileAsync = ref.watch(myProfileProvider);
     final badgesAsync = ref.watch(myBadgesProvider);
     final clanAsync = ref.watch(myClanProvider);
+    final unclaimedCountAsync = ref.watch(unclaimedRewardsCountProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -117,6 +119,42 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // 보상함 — 선물함(미수령) + 인벤토리
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _RewardEntryCard(
+                          icon: Icons.card_giftcard,
+                          accent: AppColors.brandYellow,
+                          title: '선물함',
+                          subtitle: unclaimedCountAsync.maybeWhen(
+                            data: (n) => n > 0 ? '$n개 받기 대기' : '대기 중인 보상 없음',
+                            orElse: () => '확인하기',
+                          ),
+                          badgeCount: unclaimedCountAsync.maybeWhen(
+                            data: (n) => n,
+                            orElse: () => 0,
+                          ),
+                          onTap: () => context.push('/rewards?tab=gifts'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _RewardEntryCard(
+                          icon: Icons.inventory_2_outlined,
+                          accent: AppColors.brandBlue,
+                          title: '인벤토리',
+                          subtitle: '내가 받은 보상',
+                          onTap: () => context.push('/rewards?tab=inventory'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -408,6 +446,100 @@ class _StatItem extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _RewardEntryCard extends StatelessWidget {
+  final IconData icon;
+  final Color accent;
+  final String title;
+  final String subtitle;
+  final int badgeCount;
+  final VoidCallback onTap;
+
+  const _RewardEntryCard({
+    required this.icon,
+    required this.accent,
+    required this.title,
+    required this.subtitle,
+    this.badgeCount = 0,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.bgSurface,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: accent.withValues(alpha: 0.25)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, color: accent, size: 20),
+                  ),
+                  const Spacer(),
+                  if (badgeCount > 0)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: const BoxDecoration(
+                        color: AppColors.brandRed,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                          minWidth: 22, minHeight: 22),
+                      alignment: Alignment.center,
+                      child: Text(
+                        badgeCount > 99 ? '99+' : '$badgeCount',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textMuted,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

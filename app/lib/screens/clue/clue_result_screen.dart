@@ -471,6 +471,24 @@ class _DetailPanel extends StatelessWidget {
 
             const SizedBox(height: 20),
 
+            // 보상 받으러 가기 — 선물함이 자격자만 보임
+            if (reward > 0) ...[
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => context.push('/rewards?tab=gifts'),
+                  icon: const Icon(Icons.card_giftcard, size: 20),
+                  label: const Text('선물함에서 받기'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.brandYellow,
+                    foregroundColor: Colors.black,
+                    minimumSize: const Size.fromHeight(48),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+
             // 액션 버튼
             Row(
               children: [
@@ -486,11 +504,11 @@ class _DetailPanel extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: ElevatedButton.icon(
+                  child: OutlinedButton.icon(
                     onPressed: onNext,
                     icon: const Icon(Icons.search, size: 18),
                     label: const Text('다음 미션'),
-                    style: ElevatedButton.styleFrom(
+                    style: OutlinedButton.styleFrom(
                       minimumSize: const Size.fromHeight(48),
                     ),
                   ),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../config/supabase_safe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -180,6 +182,21 @@ class ParticipationService {
       'updated_at': now,
     });
 
+    // 6) 실 보상 row 발급 — 선물함에 미수령 상태로 도착
+    //    자격 있고 0 초과일 때만. 실패는 silently — 결과 화면 표시는 진행.
+    final userId = base['user_id'] as String?;
+    if (rewardStatus == 'eligible' && earnedPoints > 0 && userId != null) {
+      try {
+        await _issueReward(
+          participationId: participationId,
+          clueId: clueId,
+          userId: userId,
+          clue: clue,
+          earnedPoints: earnedPoints,
+        );
+      } catch (_) {/* 운영 단계에서만 추적; 사용자 결과 표시는 막지 않음 */}
+    }
+
     // 응답에 계산 결과 합쳐서 반환 (DB에 저장 안 됐어도 UI에 보여주려고)
     final merged = Map<String, dynamic>.from(final_);
     merged['rank'] = rank;
@@ -190,6 +207,93 @@ class ParticipationService {
     merged['_clue_distribution_mode'] = mode;
     merged['_clue_max_winners'] = maxWinners;
     return merged;
+  }
+
+  /// clue.reward_type → rewards.type CHECK 호환 매핑.
+  /// rewards.type은 ('points','badge','coupon','prize','raffle')만 허용.
+  static String mapRewardType(String? clueRewardType) {
+    switch (clueRewardType) {
+      case 'badge':
+        return 'badge';
+      case 'points':
+        return 'points';
+      case 'cash':
+      case 'prize':
+        return 'prize';
+      case 'menu_discount':
+      case 'gifticon':
+      case 'coupon':
+        return 'coupon';
+      case 'raffle':
+        return 'raffle';
+      default:
+        return 'coupon'; // 안전한 기본값
+    }
+  }
+
+  /// 쿠폰 코드 자동 생성 — 사람이 읽기 쉬운 형태 (RC-XXXX-XXXX).
+  static String generateCouponCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 헷갈리는 글자 제외 (0/O, 1/I)
+    final rng = Random.secure();
+    String block(int n) =>
+        List.generate(n, (_) => chars[rng.nextInt(chars.length)]).join();
+    return 'RC-${block(4)}-${block(4)}';
+  }
+
+  /// rewards 테이블에 1건 발급. PGRST204 발생 시 알 수 없는 컬럼 자동 제거.
+  Future<void> _issueReward({
+    required String participationId,
+    required String clueId,
+    required String userId,
+    required Map<String, dynamic> clue,
+    required int earnedPoints,
+  }) async {
+    final type = mapRewardType(clue['reward_type']?.toString());
+    final rewardLabel = clue['reward_label']?.toString();
+
+    var payload = <String, dynamic>{
+      'user_id': userId,
+      'clue_id': clueId,
+      'participation_id': participationId,
+      'type': type,
+      'value': earnedPoints,
+      'is_claimed': false,
+      'expires_at':
+          DateTime.now().add(const Duration(days: 30)).toIso8601String(),
+    };
+
+    if (type == 'coupon') {
+      payload['coupon_code'] = generateCouponCode();
+    }
+    if (rewardLabel != null && rewardLabel.isNotEmpty) {
+      payload['badge_name'] = rewardLabel; // 모든 타입에서 라벨로 활용
+    }
+
+    final dropped = <String>[];
+    for (int attempt = 0; attempt < 6; attempt++) {
+      try {
+        await _client.from('rewards').insert(payload);
+        return;
+      } on PostgrestException catch (e) {
+        if (e.code == 'PGRST204') {
+          final match = RegExp(r"'([^']+)' column").firstMatch(e.message);
+          final col = match?.group(1);
+          if (col != null && payload.containsKey(col)) {
+            payload.remove(col);
+            dropped.add(col);
+            continue;
+          }
+        }
+        // 23514 (type CHECK 위반) — 안전한 기본값으로 폴백
+        if (e.code == '23514' && payload['type'] != 'coupon') {
+          payload['type'] = 'coupon';
+          payload['coupon_code'] ??= generateCouponCode();
+          dropped.add('type→coupon');
+          continue;
+        }
+        throw Exception('reward INSERT 실패 [${e.code}]: ${e.message} | drop=$dropped');
+      }
+    }
   }
 
   Future<Map<String, dynamic>> abandonParticipation(

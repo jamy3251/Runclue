@@ -13,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/clue_provider.dart';
 import '../../../providers/participation_provider.dart';
+import '../../../providers/reward_provider.dart';
 import '../../../services/evidence_service.dart';
 import '../../../services/location_service.dart';
 import '../../../services/similarity_service.dart';
@@ -1238,9 +1239,12 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
         await participationService
             .completeParticipation(participationId);
         // Result 화면이 최신 랭킹·보상 데이터 읽도록 캐시 무효화
+        // — 새 보상이 선물함에 도착했을 수 있으므로 reward provider도 함께 무효화
         ref.invalidate(myParticipationsProvider);
         ref.invalidate(currentParticipationProvider(widget.clueId));
         ref.invalidate(leaderboardProvider(widget.clueId));
+        ref.invalidate(myUnclaimedRewardsProvider);
+        ref.invalidate(unclaimedRewardsCountProvider);
         if (mounted) {
           context.go('/clue/${widget.clueId}/result');
         }

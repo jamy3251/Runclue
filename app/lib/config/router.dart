@@ -17,6 +17,7 @@ import '../screens/clue/play/clue_play_screen.dart';
 import '../screens/clue/clue_result_screen.dart';
 import '../screens/community/post_detail_screen.dart';
 import '../screens/profile/profile_edit_screen.dart';
+import '../screens/profile/rewards_screen.dart';
 import '../screens/profile/settings_screen.dart';
 import '../screens/host/host_dashboard_screen.dart';
 import '../screens/join/join_via_link_screen.dart';
@@ -293,6 +294,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'profileEdit',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ProfileEditScreen(),
+      ),
+
+      // 보상함 — 선물함(미수령) + 인벤토리(수령) 2탭
+      GoRoute(
+        path: '/rewards',
+        name: 'rewards',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final tab = state.uri.queryParameters['tab'] ?? 'gifts';
+          return RewardsScreen(initialTab: tab);
+        },
       ),
 
       // Settings
