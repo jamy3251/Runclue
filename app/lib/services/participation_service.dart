@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+
 import '../config/supabase_safe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -184,6 +186,7 @@ class ParticipationService {
 
     // 6) 실 보상 row 발급 — 선물함에 미수령 상태로 도착
     //    자격 있고 0 초과일 때만. 실패는 silently — 결과 화면 표시는 진행.
+    //    단 운영 디버깅을 위해 콘솔에는 명확히 남김 (RLS/스키마 누락 조기 발견).
     final userId = base['user_id'] as String?;
     if (rewardStatus == 'eligible' && earnedPoints > 0 && userId != null) {
       try {
@@ -194,7 +197,15 @@ class ParticipationService {
           clue: clue,
           earnedPoints: earnedPoints,
         );
-      } catch (_) {/* 운영 단계에서만 추적; 사용자 결과 표시는 막지 않음 */}
+      } catch (e) {
+        // 사용자 결과 화면은 막지 않음. 콘솔로만 노출.
+        debugPrint('⚠ [reward] _issueReward 실패 (silently swallowed): $e');
+        if (e.toString().contains('42501') ||
+            e.toString().contains('row-level security')) {
+          debugPrint(
+              '   → RLS INSERT 정책 누락 가능성. supabase/migrations/002 적용 필요.');
+        }
+      }
     }
 
     // 응답에 계산 결과 합쳐서 반환 (DB에 저장 안 됐어도 UI에 보여주려고)
@@ -290,6 +301,11 @@ class ParticipationService {
           payload['coupon_code'] ??= generateCouponCode();
           dropped.add('type→coupon');
           continue;
+        }
+        // 42501: RLS 정책 거부 — 자동 복구 불가, 운영자가 정책 추가해야 함
+        if (e.code == '42501') {
+          throw Exception(
+              'reward INSERT 거부 (RLS 정책 누락) — supabase/migrations/002 적용 필요');
         }
         throw Exception('reward INSERT 실패 [${e.code}]: ${e.message} | drop=$dropped');
       }
