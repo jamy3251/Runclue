@@ -217,7 +217,7 @@ class _ParticipationCard extends StatelessWidget {
               ? AppColors.borderDefault
               : isActive
                   ? Colors.blue[200]!
-                  : AppColors.bgSurface!,
+                  : AppColors.bgSurface,
         ),
       ),
       child: InkWell(

@@ -15,7 +15,6 @@ import '../../../providers/clue_provider.dart';
 import '../../../providers/participation_provider.dart';
 import '../../../services/evidence_service.dart';
 import '../../../services/location_service.dart';
-import '../../../services/participation_service.dart';
 import '../../../services/similarity_service.dart';
 import '../../../services/storage_service.dart';
 import '../../../widgets/common/loading_widget.dart';

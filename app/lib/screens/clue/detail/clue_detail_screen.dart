@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../config/supabase_safe.dart';
 import '../../../config/theme.dart';
@@ -11,7 +10,6 @@ import '../../../providers/auth_provider.dart';
 import '../../../providers/clue_provider.dart';
 import '../../../providers/participation_provider.dart';
 import '../../../services/deep_link_service.dart';
-import '../../../services/participation_service.dart';
 import '../../../services/report_service.dart';
 import '../../../widgets/common/error_widget.dart' as app;
 import '../../../widgets/common/loading_widget.dart';

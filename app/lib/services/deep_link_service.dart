@@ -1,7 +1,6 @@
 import '../config/supabase_safe.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 /// 딥링크 생성/파싱/처리를 담당하는 서비스.

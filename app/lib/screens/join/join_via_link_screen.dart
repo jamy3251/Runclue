@@ -62,7 +62,7 @@ class _JoinViaLinkScreenState extends ConsumerState<JoinViaLinkScreen> {
 
       // 참여
       final participationService = ParticipationService();
-      await participationService.joinClue(clueId: widget.clueId, userId: userId!);
+      await participationService.joinClue(clueId: widget.clueId, userId: userId);
 
       if (mounted) {
         context.go('/clue/${widget.clueId}/play');

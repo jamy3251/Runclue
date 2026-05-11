@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -337,7 +336,6 @@ class _ComparisonTable extends StatelessWidget {
           // Rows
           ...List.generate(_rows.length, (i) {
             final row = _rows[i];
-            final isRunClueWin = row[2] != row[1];
             return Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.lg,

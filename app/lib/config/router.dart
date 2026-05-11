@@ -30,7 +30,6 @@ import '../screens/search/search_screen.dart';
 import '../screens/main_shell.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(

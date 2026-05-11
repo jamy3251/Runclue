@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/profile_provider.dart';
-import '../../services/auth_service.dart';
 import '../../widgets/common/error_widget.dart' as app;
 import '../../widgets/common/loading_widget.dart';
 

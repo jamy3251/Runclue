@@ -81,7 +81,6 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
   // ── 썸네일 + 제출 ──
   File? _thumbnail;
   bool _isSubmitting = false;
-  String? _diagInfo; // 진단 정보 (INSERT 전후 count 등)
 
   @override
   void dispose() {
@@ -167,6 +166,9 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
 
   /// 긴 에러 메시지를 dialog로 — 사용자가 메시지 통째로 복사해서 신고 가능
   void _showErrorDetails(String title, String detail) {
+    // 사용자에게 보이는 친절한 요약 — 기술 코드는 펼치기 영역에
+    final friendly = _humanizeError(detail);
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -182,31 +184,35 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SelectableText(
-              detail,
-              style: GoogleFonts.firaMono(
-                fontSize: 12,
-                color: AppColors.brandRed,
-                height: 1.5,
+            Text(
+              friendly,
+              style: GoogleFonts.notoSansKr(
+                fontSize: 13,
+                color: AppColors.textPrimary,
+                height: 1.6,
               ),
             ),
             const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppColors.brandBlue.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '💡 PGRST204 = 컬럼 누락 → Supabase SQL Editor에서 GOLDEN_PATH_TEST.md STEP 0 실행\n'
-                '💡 23502 = NOT NULL 위반 → 빈 칸 확인\n'
-                '💡 PGRST301 = 권한 부족 → RLS 비활성화 SQL 실행',
+            ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              childrenPadding: EdgeInsets.zero,
+              title: Text(
+                '기술 상세 보기',
                 style: GoogleFonts.notoSansKr(
-                  fontSize: 11,
-                  color: AppColors.brandBlue,
-                  height: 1.6,
+                  fontSize: 12,
+                  color: AppColors.textMuted,
                 ),
               ),
+              children: [
+                SelectableText(
+                  detail,
+                  style: GoogleFonts.firaMono(
+                    fontSize: 11,
+                    color: AppColors.brandRed,
+                    height: 1.5,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -218,6 +224,28 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         ],
       ),
     );
+  }
+
+  /// 기술 에러 메시지에서 사용자에게 의미 있는 요약을 만든다.
+  String _humanizeError(String detail) {
+    if (detail.contains('PGRST204')) {
+      return '서버 스키마가 아직 최신이 아니에요. 잠시 후 다시 시도하거나 운영팀에 문의해 주세요.';
+    }
+    if (detail.contains('23502')) {
+      return '필수 항목이 비어 있어요. 모든 단계를 확인하고 다시 시도해 주세요.';
+    }
+    if (detail.contains('23514')) {
+      return '입력값이 허용 범위를 벗어났어요. 보상 종류나 단계 유형을 다시 확인해 주세요.';
+    }
+    if (detail.contains('PGRST301') || detail.contains('JWT')) {
+      return '로그인 세션이 만료됐어요. 다시 로그인한 뒤 시도해 주세요.';
+    }
+    if (detail.contains('network') ||
+        detail.contains('Network') ||
+        detail.contains('SocketException')) {
+      return '네트워크 연결이 불안정해요. Wi-Fi/데이터를 확인하고 다시 시도해 주세요.';
+    }
+    return '클루 등록에 실패했어요. 입력값을 확인하고 다시 시도해 주세요.';
   }
 
   Future<void> _pickThumbnail() async {
@@ -238,33 +266,25 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
     HapticFeedback.mediumImpact();
     setState(() => _isSubmitting = true);
 
-    // 시작 신호 — 사용자가 버튼 동작 확인용
-    _toast('🚀 제출 시작...');
-
     try {
       // 세션 강제 새로고침 시도 — 만료됐을 수 있음
       String? userId = ref.read(currentUserIdProvider);
       if (userId == null) {
-        _toast('세션 새로고침 시도...');
         try {
-          // Supabase 세션 강제 refresh
           await safeClient.auth.refreshSession();
         } catch (_) {/* refresh 실패 시 아래에서 처리 */}
-        // 다시 읽기
         userId = safeClient.auth.currentUser?.id;
       }
 
       if (userId == null) {
-        // 진짜 로그아웃 상태 — 로그인 화면으로
-        _toast('로그인이 필요합니다 — 로그인 화면으로 이동');
+        _toast('로그인이 필요합니다');
         if (mounted) {
-          await Future.delayed(const Duration(milliseconds: 800));
+          await Future.delayed(const Duration(milliseconds: 600));
           if (mounted) context.go('/auth/login');
         }
         return;
       }
 
-      _toast('userId OK (${userId.substring(0, 8)}) — INSERT 시도');
       final clueService = ClueService();
       final stepService = StepService();
 
@@ -292,27 +312,8 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         'current_participants': 0,
       };
 
-      // INSERT 전 전체 클루 개수 (진단용)
-      int? countBefore;
-      try {
-        final r = await safeClient.from('clues').select('id');
-        countBefore = (r as List).length;
-      } catch (_) {/* 실패해도 무시 */}
-
-      _toast('INSERT 호출 중...');
       final created = await clueService.createClue(clueData);
       final clueId = created['id'] as String;
-      _toast('✓ INSERT 응답 받음 (id=${clueId.substring(0, 8)})');
-
-      // INSERT 후 개수 (진단용 — 진짜 +1 됐는지)
-      int? countAfter;
-      try {
-        final r = await safeClient.from('clues').select('id');
-        countAfter = (r as List).length;
-      } catch (_) {/* 무시 */}
-
-      _diagInfo =
-          'count: ${countBefore ?? "?"} → ${countAfter ?? "?"}\nuserId: ${userId.substring(0, 8)}\nclueId: ${clueId.substring(0, 8)}';
 
       // 썸네일
       if (_thumbnail != null) {
@@ -405,8 +406,6 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
 
   void _showSubmitSuccess(String clueId, [Map<String, dynamic>? dbClue]) {
     final isReallySaved = dbClue != null;
-    final actualStatus = dbClue?['status']?.toString() ?? '?';
-    final actualSteps = (dbClue?['steps'] as List?)?.length ?? 0;
     final accent = isReallySaved ? AppColors.brandGreen : AppColors.brandRed;
 
     showDialog(
@@ -420,7 +419,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                     : Icons.warning_amber_rounded,
                 color: accent),
             const SizedBox(width: 8),
-            Text(isReallySaved ? '자동 승인 완료' : 'DB 저장 확인 안 됨',
+            Text(isReallySaved ? '클루 등록 완료' : '저장 확인 실패',
                 style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900)),
           ],
         ),
@@ -429,7 +428,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -437,41 +436,15 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
               ),
               child: Text(
                 isReallySaved
-                    ? '✓ Supabase 저장 완료 (id=${clueId.substring(0, 8)}...)\n'
-                        '✓ 실제 DB 상태: status=$actualStatus, steps=$actualSteps개\n'
-                        '✓ 탐색 페이지에 즉시 노출 가능\n'
-                        '✓ 탐험가가 바로 참여 가능'
-                    : '⚠ INSERT는 응답했으나 DB에서 못 찾았음\n'
-                        '   id=$clueId\n\n'
-                        '원인 후보:\n'
-                        '• RLS가 SELECT를 차단 (DISABLE ROW LEVEL SECURITY 실행)\n'
-                        '• 트리거가 행을 다른 곳으로 이동\n'
-                        '• 캐스케이드 삭제',
+                    ? '탐색 페이지에서 바로 확인할 수 있어요.\n탐험가들이 곧 참여하기 시작할 거예요!'
+                    : '요청은 전송됐지만 저장 여부를 확인하지 못했어요.\n잠시 후 다시 시도하거나 운영팀에 문의해 주세요.',
                 style: GoogleFonts.notoSansKr(
-                  fontSize: 12,
+                  fontSize: 13,
                   color: accent,
-                  height: 1.7,
+                  height: 1.6,
                 ),
               ),
             ),
-            if (_diagInfo != null) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.bgSurface,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: SelectableText(
-                  '🔬 진단:\n$_diagInfo',
-                  style: GoogleFonts.firaMono(
-                    fontSize: 10,
-                    color: AppColors.textMuted,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-            ],
             const SizedBox(height: 12),
             Text(
               '※ 정식 출시 후에는 운영진 검수(약 24시간)를 거치게 됩니다.',
@@ -479,21 +452,6 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                 fontSize: 11,
                 color: AppColors.textMuted,
                 height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppColors.bgSurface,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                'ID: ${clueId.substring(0, 8)}...',
-                style: GoogleFonts.firaMono(
-                  fontSize: 11,
-                  color: AppColors.brandYellow,
-                ),
               ),
             ),
           ],
