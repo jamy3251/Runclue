@@ -316,12 +316,18 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
       final clueId = created['id'] as String;
 
       // 썸네일
+      // 썸네일 — 실패해도 클루 생성은 성공으로 처리하되, 토스트로 알려줌
+      bool thumbnailFailed = false;
+      String? thumbnailErrorMsg;
       if (_thumbnail != null) {
         try {
           final url =
               await StorageService().uploadClueImage(_thumbnail!, clueId);
           await clueService.updateClue(clueId, {'thumbnail_url': url});
-        } catch (_) {/* 썸네일 실패는 silently 처리 */}
+        } catch (e) {
+          thumbnailFailed = true;
+          thumbnailErrorMsg = e.toString();
+        }
       }
 
       // 단계
@@ -395,6 +401,10 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
       // 탐색 페이지가 새 클루를 즉시 보여주도록 캐시 무효화
       ref.invalidate(trendingCluesProvider);
       ref.invalidate(myCluesProvider);
+      // 썸네일 실패 알림 — 사용자가 '왜 사진이 안 보이지?' 라고 헤매지 않게
+      if (thumbnailFailed) {
+        _toast('썸네일 업로드 실패 — 클루는 등록됐어요. ${thumbnailErrorMsg ?? ""}');
+      }
       _showSubmitSuccess(clueId, dbClue);
     } catch (e) {
       if (!mounted) return;

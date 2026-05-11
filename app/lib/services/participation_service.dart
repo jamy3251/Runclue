@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -284,6 +285,13 @@ class ParticipationService {
     for (int attempt = 0; attempt < 6; attempt++) {
       try {
         await _client.from('rewards').insert(payload);
+        // 알림 1건 — RLS / 컬럼 누락 시 silently skip
+        unawaited(_notifyRewardEarned(
+          userId: userId,
+          clueId: clueId,
+          rewardLabel: rewardLabel,
+          earnedPoints: earnedPoints,
+        ));
         return;
       } on PostgrestException catch (e) {
         if (e.code == 'PGRST204') {
@@ -309,6 +317,30 @@ class ParticipationService {
         }
         throw Exception('reward INSERT 실패 [${e.code}]: ${e.message} | drop=$dropped');
       }
+    }
+  }
+
+  /// 보상 도착 알림 — notifications 테이블에 1건.
+  /// 실패는 silently — 알림은 부수효과이고 선물함이 메인 채널.
+  /// 002 마이그레이션 적용 전엔 RLS로 거부될 수 있음.
+  Future<void> _notifyRewardEarned({
+    required String userId,
+    required String clueId,
+    required String? rewardLabel,
+    required int earnedPoints,
+  }) async {
+    try {
+      await _client.from('notifications').insert({
+        'user_id': userId,
+        'type': 'reward_earned',
+        'title': '🎁 보상이 도착했어요',
+        'body': rewardLabel != null && rewardLabel.isNotEmpty
+            ? '$rewardLabel — 선물함에서 받아보세요'
+            : '₩$earnedPoints 상당 보상이 선물함에 도착했어요',
+        'data': {'clue_id': clueId, 'value': earnedPoints},
+      });
+    } catch (e) {
+      debugPrint('  [reward] notification 알림 INSERT 실패 (무시): $e');
     }
   }
 
