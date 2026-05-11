@@ -370,11 +370,34 @@ class _NotificationCenterScreenState
       ref.invalidate(unreadNotificationCountProvider);
     }
 
-    // payload 기반 네비게이션
-    final payload = notification['payload'] as Map<String, dynamic>?;
-    if (payload == null) return;
+    // 1) 타입별 기본 경로 — 명시 route가 없어도 사용자가 어디로 가야 할지 안내
+    final type = notification['type']?.toString();
+    final data = (notification['data'] ??
+        notification['payload']) as Map<String, dynamic>?;
 
-    final route = payload['route'] as String?;
+    String? route;
+    switch (type) {
+      case 'reward_earned':
+        route = '/rewards?tab=gifts';
+        break;
+      case 'evidence_approved':
+      case 'evidence_rejected':
+      case 'clue_started':
+      case 'clue_ended':
+      case 'clue_approved':
+      case 'clue_rejected':
+        final clueId = data?['clue_id']?.toString();
+        if (clueId != null) route = '/clue/$clueId';
+        break;
+      case 'clan_invite':
+        route = '/community';
+        break;
+    }
+
+    // 2) 명시 route가 있으면 덮어쓰기
+    final explicit = data?['route'] as String?;
+    if (explicit != null && explicit.isNotEmpty) route = explicit;
+
     if (route != null && route.isNotEmpty) {
       context.push(route);
     }
