@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
   RunClue APK 빌드 스크립트. .env 누락 시 명확히 실패.

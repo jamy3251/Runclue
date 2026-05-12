@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
   RunClue 릴리즈 파이프라인 — APK 빌드 → GitHub Release 업로드 → QR 생성
@@ -90,9 +90,15 @@ try {
 
   # ─────────────────────────────────────────────────────────────
   # 3) 같은 태그 release 처리
+  # PS 5.1이 native stderr를 에러로 취급하므로 ErrorAction을 격리
   # ─────────────────────────────────────────────────────────────
-  $existing = gh release view $Tag 2>$null
-  if ($LASTEXITCODE -eq 0) {
+  $prevEAP = $ErrorActionPreference
+  $ErrorActionPreference = 'SilentlyContinue'
+  $null = gh release view $Tag 2>&1
+  $exists = ($LASTEXITCODE -eq 0)
+  $ErrorActionPreference = $prevEAP
+
+  if ($exists) {
     if ($Replace) {
       Write-Host "→ 기존 release ($Tag) 삭제 (-Replace)" -ForegroundColor Yellow
       gh release delete $Tag --yes --cleanup-tag
@@ -105,22 +111,29 @@ try {
 
   # ─────────────────────────────────────────────────────────────
   # 4) Release 생성 + APK 업로드
+  # PS 5.1이 한국어를 native arg로 전달 시 인코딩이 깨지므로
+  # notes는 UTF-8 파일로 작성 후 --notes-file로 전달
+  # title도 ASCII만 사용
   # ─────────────────────────────────────────────────────────────
+  $notesPath = Join-Path $env:TEMP "runclue_release_notes_$([guid]::NewGuid().ToString('N')).md"
   $notes = @"
 ## RunClue $Tag
 
-QR 스캔으로 바로 설치할 수 있어요.
-APK는 ARM64/ARMv7/x86_64 모두 동작하는 universal 빌드입니다.
+Scan QR to install on Android.
+APK is universal (ARM64 / ARMv7 / x86_64).
 
-### 설치 안내 (안드로이드)
-1. QR 스캔 또는 아래 APK 링크 클릭
-2. "알 수 없는 출처 허용" 켜기 (설정 → 보안)
-3. 설치
+### Install (Android)
+1. Scan QR or click APK link
+2. Enable "Install unknown apps" (Settings → Security)
+3. Install
 "@
+  [System.IO.File]::WriteAllText($notesPath, $notes, [System.Text.UTF8Encoding]::new($false))
 
   Write-Host "→ gh release create $Tag" -ForegroundColor Cyan
-  gh release create $Tag $apk.FullName --title "RunClue $Tag" --notes $notes
-  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  gh release create $Tag $apk.FullName --title "RunClue $Tag" --notes-file $notesPath
+  $createExit = $LASTEXITCODE
+  Remove-Item $notesPath -ErrorAction SilentlyContinue
+  if ($createExit -ne 0) { exit $createExit }
 
   # ─────────────────────────────────────────────────────────────
   # 5) 다운로드 URL + QR 생성
