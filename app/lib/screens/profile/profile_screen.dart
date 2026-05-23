@@ -360,6 +360,16 @@ class ProfileScreen extends ConsumerWidget {
                   onTap: () => context.push('/minigames'),
                 ),
                 _SettingsTile(
+                  icon: Icons.card_giftcard,
+                  title: '기프티콘 상점 (다이아 교환)',
+                  onTap: () => context.push('/shop/gifticons'),
+                ),
+                _SettingsTile(
+                  icon: Icons.receipt_long,
+                  title: '내 교환 내역',
+                  onTap: () => context.push('/profile/redemptions'),
+                ),
+                _SettingsTile(
                   icon: Icons.notifications_outlined,
                   title: '알림설정',
                   onTap: () => context.push('/settings/notifications'),

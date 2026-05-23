@@ -31,6 +31,8 @@ import '../screens/search/search_screen.dart';
 import '../screens/admin/admin_screen.dart';
 import '../screens/routines/routines_screen.dart';
 import '../screens/minigames/minigames_screen.dart';
+import '../screens/shop/gifticon_shop_screen.dart';
+import '../screens/profile/redemptions_screen.dart';
 import '../screens/minigames/rps_game.dart';
 import '../screens/minigames/coin_grab_game.dart';
 import '../screens/minigames/tap_battle_game.dart';
@@ -345,6 +347,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'profileEdit',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ProfileEditScreen(),
+      ),
+
+      // 기프티콘 상점 — 다이아 사용처 (Step 15)
+      GoRoute(
+        path: '/shop/gifticons',
+        name: 'gifticonShop',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const GifticonShopScreen(),
+      ),
+
+      // 내 교환 내역
+      GoRoute(
+        path: '/profile/redemptions',
+        name: 'redemptions',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const RedemptionsScreen(),
       ),
 
       // 보상함 — 선물함(미수령) + 인벤토리(수령) 2탭
