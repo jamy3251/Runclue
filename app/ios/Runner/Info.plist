@@ -97,5 +97,7 @@
 			<string>cstr6suwn9.skadnetwork</string>
 		</dict>
 	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>걸음수로 코인을 적립하기 위해 활동 데이터에 접근합니다.</string>
 </dict>
 </plist>

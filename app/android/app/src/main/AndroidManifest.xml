@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Health Connect (Track E, Step 13) -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.health.READ_STEPS"/>
 
     <application
         android:label="RunClue"
@@ -61,5 +64,7 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Health Connect (Track E, Step 13) -->
+        <package android:name="com.google.android.apps.healthdata"/>
     </queries>
 </manifest>

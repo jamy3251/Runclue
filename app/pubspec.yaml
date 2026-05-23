@@ -59,6 +59,8 @@ dependencies:
   timeago: ^3.6.1
   # Ads (Track C)
   google_mobile_ads: ^5.1.0
+  # Health — 걸음수 (Track E, Step 13)
+  health: ^10.2.0
 
 dev_dependencies:
   flutter_test:
