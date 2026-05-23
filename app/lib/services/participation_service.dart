@@ -157,21 +157,31 @@ class ParticipationService {
     } catch (_) {/* 무시, rank=1 유지 */}
 
     // 4) 분배 방식별 보상 산정
+    //    base는 사장 충전 풀(reward_pool_net) 우선, 없으면 reward_value fallback (구버전).
     final mode = clue['distribution_mode']?.toString() ?? 'first_come';
     final maxWinners = (clue['max_participants'] as int?) ?? 99999;
+    final poolNet = (clue['reward_pool_net'] as int?) ?? 0;
     final rewardValue = (clue['reward_value'] as num?)?.toInt() ?? 0;
+    final prizeBase = poolNet > 0 ? poolNet : rewardValue;
+    final minP = (clue['min_participants'] as int?) ?? 1;
 
     int earnedPoints = 0;
     String rewardStatus = 'not_eligible';
 
     switch (mode) {
+      case 'coop_split':
+        // 그룹 미션 #15 — 풀을 min_participants 동등 분배
+        // 개별 완료 시 자기 몫 즉시 지급
+        earnedPoints = minP > 0 ? (prizeBase / minP).floor() : 0;
+        rewardStatus = earnedPoints > 0 ? 'eligible' : 'not_eligible';
+        break;
       case 'all':
-        earnedPoints = rewardValue;
+        earnedPoints = prizeBase;
         rewardStatus = 'eligible';
         break;
       case 'first_come':
         if (rank <= maxWinners) {
-          earnedPoints = rewardValue;
+          earnedPoints = prizeBase;
           rewardStatus = 'eligible';
         }
         break;
@@ -179,7 +189,7 @@ class ParticipationService {
         // 1등 100%, N등 비율 (선형)
         if (rank <= maxWinners) {
           final ratio = (maxWinners - rank + 1) / maxWinners;
-          earnedPoints = (rewardValue * ratio).round();
+          earnedPoints = (prizeBase * ratio).round();
           rewardStatus = 'eligible';
         }
         break;
