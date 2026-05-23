@@ -370,6 +370,11 @@ class ProfileScreen extends ConsumerWidget {
                   onTap: () => context.push('/profile/redemptions'),
                 ),
                 _SettingsTile(
+                  icon: Icons.account_balance_wallet,
+                  title: '내 지갑 (사장 전용)',
+                  onTap: () => context.push('/biz/wallet'),
+                ),
+                _SettingsTile(
                   icon: Icons.store,
                   title: '내 가게 메뉴 관리 (사장 전용)',
                   onTap: () => context.push('/store/manage'),

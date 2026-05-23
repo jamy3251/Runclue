@@ -37,6 +37,7 @@ import '../screens/profile/my_purchases_screen.dart';
 import '../screens/store/menu_manage_screen.dart';
 import '../screens/store/store_menu_list_screen.dart';
 import '../screens/store/qr_redeem_screen.dart';
+import '../screens/biz/wallet_history_screen.dart';
 import '../screens/minigames/rps_game.dart';
 import '../screens/minigames/coin_grab_game.dart';
 import '../screens/minigames/tap_battle_game.dart';
@@ -396,6 +397,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'myPurchases',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const MyPurchasesScreen(),
+      ),
+
+      // 사장 wallet 대시보드 (Step 17)
+      GoRoute(
+        path: '/biz/wallet',
+        name: 'bizWallet',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const WalletHistoryScreen(),
       ),
 
       // 보상함 — 선물함(미수령) + 인벤토리(수령) 2탭
