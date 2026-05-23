@@ -8,6 +8,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../providers/reward_provider.dart';
 import '../../utils/user_level.dart';
+import '../../widgets/common/currency_balance_chip.dart';
 import '../../widgets/common/error_widget.dart' as app;
 import '../../widgets/common/loading_widget.dart';
 
@@ -29,6 +30,10 @@ class ProfileScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black87,
         actions: [
+          const Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: Center(child: CurrencyBalanceChips()),
+          ),
           IconButton(
             onPressed: () => context.push('/profile/edit'),
             icon: const Icon(Icons.edit),
