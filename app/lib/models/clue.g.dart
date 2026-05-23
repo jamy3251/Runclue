@@ -17,6 +17,15 @@ _$ClueImpl _$$ClueImplFromJson(Map<String, dynamic> json) => _$ClueImpl(
       isPublic: json['is_public'] as bool? ?? true,
       maxParticipants: (json['max_participants'] as num?)?.toInt(),
       currentParticipants: (json['current_participants'] as num?)?.toInt() ?? 0,
+      gameMode: $enumDecodeNullable(_$ClueGameModeEnumMap, json['game_mode']) ??
+          ClueGameMode.solo,
+      minParticipants: (json['min_participants'] as num?)?.toInt() ?? 1,
+      lobbyWindowMinutes: (json['lobby_window_minutes'] as num?)?.toInt() ?? 30,
+      lobbyStartedAt: json['lobby_started_at'] == null
+          ? null
+          : DateTime.parse(json['lobby_started_at'] as String),
+      coopState: $enumDecodeNullable(_$CoopStateEnumMap, json['coop_state']) ??
+          CoopState.idle,
       startTime: json['start_time'] == null
           ? null
           : DateTime.parse(json['start_time'] as String),
@@ -65,6 +74,11 @@ Map<String, dynamic> _$$ClueImplToJson(_$ClueImpl instance) =>
       'is_public': instance.isPublic,
       'max_participants': instance.maxParticipants,
       'current_participants': instance.currentParticipants,
+      'game_mode': _$ClueGameModeEnumMap[instance.gameMode]!,
+      'min_participants': instance.minParticipants,
+      'lobby_window_minutes': instance.lobbyWindowMinutes,
+      'lobby_started_at': instance.lobbyStartedAt?.toIso8601String(),
+      'coop_state': _$CoopStateEnumMap[instance.coopState]!,
       'start_time': instance.startTime?.toIso8601String(),
       'end_time': instance.endTime?.toIso8601String(),
       'time_limit_minutes': instance.timeLimitMinutes,
@@ -106,4 +120,16 @@ const _$ClueStatusEnumMap = {
   ClueStatus.completed: 'completed',
   ClueStatus.rejected: 'rejected',
   ClueStatus.suspended: 'suspended',
+};
+
+const _$ClueGameModeEnumMap = {
+  ClueGameMode.solo: 'solo',
+  ClueGameMode.coop: 'coop',
+};
+
+const _$CoopStateEnumMap = {
+  CoopState.idle: 'idle',
+  CoopState.recruiting: 'recruiting',
+  CoopState.started: 'started',
+  CoopState.cancelled: 'cancelled',
 };

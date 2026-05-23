@@ -151,6 +151,34 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
         return;
       }
 
+      // ── 그룹 미션 #15 진입 가드 ──
+      // coop 클루는 coop_state='started' 인 경우에만 진입 허용.
+      // recruiting/idle: 모집 중이므로 뒤로 + 다이얼로그.
+      // cancelled: 그룹 모집 실패.
+      final gameMode = (clueDetail['game_mode'] ?? 'solo') as String;
+      final coopState = (clueDetail['coop_state'] ?? 'idle') as String;
+      if (gameMode == 'coop' && coopState != 'started') {
+        if (!mounted) return;
+        final msg = coopState == 'cancelled'
+            ? '그룹 모집이 취소되었습니다.'
+            : '아직 모집 중입니다. 모든 인원이 모이면 자동으로 시작됩니다.';
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('그룹 미션'),
+            content: Text(msg),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('확인'),
+              ),
+            ],
+          ),
+        );
+        if (mounted) Navigator.of(context).pop();
+        return;
+      }
+
       final steps = (clueDetail['steps'] as List<dynamic>?)
               ?.cast<Map<String, dynamic>>() ??
           [];

@@ -33,6 +33,16 @@ mixin _$Clue {
   int? get maxParticipants => throw _privateConstructorUsedError;
   @JsonKey(name: 'current_participants')
   int get currentParticipants => throw _privateConstructorUsedError;
+  @JsonKey(name: 'game_mode')
+  ClueGameMode get gameMode => throw _privateConstructorUsedError;
+  @JsonKey(name: 'min_participants')
+  int get minParticipants => throw _privateConstructorUsedError;
+  @JsonKey(name: 'lobby_window_minutes')
+  int get lobbyWindowMinutes => throw _privateConstructorUsedError;
+  @JsonKey(name: 'lobby_started_at')
+  DateTime? get lobbyStartedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'coop_state')
+  CoopState get coopState => throw _privateConstructorUsedError;
   @JsonKey(name: 'start_time')
   DateTime? get startTime => throw _privateConstructorUsedError;
   @JsonKey(name: 'end_time')
@@ -95,6 +105,11 @@ abstract class $ClueCopyWith<$Res> {
       @JsonKey(name: 'is_public') bool isPublic,
       @JsonKey(name: 'max_participants') int? maxParticipants,
       @JsonKey(name: 'current_participants') int currentParticipants,
+      @JsonKey(name: 'game_mode') ClueGameMode gameMode,
+      @JsonKey(name: 'min_participants') int minParticipants,
+      @JsonKey(name: 'lobby_window_minutes') int lobbyWindowMinutes,
+      @JsonKey(name: 'lobby_started_at') DateTime? lobbyStartedAt,
+      @JsonKey(name: 'coop_state') CoopState coopState,
       @JsonKey(name: 'start_time') DateTime? startTime,
       @JsonKey(name: 'end_time') DateTime? endTime,
       @JsonKey(name: 'time_limit_minutes') int? timeLimitMinutes,
@@ -144,6 +159,11 @@ class _$ClueCopyWithImpl<$Res, $Val extends Clue>
     Object? isPublic = null,
     Object? maxParticipants = freezed,
     Object? currentParticipants = null,
+    Object? gameMode = null,
+    Object? minParticipants = null,
+    Object? lobbyWindowMinutes = null,
+    Object? lobbyStartedAt = freezed,
+    Object? coopState = null,
     Object? startTime = freezed,
     Object? endTime = freezed,
     Object? timeLimitMinutes = freezed,
@@ -203,6 +223,26 @@ class _$ClueCopyWithImpl<$Res, $Val extends Clue>
           ? _value.currentParticipants
           : currentParticipants // ignore: cast_nullable_to_non_nullable
               as int,
+      gameMode: null == gameMode
+          ? _value.gameMode
+          : gameMode // ignore: cast_nullable_to_non_nullable
+              as ClueGameMode,
+      minParticipants: null == minParticipants
+          ? _value.minParticipants
+          : minParticipants // ignore: cast_nullable_to_non_nullable
+              as int,
+      lobbyWindowMinutes: null == lobbyWindowMinutes
+          ? _value.lobbyWindowMinutes
+          : lobbyWindowMinutes // ignore: cast_nullable_to_non_nullable
+              as int,
+      lobbyStartedAt: freezed == lobbyStartedAt
+          ? _value.lobbyStartedAt
+          : lobbyStartedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      coopState: null == coopState
+          ? _value.coopState
+          : coopState // ignore: cast_nullable_to_non_nullable
+              as CoopState,
       startTime: freezed == startTime
           ? _value.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
@@ -322,6 +362,11 @@ abstract class _$$ClueImplCopyWith<$Res> implements $ClueCopyWith<$Res> {
       @JsonKey(name: 'is_public') bool isPublic,
       @JsonKey(name: 'max_participants') int? maxParticipants,
       @JsonKey(name: 'current_participants') int currentParticipants,
+      @JsonKey(name: 'game_mode') ClueGameMode gameMode,
+      @JsonKey(name: 'min_participants') int minParticipants,
+      @JsonKey(name: 'lobby_window_minutes') int lobbyWindowMinutes,
+      @JsonKey(name: 'lobby_started_at') DateTime? lobbyStartedAt,
+      @JsonKey(name: 'coop_state') CoopState coopState,
       @JsonKey(name: 'start_time') DateTime? startTime,
       @JsonKey(name: 'end_time') DateTime? endTime,
       @JsonKey(name: 'time_limit_minutes') int? timeLimitMinutes,
@@ -369,6 +414,11 @@ class __$$ClueImplCopyWithImpl<$Res>
     Object? isPublic = null,
     Object? maxParticipants = freezed,
     Object? currentParticipants = null,
+    Object? gameMode = null,
+    Object? minParticipants = null,
+    Object? lobbyWindowMinutes = null,
+    Object? lobbyStartedAt = freezed,
+    Object? coopState = null,
     Object? startTime = freezed,
     Object? endTime = freezed,
     Object? timeLimitMinutes = freezed,
@@ -428,6 +478,26 @@ class __$$ClueImplCopyWithImpl<$Res>
           ? _value.currentParticipants
           : currentParticipants // ignore: cast_nullable_to_non_nullable
               as int,
+      gameMode: null == gameMode
+          ? _value.gameMode
+          : gameMode // ignore: cast_nullable_to_non_nullable
+              as ClueGameMode,
+      minParticipants: null == minParticipants
+          ? _value.minParticipants
+          : minParticipants // ignore: cast_nullable_to_non_nullable
+              as int,
+      lobbyWindowMinutes: null == lobbyWindowMinutes
+          ? _value.lobbyWindowMinutes
+          : lobbyWindowMinutes // ignore: cast_nullable_to_non_nullable
+              as int,
+      lobbyStartedAt: freezed == lobbyStartedAt
+          ? _value.lobbyStartedAt
+          : lobbyStartedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      coopState: null == coopState
+          ? _value.coopState
+          : coopState // ignore: cast_nullable_to_non_nullable
+              as CoopState,
       startTime: freezed == startTime
           ? _value.startTime
           : startTime // ignore: cast_nullable_to_non_nullable
@@ -529,6 +599,11 @@ class _$ClueImpl implements _Clue {
       @JsonKey(name: 'is_public') this.isPublic = true,
       @JsonKey(name: 'max_participants') this.maxParticipants,
       @JsonKey(name: 'current_participants') this.currentParticipants = 0,
+      @JsonKey(name: 'game_mode') this.gameMode = ClueGameMode.solo,
+      @JsonKey(name: 'min_participants') this.minParticipants = 1,
+      @JsonKey(name: 'lobby_window_minutes') this.lobbyWindowMinutes = 30,
+      @JsonKey(name: 'lobby_started_at') this.lobbyStartedAt,
+      @JsonKey(name: 'coop_state') this.coopState = CoopState.idle,
       @JsonKey(name: 'start_time') this.startTime,
       @JsonKey(name: 'end_time') this.endTime,
       @JsonKey(name: 'time_limit_minutes') this.timeLimitMinutes,
@@ -579,6 +654,21 @@ class _$ClueImpl implements _Clue {
   @override
   @JsonKey(name: 'current_participants')
   final int currentParticipants;
+  @override
+  @JsonKey(name: 'game_mode')
+  final ClueGameMode gameMode;
+  @override
+  @JsonKey(name: 'min_participants')
+  final int minParticipants;
+  @override
+  @JsonKey(name: 'lobby_window_minutes')
+  final int lobbyWindowMinutes;
+  @override
+  @JsonKey(name: 'lobby_started_at')
+  final DateTime? lobbyStartedAt;
+  @override
+  @JsonKey(name: 'coop_state')
+  final CoopState coopState;
   @override
   @JsonKey(name: 'start_time')
   final DateTime? startTime;
@@ -655,7 +745,7 @@ class _$ClueImpl implements _Clue {
 
   @override
   String toString() {
-    return 'Clue(id: $id, creatorId: $creatorId, title: $title, description: $description, category: $category, status: $status, isPublic: $isPublic, maxParticipants: $maxParticipants, currentParticipants: $currentParticipants, startTime: $startTime, endTime: $endTime, timeLimitMinutes: $timeLimitMinutes, latitude: $latitude, longitude: $longitude, radiusMeters: $radiusMeters, address: $address, thumbnailUrl: $thumbnailUrl, rewardType: $rewardType, rewardValue: $rewardValue, requiresApproval: $requiresApproval, isPrizeType: $isPrizeType, isBroadcastType: $isBroadcastType, minAge: $minAge, tags: $tags, viewCount: $viewCount, likeCount: $likeCount, createdAt: $createdAt, updatedAt: $updatedAt, steps: $steps, creatorProfile: $creatorProfile)';
+    return 'Clue(id: $id, creatorId: $creatorId, title: $title, description: $description, category: $category, status: $status, isPublic: $isPublic, maxParticipants: $maxParticipants, currentParticipants: $currentParticipants, gameMode: $gameMode, minParticipants: $minParticipants, lobbyWindowMinutes: $lobbyWindowMinutes, lobbyStartedAt: $lobbyStartedAt, coopState: $coopState, startTime: $startTime, endTime: $endTime, timeLimitMinutes: $timeLimitMinutes, latitude: $latitude, longitude: $longitude, radiusMeters: $radiusMeters, address: $address, thumbnailUrl: $thumbnailUrl, rewardType: $rewardType, rewardValue: $rewardValue, requiresApproval: $requiresApproval, isPrizeType: $isPrizeType, isBroadcastType: $isBroadcastType, minAge: $minAge, tags: $tags, viewCount: $viewCount, likeCount: $likeCount, createdAt: $createdAt, updatedAt: $updatedAt, steps: $steps, creatorProfile: $creatorProfile)';
   }
 
   @override
@@ -678,6 +768,16 @@ class _$ClueImpl implements _Clue {
                 other.maxParticipants == maxParticipants) &&
             (identical(other.currentParticipants, currentParticipants) ||
                 other.currentParticipants == currentParticipants) &&
+            (identical(other.gameMode, gameMode) ||
+                other.gameMode == gameMode) &&
+            (identical(other.minParticipants, minParticipants) ||
+                other.minParticipants == minParticipants) &&
+            (identical(other.lobbyWindowMinutes, lobbyWindowMinutes) ||
+                other.lobbyWindowMinutes == lobbyWindowMinutes) &&
+            (identical(other.lobbyStartedAt, lobbyStartedAt) ||
+                other.lobbyStartedAt == lobbyStartedAt) &&
+            (identical(other.coopState, coopState) ||
+                other.coopState == coopState) &&
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
             (identical(other.endTime, endTime) || other.endTime == endTime) &&
@@ -730,6 +830,11 @@ class _$ClueImpl implements _Clue {
         isPublic,
         maxParticipants,
         currentParticipants,
+        gameMode,
+        minParticipants,
+        lobbyWindowMinutes,
+        lobbyStartedAt,
+        coopState,
         startTime,
         endTime,
         timeLimitMinutes,
@@ -780,6 +885,11 @@ abstract class _Clue implements Clue {
           @JsonKey(name: 'is_public') final bool isPublic,
           @JsonKey(name: 'max_participants') final int? maxParticipants,
           @JsonKey(name: 'current_participants') final int currentParticipants,
+          @JsonKey(name: 'game_mode') final ClueGameMode gameMode,
+          @JsonKey(name: 'min_participants') final int minParticipants,
+          @JsonKey(name: 'lobby_window_minutes') final int lobbyWindowMinutes,
+          @JsonKey(name: 'lobby_started_at') final DateTime? lobbyStartedAt,
+          @JsonKey(name: 'coop_state') final CoopState coopState,
           @JsonKey(name: 'start_time') final DateTime? startTime,
           @JsonKey(name: 'end_time') final DateTime? endTime,
           @JsonKey(name: 'time_limit_minutes') final int? timeLimitMinutes,
@@ -827,6 +937,21 @@ abstract class _Clue implements Clue {
   @override
   @JsonKey(name: 'current_participants')
   int get currentParticipants;
+  @override
+  @JsonKey(name: 'game_mode')
+  ClueGameMode get gameMode;
+  @override
+  @JsonKey(name: 'min_participants')
+  int get minParticipants;
+  @override
+  @JsonKey(name: 'lobby_window_minutes')
+  int get lobbyWindowMinutes;
+  @override
+  @JsonKey(name: 'lobby_started_at')
+  DateTime? get lobbyStartedAt;
+  @override
+  @JsonKey(name: 'coop_state')
+  CoopState get coopState;
   @override
   @JsonKey(name: 'start_time')
   DateTime? get startTime;

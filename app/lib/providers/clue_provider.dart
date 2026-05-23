@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 
 import '../services/clue_service.dart';
 import '../services/location_service.dart';
+import '../services/participation_service.dart';
 import 'auth_provider.dart';
 
 /// 디바이스 현재 GPS 위치 (1회성 fetch).
@@ -64,4 +65,19 @@ final clueSearchProvider =
 
   final clueService = ref.watch(clueServiceProvider);
   return clueService.searchClues(query);
+});
+
+/// 그룹 미션 #15 — coop 모집 상태 5초 polling.
+/// 반환: {coop_state, current_participants, min_participants, lobby_started_at, lobby_window_minutes, game_mode}
+final coopStateProvider =
+    StreamProvider.family<Map<String, dynamic>?, String>((ref, clueId) async* {
+  final svc = ParticipationService();
+  while (true) {
+    try {
+      yield await svc.fetchCoopState(clueId);
+    } catch (_) {
+      yield null;
+    }
+    await Future.delayed(const Duration(seconds: 5));
+  }
 });

@@ -828,18 +828,51 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
     final inProgress = existing != null &&
         (existing['status'] == 'in_progress' || existing['status'] == null);
     final completed = existing != null && existing['status'] == 'completed';
+    final inLobby = existing != null && existing['status'] == 'in_lobby';
+
+    // ── 그룹 미션 #15 ──
+    // coop 클루의 모집/진행 상태는 5초 polling으로 받음 — clue raw 값보다 신선함.
+    final isCoop = (clue['game_mode'] ?? 'solo') == 'coop';
+    final coopAsync = isCoop
+        ? ref.watch(coopStateProvider(widget.clueId))
+        : const AsyncValue<Map<String, dynamic>?>.data(null);
+    final coopRow = coopAsync.valueOrNull;
+    final coopState = (coopRow?['coop_state'] ?? clue['coop_state'] ?? 'idle')
+        as String;
+    final minP =
+        (coopRow?['min_participants'] ?? clue['min_participants'] ?? 1) as int;
+    final curP = (coopRow?['current_participants'] ??
+        clue['current_participants'] ??
+        0) as int;
+    final lobbyOpen =
+        isCoop && (coopState == 'idle' || coopState == 'recruiting');
+    final coopStarted = isCoop && coopState == 'started';
+    final coopCancelled = isCoop && coopState == 'cancelled';
 
     String label;
     IconData icon;
-    if (ended) {
-      label = '이미 마감된 미션입니다';
+    if (ended || coopCancelled) {
+      label = coopCancelled ? '그룹 모집이 취소되었습니다' : '이미 마감된 미션입니다';
       icon = Icons.lock;
     } else if (completed) {
       label = '이미 완료한 미션 — 결과 보기';
       icon = Icons.check_circle;
+    } else if (lobbyOpen && inLobby) {
+      label = '모집 대기 중 ($curP/$minP)';
+      icon = Icons.hourglass_top;
+    } else if (lobbyOpen) {
+      label = '함께 모집 참여 ($curP/$minP)';
+      icon = Icons.group_add;
+    } else if (coopStarted && inLobby) {
+      // 자동 시작 직후 상태 — 진입 가능
+      label = '🎉 모집 완료! 시작하기';
+      icon = Icons.play_arrow;
     } else if (inProgress) {
       label = '이어서 하기';
       icon = Icons.play_arrow;
+    } else if (coopStarted && !inLobby && !inProgress) {
+      label = '이미 시작된 그룹 — 참여 불가';
+      icon = Icons.lock;
     } else {
       label = '지금 참여하기';
       icon = Icons.location_on;
@@ -851,6 +884,60 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // 그룹 미션 #15 — lobby 게이지
+            if (isCoop && (lobbyOpen || (coopStarted && inLobby))) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.brandBlue.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: AppColors.brandBlue.withValues(alpha: 0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          coopStarted
+                              ? '🎉 모집 완료'
+                              : '👥 함께 모집 중',
+                          style: GoogleFonts.notoSansKr(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.brandBlue,
+                          ),
+                        ),
+                        Text(
+                          '$curP / $minP 명',
+                          style: GoogleFonts.notoSansKr(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.brandBlue,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: minP <= 0 ? 0 : (curP / minP).clamp(0.0, 1.0),
+                        backgroundColor:
+                            AppColors.brandBlue.withValues(alpha: 0.15),
+                        valueColor: const AlwaysStoppedAnimation(
+                            AppColors.brandBlue),
+                        minHeight: 6,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
             if (inProgress) ...[
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -894,11 +981,21 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                   color: Colors.transparent,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
-                    onTap: ended
+                    onTap: (ended || coopCancelled)
                         ? null
-                        : (inProgress || completed)
-                            ? () => context.push('/clue/${widget.clueId}/play')
-                            : () => _onJoin(clue),
+                        : (coopStarted && !inLobby && !inProgress)
+                            ? null
+                            : (lobbyOpen && inLobby)
+                                ? null
+                                : (lobbyOpen)
+                                    ? () => _onJoinCoop(clue)
+                                    : (coopStarted && inLobby)
+                                        ? () => context.push(
+                                            '/clue/${widget.clueId}/play')
+                                        : (inProgress || completed)
+                                            ? () => context.push(
+                                                '/clue/${widget.clueId}/play')
+                                            : () => _onJoin(clue),
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -931,6 +1028,66 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
         ),
       ),
     );
+  }
+
+  /// 그룹 미션 #15 — coop lobby 참여. RPC join_coop_clue 호출.
+  /// 임계값 도달 시 서버가 자동으로 모든 lobby 참여자를 in_progress로 전환.
+  Future<void> _onJoinCoop(Map<String, dynamic> clue) async {
+    HapticFeedback.mediumImpact();
+    final userId = ref.read(currentUserIdProvider);
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('로그인이 필요합니다')),
+      );
+      context.go('/auth');
+      return;
+    }
+    try {
+      final service = ref.read(participationServiceProvider);
+      final result = await service.joinCoop(widget.clueId);
+      final ok = result['ok'] == true;
+      if (!ok) {
+        if (mounted) {
+          final reason = result['reason']?.toString() ?? 'unknown';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('참여 실패: $reason')),
+          );
+        }
+        return;
+      }
+      ref.invalidate(currentParticipationProvider(widget.clueId));
+      ref.invalidate(coopStateProvider(widget.clueId));
+      ref.invalidate(myParticipationsProvider);
+      if (!mounted) return;
+      final started = result['started'] == true;
+      HapticFeedback.heavyImpact();
+      if (started) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('🎉 모집 완료! 시작합니다'),
+            duration: Duration(seconds: 1),
+            backgroundColor: AppColors.brandGreen,
+          ),
+        );
+        context.push('/clue/${widget.clueId}/play');
+      } else {
+        final cur = result['current'];
+        final tgt = result['target'];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ 모집 대기 중 ($cur/$tgt)'),
+            duration: const Duration(seconds: 2),
+            backgroundColor: AppColors.brandBlue,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('네트워크 오류: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _onJoin(Map<String, dynamic> clue) async {

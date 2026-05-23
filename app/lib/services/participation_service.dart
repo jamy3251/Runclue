@@ -433,4 +433,26 @@ class ParticipationService {
     // 모든 컬럼 드롭됐으면 응답 합성
     return {'id': participationId, ...payload};
   }
+
+  /// 그룹 미션 #15 — coop 클루 lobby 참여.
+  /// 서버 RPC가 임계값 도달 시 자동으로 모든 lobby 참여자를 in_progress로 전환.
+  /// 반환: {ok, state, current, target, started, reason?}
+  Future<Map<String, dynamic>> joinCoop(String clueId) async {
+    final res = await _client.rpc('join_coop_clue', params: {
+      'clue_id_in': clueId,
+    });
+    if (res is Map) return Map<String, dynamic>.from(res);
+    return {'ok': false, 'reason': 'unexpected_response'};
+  }
+
+  /// coop 클루 모집 상태 polling용.
+  /// 반환: {coop_state, current_participants, min_participants, lobby_started_at}
+  Future<Map<String, dynamic>?> fetchCoopState(String clueId) async {
+    final row = await _client
+        .from('clues')
+        .select('coop_state, current_participants, min_participants, lobby_started_at, lobby_window_minutes, game_mode')
+        .eq('id', clueId)
+        .maybeSingle();
+    return row == null ? null : Map<String, dynamic>.from(row);
+  }
 }

@@ -28,6 +28,32 @@ enum ClueCategory {
 }
 
 @JsonEnum(valueField: 'value')
+enum ClueGameMode {
+  @JsonValue('solo')
+  solo('solo'),
+  @JsonValue('coop')
+  coop('coop');
+
+  const ClueGameMode(this.value);
+  final String value;
+}
+
+@JsonEnum(valueField: 'value')
+enum CoopState {
+  @JsonValue('idle')
+  idle('idle'),
+  @JsonValue('recruiting')
+  recruiting('recruiting'),
+  @JsonValue('started')
+  started('started'),
+  @JsonValue('cancelled')
+  cancelled('cancelled');
+
+  const CoopState(this.value);
+  final String value;
+}
+
+@JsonEnum(valueField: 'value')
 enum ClueStatus {
   @JsonValue('draft')
   draft('draft'),
@@ -60,6 +86,11 @@ class Clue with _$Clue {
     @Default(true) @JsonKey(name: 'is_public') bool isPublic,
     @JsonKey(name: 'max_participants') int? maxParticipants,
     @Default(0) @JsonKey(name: 'current_participants') int currentParticipants,
+    @Default(ClueGameMode.solo) @JsonKey(name: 'game_mode') ClueGameMode gameMode,
+    @Default(1) @JsonKey(name: 'min_participants') int minParticipants,
+    @Default(30) @JsonKey(name: 'lobby_window_minutes') int lobbyWindowMinutes,
+    @JsonKey(name: 'lobby_started_at') DateTime? lobbyStartedAt,
+    @Default(CoopState.idle) @JsonKey(name: 'coop_state') CoopState coopState,
     @JsonKey(name: 'start_time') DateTime? startTime,
     @JsonKey(name: 'end_time') DateTime? endTime,
     @JsonKey(name: 'time_limit_minutes') int? timeLimitMinutes,
