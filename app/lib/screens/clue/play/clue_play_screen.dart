@@ -170,9 +170,10 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
       _initChecklistForCurrentStep();
       // GPS 단계라면 즉시 위치 스트림 시작
       if (_isGpsStep) _ensureLocationStream();
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('⚠ [clue_play] _loadData 실패: $e\n$st');
       setState(() {
-        _error = '데이터를 불러올 수 없습니다';
+        _error = '데이터를 불러올 수 없습니다\n($e)';
         _isLoading = false;
       });
     }

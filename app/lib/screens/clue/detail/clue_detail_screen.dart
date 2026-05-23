@@ -9,8 +9,11 @@ import '../../../config/theme.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/clue_provider.dart';
 import '../../../providers/participation_provider.dart';
+import '../../../providers/recommendation_provider.dart';
+import '../../../services/clue_service.dart';
 import '../../../services/deep_link_service.dart';
 import '../../../services/report_service.dart';
+import '../../../utils/clue_helpers.dart';
 import '../../../widgets/common/error_widget.dart' as app;
 import '../../../widgets/common/loading_widget.dart';
 import '../../../widgets/step_type_icon.dart';
@@ -34,6 +37,50 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> _confirmDeleteClue() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.bgElevated,
+        title: const Text('클루를 삭제할까요?',
+            style: TextStyle(color: AppColors.textPrimary)),
+        content: const Text(
+          '삭제하면 참여 중인 사람들도 더 이상 진행할 수 없어요. 되돌릴 수 없습니다.',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('삭제',
+                style: TextStyle(color: AppColors.brandRed)),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await ClueService().deleteClue(widget.clueId);
+      ref.invalidate(clueDetailProvider(widget.clueId));
+      ref.invalidate(trendingCluesProvider);
+      ref.invalidate(myCluesProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('클루 삭제 완료')));
+        context.pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('삭제 실패: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -116,28 +163,45 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
             clueTitle: title,
           ),
         ),
-        PopupMenuButton<String>(
-          icon: _CircleIconButton(
-            icon: Icons.more_vert,
-            onTap: null,
-          ),
-          color: AppColors.bgElevated,
-          onSelected: (value) {
-            if (value == 'report') _showReportDialog();
-          },
-          itemBuilder: (_) => [
-            const PopupMenuItem(
-              value: 'report',
-              child: Row(
-                children: [
-                  Icon(Icons.flag, color: AppColors.brandRed, size: 18),
-                  SizedBox(width: 8),
-                  Text('신고하기'),
-                ],
-              ),
+        Builder(builder: (_) {
+          final myId = ref.watch(currentUserIdProvider);
+          final isCreator = myId != null && myId == clue['creator_id'];
+          return PopupMenuButton<String>(
+            icon: _CircleIconButton(
+              icon: Icons.more_vert,
+              onTap: null,
             ),
-          ],
-        ),
+            color: AppColors.bgElevated,
+            onSelected: (value) {
+              if (value == 'report') _showReportDialog();
+              if (value == 'delete') _confirmDeleteClue();
+            },
+            itemBuilder: (_) => [
+              const PopupMenuItem(
+                value: 'report',
+                child: Row(
+                  children: [
+                    Icon(Icons.flag, color: AppColors.brandRed, size: 18),
+                    SizedBox(width: 8),
+                    Text('신고하기'),
+                  ],
+                ),
+              ),
+              if (isCreator)
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete_outline,
+                          color: AppColors.brandRed, size: 18),
+                      SizedBox(width: 8),
+                      Text('클루 삭제', style: TextStyle(color: AppColors.brandRed)),
+                    ],
+                  ),
+                ),
+            ],
+          );
+        }),
         const SizedBox(width: 4),
       ],
       flexibleSpace: FlexibleSpaceBar(
@@ -204,33 +268,56 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 12,
-                        backgroundColor: AppColors.bgElevated,
-                        backgroundImage:
-                            clue['creator_avatar_url'] != null
-                                ? NetworkImage(clue['creator_avatar_url'])
-                                : null,
-                        child: clue['creator_avatar_url'] == null
-                            ? Text(
-                                (clue['creator_name'] ?? '?')
-                                    .toString()
-                                    .substring(0, 1),
+                      Builder(builder: (_) {
+                        final name = clueCreatorName(clue);
+                        final avatar = clueCreatorAvatarUrl(clue);
+                        final roleLabel = clueCreatorRoleLabel(clue);
+                        return Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 12,
+                              backgroundColor: AppColors.bgElevated,
+                              backgroundImage: avatar != null
+                                  ? NetworkImage(avatar)
+                                  : null,
+                              child: avatar == null
+                                  ? Text(
+                                      name.substring(0, 1),
+                                      style: GoogleFonts.notoSansKr(
+                                        fontSize: 11,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.brandYellow.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                roleLabel,
                                 style: GoogleFonts.notoSansKr(
-                                  fontSize: 11,
-                                  color: AppColors.textPrimary,
+                                  fontSize: 10,
+                                  color: AppColors.brandYellow,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                              )
-                            : null,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '@${clue['creator_name'] ?? '크리에이터'}',
-                        style: GoogleFonts.notoSansKr(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '@$name',
+                              style: GoogleFonts.notoSansKr(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
                     ],
                   ),
                 ],
@@ -558,7 +645,135 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
               ],
             ),
           ),
+        const SizedBox(height: 24),
+        _buildSameDistrictSection(),
       ],
+    );
+  }
+
+  // ─────────────────────── 이 동네 다른 클루 ───────────────────────
+  Widget _buildSameDistrictSection() {
+    final async = ref.watch(sameDistrictProvider(widget.clueId));
+    return async.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (clues) {
+        if (clues.isEmpty) return const SizedBox.shrink();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.near_me,
+                    color: AppColors.brandYellow, size: 18),
+                const SizedBox(width: 6),
+                Text(
+                  '이 동네 다른 클루',
+                  style: GoogleFonts.notoSansKr(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '· 1km 이내 ${clues.length}개',
+                  style: GoogleFonts.notoSansKr(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...clues.map((c) {
+              final dist = (c['distance_m'] as num?)?.toInt() ?? 0;
+              return GestureDetector(
+                onTap: () => context.push('/clue/${c['id']}'),
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgSurface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.borderDefault),
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: SizedBox(
+                          width: 56,
+                          height: 56,
+                          child: c['thumbnail_url'] != null
+                              ? Image.network(
+                                  c['thumbnail_url'],
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Container(
+                                    color: AppColors.bgElevated,
+                                    child: const Icon(Icons.image_not_supported,
+                                        color: AppColors.textMuted, size: 20),
+                                  ),
+                                )
+                              : Container(
+                                  color: AppColors.bgElevated,
+                                  child: const Icon(Icons.explore,
+                                      color: AppColors.textMuted, size: 20),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              c['title'] ?? '미션',
+                              style: GoogleFonts.notoSansKr(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.location_on,
+                                    size: 11, color: AppColors.textMuted),
+                                const SizedBox(width: 2),
+                                Text(
+                                  '${dist}m · ${c['location_name'] ?? '위치'}',
+                                  style: GoogleFonts.notoSansKr(
+                                    fontSize: 11,
+                                    color: AppColors.textMuted,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (c['reward_value'] != null)
+                        Text(
+                          '₩${c['reward_value']}',
+                          style: GoogleFonts.notoSansKr(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.brandYellow,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ],
+        );
+      },
     );
   }
 
@@ -606,13 +821,55 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
         : null;
     final isUrgent = remaining != null && remaining <= 5 && remaining > 0;
 
+    // 기존 참여 여부 확인 — "지금 참여" vs "이어서 하기" 분기
+    final participationAsync =
+        ref.watch(currentParticipationProvider(widget.clueId));
+    final existing = participationAsync.valueOrNull;
+    final inProgress = existing != null &&
+        (existing['status'] == 'in_progress' || existing['status'] == null);
+    final completed = existing != null && existing['status'] == 'completed';
+
+    String label;
+    IconData icon;
+    if (ended) {
+      label = '이미 마감된 미션입니다';
+      icon = Icons.lock;
+    } else if (completed) {
+      label = '이미 완료한 미션 — 결과 보기';
+      icon = Icons.check_circle;
+    } else if (inProgress) {
+      label = '이어서 하기';
+      icon = Icons.play_arrow;
+    } else {
+      label = '지금 참여하기';
+      icon = Icons.location_on;
+    }
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (isUrgent) ...[
+            if (inProgress) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.brandGreen.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '● 참여 중',
+                  style: GoogleFonts.notoSansKr(
+                    fontSize: 11,
+                    color: AppColors.brandGreen,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+            ] else if (isUrgent) ...[
               Text(
                 '선착순 $remaining자리 남음',
                 style: GoogleFonts.notoSansKr(
@@ -628,33 +885,33 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
               width: double.infinity,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  gradient: ended
-                      ? null
-                      : AppGradients.ctaYellow,
+                  gradient: ended ? null : AppGradients.ctaYellow,
                   color: ended ? AppColors.bgElevated : null,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: ended
-                      ? null
-                      : const [AppShadows.ctaYellow],
+                  boxShadow: ended ? null : const [AppShadows.ctaYellow],
                 ),
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
-                    onTap: ended ? null : () => _onJoin(clue),
+                    onTap: ended
+                        ? null
+                        : (inProgress || completed)
+                            ? () => context.push('/clue/${widget.clueId}/play')
+                            : () => _onJoin(clue),
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            ended ? Icons.lock : Icons.location_on,
+                            icon,
                             size: 18,
                             color:
                                 ended ? AppColors.textMuted : Colors.black,
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            ended ? '이미 마감된 미션입니다' : '지금 참여하기',
+                            label,
                             style: GoogleFonts.notoSansKr(
                               fontSize: 16,
                               fontWeight: FontWeight.w900,

@@ -85,15 +85,28 @@ class ParticipationService {
     String userId,
   ) async {
     try {
+      // steps는 clues의 자식이라 participations에서 직접 embed 불가.
+      // clues를 통해 중첩 embed로 가져옴. clue_play_screen은 clueDetailProvider로
+      // 별도 fetch 하므로 steps 누락돼도 무방.
       final response = await _client
           .from('participations')
-          .select('*, clues(*), steps(*)')
+          .select('*, clues(*, steps(*))')
           .eq('clue_id', clueId)
           .eq('user_id', userId)
           .maybeSingle();
       return response;
     } catch (e) {
-      throw Exception('Failed to fetch participation: $e');
+      // 1차 실패 시 steps 없이 재시도 (관계 미정의 등 안전 fallback)
+      try {
+        return await _client
+            .from('participations')
+            .select('*, clues(*)')
+            .eq('clue_id', clueId)
+            .eq('user_id', userId)
+            .maybeSingle();
+      } catch (e2) {
+        throw Exception('Failed to fetch participation: $e2 (1차: $e)');
+      }
     }
   }
 

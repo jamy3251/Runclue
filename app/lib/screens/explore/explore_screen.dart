@@ -11,6 +11,7 @@ import '../../config/theme.dart';
 import '../../providers/clue_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../services/location_service.dart';
+import '../../utils/clue_helpers.dart';
 import '../../widgets/clue_card.dart';
 import '../../widgets/common/category_filter_tabs.dart';
 import '../../widgets/common/earnings_notification_banner.dart';
@@ -173,9 +174,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                         final dist = _distanceToClue(clue);
                         return ClueCard(
                           title: clue['title'] ?? '제목 없음',
-                          creatorName: clue['creator_profile']
-                                  ?['nickname'] ??
-                              '크리에이터',
+                          creatorName: clueCreatorName(clue),
                           category: clue['category'] ?? '탐험',
                           locationText:
                               clue['location_name'] ?? clue['address'] ?? '위치 미설정',
@@ -480,6 +479,17 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   List<Map<String, dynamic>> _applyFilter(List<Map<String, dynamic>> clues) {
     Iterable<Map<String, dynamic>> result = clues;
 
+    // 만료된 클루 자동 숨김 (ends_at 이 과거이면 제외).
+    // null 이면 무기한이라 통과.
+    final now = DateTime.now();
+    result = result.where((c) {
+      final endsAt = c['ends_at'];
+      if (endsAt == null) return true;
+      final dt = DateTime.tryParse(endsAt.toString());
+      if (dt == null) return true;
+      return dt.isAfter(now);
+    });
+
     // 카테고리 필터 (간단 매핑 — 0:전체, 5:근처)
     if (_selectedCategory == 1) {
       result = result.where((c) => c['status'] == 'active');
@@ -537,8 +547,14 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         }
         break;
       case _SortMode.reward:
-        list.sort((a, b) => ((b['reward_value'] ?? 0) as num)
-            .compareTo((a['reward_value'] ?? 0) as num));
+        // reward_value는 DB에서 text 타입이라 String으로 옴 — num 캐스트 시 TypeError → white screen.
+        num parseReward(dynamic v) {
+          if (v == null) return 0;
+          if (v is num) return v;
+          return num.tryParse(v.toString()) ?? 0;
+        }
+        list.sort((a, b) => parseReward(b['reward_value'])
+            .compareTo(parseReward(a['reward_value'])));
         break;
       case _SortMode.deadline:
         list.sort((a, b) {

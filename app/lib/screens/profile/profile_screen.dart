@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../providers/admin_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../providers/reward_provider.dart';
+import '../../utils/user_level.dart';
 import '../../widgets/common/error_widget.dart' as app;
 import '../../widgets/common/loading_widget.dart';
 
@@ -72,6 +74,10 @@ class ProfileScreen extends ConsumerWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      const SizedBox(height: 6),
+                      UserLevelChip(
+                        points: (profile['total_points'] as int?) ?? 0,
+                      ),
                       if (profile['bio'] != null) ...[
                         const SizedBox(height: 4),
                         Text(
@@ -83,6 +89,13 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ],
                     ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: UserLevelCard(
+                    points: (profile['total_points'] as int?) ?? 0,
                   ),
                 ),
 
@@ -332,6 +345,16 @@ class ProfileScreen extends ConsumerWidget {
 
                 // Settings List
                 _SettingsTile(
+                  icon: Icons.repeat,
+                  title: '루틴 인증 (streak)',
+                  onTap: () => context.push('/routines'),
+                ),
+                _SettingsTile(
+                  icon: Icons.sports_esports,
+                  title: '미니게임 4종',
+                  onTap: () => context.push('/minigames'),
+                ),
+                _SettingsTile(
                   icon: Icons.notifications_outlined,
                   title: '알림설정',
                   onTap: () => context.push('/settings/notifications'),
@@ -356,6 +379,20 @@ class ProfileScreen extends ConsumerWidget {
                   title: '개인정보처리방침',
                   onTap: () => context.push('/settings/privacy-policy'),
                 ),
+                // 관리자 전용 — is_admin RPC가 false면 화면 자체에서 차단
+                Consumer(builder: (_, ref, __) {
+                  final isAdminAsync = ref.watch(isAdminProvider);
+                  return isAdminAsync.maybeWhen(
+                    data: (isAdmin) => isAdmin
+                        ? _SettingsTile(
+                            icon: Icons.shield_outlined,
+                            title: '관리자 페이지',
+                            onTap: () => context.push('/admin'),
+                          )
+                        : const SizedBox.shrink(),
+                    orElse: () => const SizedBox.shrink(),
+                  );
+                }),
                 const Divider(indent: 24, endIndent: 24),
                 _SettingsTile(
                   icon: Icons.logout,

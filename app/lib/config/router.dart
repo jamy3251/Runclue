@@ -28,6 +28,13 @@ import '../screens/biz/biz_landing_screen.dart';
 import '../screens/landing/why_runclue_screen.dart';
 import '../screens/notifications/notification_center_screen.dart';
 import '../screens/search/search_screen.dart';
+import '../screens/admin/admin_screen.dart';
+import '../screens/routines/routines_screen.dart';
+import '../screens/minigames/minigames_screen.dart';
+import '../screens/minigames/rps_game.dart';
+import '../screens/minigames/coin_grab_game.dart';
+import '../screens/minigames/tap_battle_game.dart';
+import '../screens/minigames/othello_game.dart';
 import '../screens/main_shell.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -254,6 +261,50 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'notifications',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const NotificationCenterScreen(),
+      ),
+
+      // Admin (관리자 페이지) — is_admin() RPC + admin RLS 정책으로 보호
+      GoRoute(
+        path: '/admin',
+        name: 'admin',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AdminScreen(),
+      ),
+
+      // Routines (루틴 인증) — 매일 가는 곳 streak retention
+      GoRoute(
+        path: '/routines',
+        name: 'routines',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const RoutinesScreen(),
+      ),
+
+      // Minigames (#24) — RPS / 동전줍기 / 때리기 / 오셀로
+      GoRoute(
+        path: '/minigames',
+        name: 'minigames',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const MinigamesScreen(),
+      ),
+      GoRoute(
+        path: '/minigames/rps',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const RpsGame(),
+      ),
+      GoRoute(
+        path: '/minigames/coin',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const CoinGrabGame(),
+      ),
+      GoRoute(
+        path: '/minigames/tap',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const TapBattleGame(),
+      ),
+      GoRoute(
+        path: '/minigames/othello',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const OthelloGame(),
       ),
 
       // My Progress (랭킹 & 기록)

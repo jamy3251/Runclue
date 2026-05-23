@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../config/theme.dart';
 import '../../providers/clue_provider.dart';
+import '../../utils/clue_helpers.dart';
 import '../../widgets/clue_card.dart';
 
 /// SharedPreferences key for recent searches.
@@ -339,7 +340,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             final clue = results[index];
             return ClueCard(
               title: clue['title'] as String? ?? '제목 없음',
-              creatorName: clue['creator_name'] as String? ?? '알 수 없음',
+              creatorName: clueCreatorName(clue),
               category: clue['category'] as String? ?? '기타',
               locationText: clue['location_text'] as String? ?? '온라인',
               participantCount: clue['participant_count'] as int? ?? 0,

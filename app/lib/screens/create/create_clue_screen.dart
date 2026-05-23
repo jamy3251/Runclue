@@ -78,6 +78,11 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
   String _distributionMode = 'first_come'; // first_come / rank / random / all
   final _winnerCountController = TextEditingController(text: '20');
 
+  // ── 유효 기간 ──
+  DateTime? _startsAt;
+  DateTime? _endsAt;
+  bool _isEvent = false;  // 단기 이벤트 (술집/축제/세미나) — 24h 자동 만료
+
   // ── 썸네일 + 제출 ──
   File? _thumbnail;
   bool _isSubmitting = false;
@@ -310,6 +315,15 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         'distribution_mode': _distributionMode,
         'max_participants': winnerCount,
         'current_participants': 0,
+        if (_startsAt != null) 'starts_at': _startsAt!.toUtc().toIso8601String(),
+        if (_endsAt != null)
+          'ends_at': _endsAt!.toUtc().toIso8601String()
+        else if (_isEvent)
+          'ends_at': DateTime.now()
+              .toUtc()
+              .add(const Duration(hours: 24))
+              .toIso8601String(),
+        if (_isEvent) 'is_event': true,
       };
 
       final created = await clueService.createClue(clueData);
@@ -1114,6 +1128,95 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
             onChanged: (_) => setState(() {}),
           ),
         ],
+
+        const SizedBox(height: 20),
+
+        // 단기 이벤트 토글 (술집/축제/세미나)
+        InkWell(
+          onTap: () => setState(() => _isEvent = !_isEvent),
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: _isEvent
+                  ? AppColors.brandRed.withValues(alpha: 0.10)
+                  : AppColors.bgSurface,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: _isEvent
+                    ? AppColors.brandRed.withValues(alpha: 0.4)
+                    : AppColors.borderDefault,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  _isEvent ? Icons.celebration : Icons.celebration_outlined,
+                  color: _isEvent ? AppColors.brandRed : AppColors.textMuted,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('단기 이벤트 (24시간 한정)',
+                          style: GoogleFonts.notoSansKr(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w900,
+                              color: _isEvent
+                                  ? AppColors.brandRed
+                                  : AppColors.textPrimary)),
+                      const SizedBox(height: 2),
+                      Text(
+                        '술집·축제·세미나처럼 짧고 강한 한정 미션. 24h 후 자동 만료.',
+                        style: GoogleFonts.notoSansKr(
+                            fontSize: 11, color: AppColors.textMuted),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: _isEvent,
+                  activeColor: AppColors.brandRed,
+                  onChanged: (v) => setState(() => _isEvent = v),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // 유효 기간 — 시간제한 미션 (선택)
+        _DarkLabel('유효 기간 (선택)'),
+        const SizedBox(height: 4),
+        Text(
+          '시작/종료 시각 — 비워두면 즉시 시작 + 무기한',
+          style: GoogleFonts.notoSansKr(
+              fontSize: 11, color: AppColors.textMuted),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: _DatePickerTile(
+                label: '시작',
+                value: _startsAt,
+                onPick: (dt) => setState(() => _startsAt = dt),
+                onClear: () => setState(() => _startsAt = null),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _DatePickerTile(
+                label: '종료',
+                value: _endsAt,
+                onPick: (dt) => setState(() => _endsAt = dt),
+                onClear: () => setState(() => _endsAt = null),
+              ),
+            ),
+          ],
+        ),
 
         const SizedBox(height: 16),
 
@@ -2187,3 +2290,95 @@ class _GridPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+/// 시작/종료 날짜 picker tile.
+class _DatePickerTile extends StatelessWidget {
+  final String label;
+  final DateTime? value;
+  final ValueChanged<DateTime> onPick;
+  final VoidCallback onClear;
+
+  const _DatePickerTile({
+    required this.label,
+    required this.value,
+    required this.onPick,
+    required this.onClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasValue = value != null;
+    final text = hasValue
+        ? '${value!.year}.${value!.month.toString().padLeft(2, '0')}.${value!.day.toString().padLeft(2, '0')}'
+        : '날짜 선택';
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: () async {
+        final now = DateTime.now();
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: value ?? now,
+          firstDate: now.subtract(const Duration(days: 1)),
+          lastDate: now.add(const Duration(days: 365)),
+          builder: (ctx, child) => Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: const ColorScheme.dark(
+                primary: AppColors.brandYellow,
+                onPrimary: Colors.black,
+              ),
+            ),
+            child: child!,
+          ),
+        );
+        if (picked != null) onPick(picked);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppColors.bgSurface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: hasValue
+                ? AppColors.brandYellow.withValues(alpha: 0.4)
+                : AppColors.borderDefault,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today,
+                size: 14,
+                color: hasValue
+                    ? AppColors.brandYellow
+                    : AppColors.textMuted),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label,
+                      style: GoogleFonts.notoSansKr(
+                          fontSize: 10, color: AppColors.textMuted)),
+                  const SizedBox(height: 2),
+                  Text(text,
+                      style: GoogleFonts.notoSansKr(
+                          fontSize: 13,
+                          color: hasValue
+                              ? AppColors.textPrimary
+                              : AppColors.textMuted,
+                          fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+            if (hasValue)
+              GestureDetector(
+                onTap: onClear,
+                child: const Icon(Icons.close,
+                    size: 16, color: AppColors.textMuted),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

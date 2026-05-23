@@ -126,10 +126,57 @@ class ClueCard extends StatelessWidget {
           border: Border.all(color: AppColors.borderDefault),
           boxShadow: const [AppShadows.card],
         ),
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (thumbnailUrl != null && thumbnailUrl!.isNotEmpty)
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Image.network(
+                  thumbnailUrl!,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (_, child, progress) => progress == null
+                      ? child
+                      : Container(
+                          color: AppColors.bgElevated,
+                          child: const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.textMuted),
+                            ),
+                          ),
+                        ),
+                  errorBuilder: (_, __, ___) => Container(
+                    color: AppColors.bgElevated,
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.broken_image_outlined,
+                        color: AppColors.textMuted, size: 32),
+                  ),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildFullBody(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFullBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
             // Row 1: badges + like
             Row(
               children: [
@@ -279,9 +326,7 @@ class ClueCard extends StatelessWidget {
               ],
             ),
           ],
-        ),
-      ),
-    );
+        );
   }
 }
 

@@ -1,7 +1,24 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../services/clue_service.dart';
+import '../services/location_service.dart';
 import 'auth_provider.dart';
+
+/// 디바이스 현재 GPS 위치 (1회성 fetch).
+/// 권한 거부/불가 시 null 반환 (예외 던지지 않고 graceful degradation).
+final userPositionProvider = FutureProvider<Position?>((ref) async {
+  try {
+    final svc = LocationService();
+    await svc.requestPermission();
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.medium,
+      timeLimit: const Duration(seconds: 5),
+    );
+  } catch (_) {
+    return null;
+  }
+});
 
 /// Singleton provider for [ClueService].
 final clueServiceProvider = Provider<ClueService>((ref) {

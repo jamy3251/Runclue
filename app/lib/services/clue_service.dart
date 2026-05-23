@@ -56,11 +56,11 @@ class ClueService {
   /// 1차: join으로 한 번에 (FK 관계 있을 때 빠름)
   /// 2차: clue + steps 따로 fetch (FK 없거나 PGRST200 발생 시)
   Future<Map<String, dynamic>?> getClueById(String id) async {
-    // 1차 — embed
+    // 1차 — embed (steps + creator profile)
     try {
       final response = await _client
           .from('clues')
-          .select('*, steps(*)')
+          .select('*, steps(*), creator:profiles!creator_id(nickname, avatar_url, role)')
           .eq('id', id)
           .single();
       return response;
@@ -250,11 +250,11 @@ class ClueService {
   /// 2차: status='active' + created_at 정렬만
   /// 3차: 모든 status, created_at 정렬
   Future<List<Map<String, dynamic>>> getTrendingClues({int limit = 20}) async {
-    // 1차 시도
+    // 1차 시도 (creator profile embed 포함)
     try {
       final response = await _client
           .from('clues')
-          .select('*, steps(count)')
+          .select('*, steps(count), creator:profiles!creator_id(nickname, avatar_url, role)')
           .eq('status', 'active')
           .order('view_count', ascending: false)
           .order('like_count', ascending: false)

@@ -6,11 +6,13 @@ class PlatformStats {
   final int totalParticipants;
   final int cumulativeEarnings; // ₩ 단위
   final int activeMissions;
+  final int totalClues; // 등급제 (#25)용 — 모든 상태 포함
 
   const PlatformStats({
     this.totalParticipants = 0,
     this.cumulativeEarnings = 0,
     this.activeMissions = 0,
+    this.totalClues = 0,
   });
 }
 
@@ -44,10 +46,12 @@ class PlatformStatsService {
           .select('id')
           .eq('status', 'active')
           .count();
+      final allCluesResult = await _client.from('clues').select('id').count();
 
       return PlatformStats(
         totalParticipants: participantsResult.count,
         activeMissions: missionsResult.count,
+        totalClues: allCluesResult.count,
         cumulativeEarnings: 0, // 별도 집계 테이블 필요
       );
     } catch (_) {

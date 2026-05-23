@@ -6,7 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../config/theme.dart';
 import '../../providers/clue_provider.dart';
+import '../../providers/points_provider.dart';
+import '../../providers/recommendation_provider.dart';
 import '../../services/platform_stats_service.dart';
+import '../../utils/clue_helpers.dart';
+import '../../utils/platform_grade.dart';
 import '../../widgets/cards/persona_card.dart';
 import '../../widgets/clue_card.dart';
 
@@ -23,6 +27,65 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   _RoleTab _activeTab = _RoleTab.explorer;
 
+  void _switchTab(_RoleTab tab) {
+    if (_activeTab == tab) return;
+    HapticFeedback.selectionClick();
+    setState(() => _activeTab = tab);
+
+    final guide = switch (tab) {
+      _RoleTab.explorer =>
+        ('탐험가 모드', '클루를 풀고 보상을 모아요. 우리 동네 새 가게 발견!', AppColors.brandBlue, Icons.explore_outlined),
+      _RoleTab.creator =>
+        ('크리에이터 모드', '미션을 디자인하고 공유. 포트폴리오 + 부수입.', AppColors.brandPurple, Icons.edit_outlined),
+      _RoleTab.business =>
+        ('사장님 모드', '내 가게 마케팅. 신규 손님 유입을 0원으로.', AppColors.brandOrange, Icons.storefront_outlined),
+    };
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        backgroundColor: AppColors.bgElevated,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: guide.$3.withValues(alpha: 0.4)),
+        ),
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+        content: Row(
+          children: [
+            Icon(guide.$4, color: guide.$3, size: 18),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    guide.$1,
+                    style: TextStyle(
+                      color: guide.$3,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    guide.$2,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,13 +95,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: AppColors.bgElevated,
         onRefresh: () async {
           ref.invalidate(platformStatsProvider);
+          // 만료 클루 자동 정리 (운영 자동화 — 홈 새로고침 시 1회)
+          await ref.read(pointsServiceProvider).expireOverdueClues();
           ref.invalidate(trendingCluesProvider);
+          ref.invalidate(recommendedCluesProvider);
+          ref.invalidate(userPositionProvider);
+          ref.invalidate(platformStatsProvider);
         },
         child: CustomScrollView(
           slivers: [
             _buildHeader(),
             SliverToBoxAdapter(child: _buildPlatformStats()),
+            SliverToBoxAdapter(child: _buildPlatformGradeCard()),
             SliverToBoxAdapter(child: _buildRoleTabs()),
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            SliverToBoxAdapter(child: _buildRecommendedSection()),
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
             SliverToBoxAdapter(child: _buildLiveSection()),
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -49,6 +120,100 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  // ─────────────────────── 플랫폼 등급 카드 (#25) ───────────────────────
+  Widget _buildPlatformGradeCard() {
+    final statsAsync = ref.watch(platformStatsProvider);
+    return statsAsync.maybeWhen(
+      data: (s) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: PlatformGradeCard(
+          totalClues: s.totalClues,
+          totalUsers: s.totalParticipants,
+        ),
+      ),
+      orElse: () => const SizedBox.shrink(),
+    );
+  }
+
+  // ─────────────────────── 내 주변 추천 ───────────────────────
+  Widget _buildRecommendedSection() {
+    final recAsync = ref.watch(recommendedCluesProvider);
+    return recAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (clues) {
+        if (clues.isEmpty) return const SizedBox.shrink();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  const Icon(Icons.location_on,
+                      color: AppColors.brandYellow, size: 18),
+                  const SizedBox(width: 6),
+                  Text(
+                    '내 주변 추천',
+                    style: GoogleFonts.notoSansKr(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '· ${clues.length}개',
+                    style: GoogleFonts.notoSansKr(
+                      fontSize: 12,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 168,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: clues.length.clamp(0, 10),
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (_, i) {
+                  final c = clues[i];
+                  final dist = (c['distance_m'] as num?)?.toDouble();
+                  final distLabel = dist == null
+                      ? null
+                      : (dist < 1000
+                          ? '${dist.toInt()}m'
+                          : '${(dist / 1000).toStringAsFixed(1)}km');
+                  return SizedBox(
+                    width: 180,
+                    child: ClueCard(
+                      title: c['title'] ?? '미션',
+                      creatorName: clueCreatorName(c),
+                      category: c['category'] ?? '탐험',
+                      thumbnailUrl: c['thumbnail_url'],
+                      participantCount: c['current_participants'] ?? 0,
+                      distanceText: distLabel,
+                      rewardText: c['reward_value'] != null
+                          ? '₩${c['reward_value']}'
+                          : null,
+                      statusBadge: 'NEW',
+                      compact: true,
+                      onTap: () => context.push('/clue/${c['id']}'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -253,7 +418,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             label: '탐험가',
             isActive: _activeTab == _RoleTab.explorer,
             color: AppColors.brandBlue,
-            onTap: () => setState(() => _activeTab = _RoleTab.explorer),
+            onTap: () => _switchTab(_RoleTab.explorer),
           ),
           const SizedBox(width: 8),
           _RoleTabChip(
@@ -261,7 +426,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             label: '크리에이터',
             isActive: _activeTab == _RoleTab.creator,
             color: AppColors.brandPurple,
-            onTap: () => setState(() => _activeTab = _RoleTab.creator),
+            onTap: () => _switchTab(_RoleTab.creator),
           ),
           const SizedBox(width: 8),
           _RoleTabChip(
@@ -269,7 +434,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             label: '사장님',
             isActive: _activeTab == _RoleTab.business,
             color: AppColors.brandOrange,
-            onTap: () => setState(() => _activeTab = _RoleTab.business),
+            onTap: () => _switchTab(_RoleTab.business),
           ),
         ],
       ),
@@ -311,7 +476,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         final clue = clues[i + 1];
                         return ClueCard(
                           title: clue['title'] ?? '미션',
-                          creatorName: clue['creator_nickname'] ?? '크리에이터',
+                          creatorName: clueCreatorName(clue),
                           category: clue['category'] ?? '탐험',
                           rewardText: clue['reward_amount'] != null
                               ? '₩${_formatCount(clue['reward_amount'] as int)}'
