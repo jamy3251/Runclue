@@ -8,9 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
-import '../../providers/points_provider.dart';
+import '../../providers/currency_provider.dart';
 
-/// 동전줍기 — 15초간 화면 동전 탭 경쟁. 점수만큼 포인트 적립 (max 100).
+/// 동전줍기 — 15초간 화면 동전 탭 경쟁. 점수의 절반 (max 15) 코인 적립.
 class CoinGrabGame extends ConsumerStatefulWidget {
   const CoinGrabGame({super.key});
 
@@ -66,21 +66,30 @@ class _CoinGrabGameState extends ConsumerState<CoinGrabGame> {
       if (_score > _highScore) _highScore = _score;
     });
     HapticFeedback.heavyImpact();
-    if (_score > 0) _awardPoints(_score.clamp(0, 100));
+    // 점수의 절반을 코인으로 (점수 30 = 15코인, max 15 — 단발 ±100 캡 안)
+    final awarded = (_score / 2).floor().clamp(0, 15);
+    if (awarded > 0) {
+      _awardCoin(awarded, isWin: _score >= 10);
+    } else {
+      _awardCoin(3, isWin: false); // 참가상
+    }
   }
 
-  Future<void> _awardPoints(int p) async {
+  Future<void> _awardCoin(int p, {required bool isWin}) async {
     final uid = ref.read(currentUserIdProvider);
     if (uid == null) return;
-    await ref.read(pointsServiceProvider).add(
+    final res = await ref.read(currencyServiceProvider).grantCoin(
           userId: uid,
           delta: p,
-          reason: 'minigame:coin:score',
+          reason: isWin ? 'minigame_win' : 'minigame_lose',
+          sourceId: 'coin_grab',
         );
+    if (res['ok'] != true) return;
+    ref.invalidate(balancesProvider);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('+${p}p 획득!'),
+          content: Text(isWin ? '🪙 +$p 코인!' : '+$p 코인 (참가상)'),
           duration: const Duration(seconds: 1),
           backgroundColor: AppColors.brandGreen,
         ),

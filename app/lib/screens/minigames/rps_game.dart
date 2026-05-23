@@ -7,9 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
-import '../../providers/points_provider.dart';
+import '../../providers/currency_provider.dart';
 
-/// 가위바위보 vs CPU. 승리 시 +5p 적립.
+/// 가위바위보 vs CPU. 승리 +15 코인, 패배 +3 코인 (트랙 E).
 class RpsGame extends ConsumerStatefulWidget {
   const RpsGame({super.key});
 
@@ -51,22 +51,27 @@ class _RpsGameState extends ConsumerState<RpsGame> {
     });
     if (result == 'win') {
       HapticFeedback.heavyImpact();
-      _awardPoints(5);
+      _awardCoin(15, isWin: true);
+    } else if (result == 'lose') {
+      _awardCoin(3, isWin: false);
     }
   }
 
-  Future<void> _awardPoints(int p) async {
+  Future<void> _awardCoin(int p, {required bool isWin}) async {
     final uid = ref.read(currentUserIdProvider);
     if (uid == null) return;
-    await ref.read(pointsServiceProvider).add(
+    final res = await ref.read(currencyServiceProvider).grantCoin(
           userId: uid,
           delta: p,
-          reason: 'minigame:rps:win',
+          reason: isWin ? 'minigame_win' : 'minigame_lose',
+          sourceId: 'rps',
         );
+    if (res['ok'] != true) return; // 일일 캡 도달 등 — 조용히 무시
+    ref.invalidate(balancesProvider);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('+${p}p 획득!'),
+          content: Text(isWin ? '🪙 +$p 코인!' : '+$p 코인 (참가상)'),
           duration: const Duration(seconds: 1),
           backgroundColor: AppColors.brandGreen,
         ),

@@ -8,9 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
-import '../../providers/points_provider.dart';
+import '../../providers/currency_provider.dart';
 
-/// 서로 때리기 — 10초간 탭 연사 vs CPU. 승리 시 +5p.
+/// 서로 때리기 — 10초간 탭 연사 vs CPU. 승리 +15 코인, 패배 +3 코인.
 class TapBattleGame extends ConsumerStatefulWidget {
   const TapBattleGame({super.key});
 
@@ -65,21 +65,28 @@ class _TapBattleGameState extends ConsumerState<TapBattleGame> {
         _result = 'draw';
       }
     });
-    if (_result == 'win') _awardPoints(5);
+    if (_result == 'win') {
+      _awardCoin(15, isWin: true);
+    } else if (_result == 'lose') {
+      _awardCoin(3, isWin: false);
+    }
   }
 
-  Future<void> _awardPoints(int p) async {
+  Future<void> _awardCoin(int p, {required bool isWin}) async {
     final uid = ref.read(currentUserIdProvider);
     if (uid == null) return;
-    await ref.read(pointsServiceProvider).add(
+    final res = await ref.read(currencyServiceProvider).grantCoin(
           userId: uid,
           delta: p,
-          reason: 'minigame:tap:win',
+          reason: isWin ? 'minigame_win' : 'minigame_lose',
+          sourceId: 'tap_battle',
         );
+    if (res['ok'] != true) return;
+    ref.invalidate(balancesProvider);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('+${p}p 획득!'),
+          content: Text(isWin ? '🪙 +$p 코인!' : '+$p 코인 (참가상)'),
           duration: const Duration(seconds: 1),
           backgroundColor: AppColors.brandGreen,
         ),
