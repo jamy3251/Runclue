@@ -33,6 +33,10 @@ import '../screens/routines/routines_screen.dart';
 import '../screens/minigames/minigames_screen.dart';
 import '../screens/shop/gifticon_shop_screen.dart';
 import '../screens/profile/redemptions_screen.dart';
+import '../screens/profile/my_purchases_screen.dart';
+import '../screens/store/menu_manage_screen.dart';
+import '../screens/store/store_menu_list_screen.dart';
+import '../screens/store/qr_redeem_screen.dart';
 import '../screens/minigames/rps_game.dart';
 import '../screens/minigames/coin_grab_game.dart';
 import '../screens/minigames/tap_battle_game.dart';
@@ -363,6 +367,35 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'redemptions',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const RedemptionsScreen(),
+      ),
+
+      // 가게 커머스 (Step 16)
+      GoRoute(
+        path: '/store/manage',
+        name: 'storeManage',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const MenuManageScreen(),
+      ),
+      GoRoute(
+        path: '/store/scan',
+        name: 'storeScan',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const QrRedeemScreen(),
+      ),
+      GoRoute(
+        path: '/store/:ownerId',
+        name: 'storeMenus',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final ownerId = state.pathParameters['ownerId']!;
+          return StoreMenuListScreen(ownerId: ownerId);
+        },
+      ),
+      GoRoute(
+        path: '/profile/purchases',
+        name: 'myPurchases',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const MyPurchasesScreen(),
       ),
 
       // 보상함 — 선물함(미수령) + 인벤토리(수령) 2탭

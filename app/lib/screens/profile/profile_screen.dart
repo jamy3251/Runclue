@@ -370,6 +370,21 @@ class ProfileScreen extends ConsumerWidget {
                   onTap: () => context.push('/profile/redemptions'),
                 ),
                 _SettingsTile(
+                  icon: Icons.store,
+                  title: '내 가게 메뉴 관리 (사장 전용)',
+                  onTap: () => context.push('/store/manage'),
+                ),
+                _SettingsTile(
+                  icon: Icons.qr_code_scanner,
+                  title: '손님 QR 스캔 (사장 전용)',
+                  onTap: () => context.push('/store/scan'),
+                ),
+                _SettingsTile(
+                  icon: Icons.shopping_bag,
+                  title: '내 가게 구매 / QR',
+                  onTap: () => context.push('/profile/purchases'),
+                ),
+                _SettingsTile(
                   icon: Icons.notifications_outlined,
                   title: '알림설정',
                   onTap: () => context.push('/settings/notifications'),
