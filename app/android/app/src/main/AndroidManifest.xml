@@ -44,6 +44,14 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
 
+        <!-- Google AdMob App ID (Track C — Step 11)
+             Debug: Google 공식 테스트 App ID (안전).
+             Release: 사용자가 .env에 GMA_APP_ID_ANDROID 설정 후
+             build.gradle.kts manifestPlaceholders로 주입 필요. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

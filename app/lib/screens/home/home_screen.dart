@@ -13,6 +13,7 @@ import '../../utils/clue_helpers.dart';
 import '../../utils/platform_grade.dart';
 import '../../widgets/cards/persona_card.dart';
 import '../../widgets/clue_card.dart';
+import '../../widgets/common/ad_reward_card.dart';
 import '../../widgets/common/daily_quests_card.dart';
 
 enum _RoleTab { explorer, creator, business }
@@ -111,6 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             SliverToBoxAdapter(child: _buildRoleTabs()),
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
             const SliverToBoxAdapter(child: DailyQuestsCard()),
+            const SliverToBoxAdapter(child: AdRewardCard()),
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
             SliverToBoxAdapter(child: _buildRecommendedSection()),
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
