@@ -243,8 +243,28 @@ Edge Function `toss-webhook` 작성 완료 — HMAC-SHA256 서명 검증 + 결�
 
 운영 활성화는 위 1번 항목의 4~5 단계 참조.
 
-### 19. Step 18 Lobby 타임아웃
-`pg_cron`으로 30분 초과 recruiting 클루 자동 취소 + 풀 복원.
+### 19. Step 18 Lobby 타임아웃 ✅ 완료
+마이그레이션 025 + pg_cron 활성화. `expire_lobby_recruits()` 5분마다 실행 →
+`coop_state='recruiting'`이고 `recruiting_started_at + lobby_window_minutes`
+초과한 클루를 `cancelled` + in_lobby 참여자를 `abandoned`로 전환.
+
+풀 보존 정책 (현재): 사장이 충전한 풀은 그대로 유지. cancelled 후 환불·재사용은
+admin이 수동 처리. (자동 환불은 토스 webhook과 통합 시 가능).
+
+운영 모니터링:
+```sql
+SELECT jobid, jobname, schedule, active FROM cron.job
+ WHERE jobname = 'expire_lobby_recruits';
+
+SELECT * FROM cron.job_run_details
+ WHERE jobname = 'expire_lobby_recruits'
+ ORDER BY start_time DESC LIMIT 10;
+
+-- 최근 자동 취소된 coop 클루
+SELECT id, title, recruiting_started_at, lobby_window_minutes
+FROM clues WHERE coop_state = 'cancelled'
+ORDER BY recruiting_started_at DESC LIMIT 20;
+```
 
 ---
 
