@@ -14,6 +14,7 @@ class UserLevel {
   final int nextTier;        // 다음 레벨 진입 점수 (-1 if 만렙)
   final double progress;     // 0.0 ~ 1.0 (현재 → 다음까지 비율)
   final int points;          // 사용자 누적 점수 (계산 input)
+  final int multiplierBps;   // 코인 적립 배수 (basis points, 10000=1.0×)
 
   const UserLevel({
     required this.level,
@@ -24,20 +25,29 @@ class UserLevel {
     required this.nextTier,
     required this.progress,
     required this.points,
+    required this.multiplierBps,
   });
 
   bool get isMax => nextTier < 0;
   int get pointsToNext => isMax ? 0 : nextTier - points;
+
+  /// "+20%" 처럼 표시할 텍스트 (1.0×면 빈 문자열).
+  String get multiplierLabel {
+    if (multiplierBps <= 10000) return '';
+    final pct = ((multiplierBps - 10000) / 100).round();
+    return '+$pct%';
+  }
 }
 
-/// 레벨 임계값 (point, 한국어 이름, 아이콘, 컬러).
-const _tiers = <(int, String, IconData, Color)>[
-  (0,     '새싹',     Icons.eco,                      AppColors.brandGreen),
-  (100,   '브론즈',    Icons.workspace_premium,        Color(0xFFCD7F32)),
-  (500,   '실버',     Icons.workspace_premium,        Color(0xFFC0C0C0)),
-  (2000,  '골드',     Icons.workspace_premium,        AppColors.brandYellow),
-  (5000,  '플래티넘',  Icons.diamond,                  Color(0xFF38BDF8)),
-  (10000, '다이아',   Icons.diamond,                  AppColors.brandPurple),
+/// 레벨 임계값 (point, 한국어 이름, 아이콘, 컬러, multiplier bps).
+/// multiplier는 user_level_multiplier_bps RPC와 일관 유지 (마이그레이션 027).
+const _tiers = <(int, String, IconData, Color, int)>[
+  (0,     '새싹',     Icons.eco,                     AppColors.brandGreen,    10000),
+  (100,   '브론즈',    Icons.workspace_premium,       Color(0xFFCD7F32),       10500),
+  (500,   '실버',     Icons.workspace_premium,       Color(0xFFC0C0C0),       11000),
+  (2000,  '골드',     Icons.workspace_premium,       AppColors.brandYellow,   12000),
+  (5000,  '플래티넘',  Icons.diamond,                 Color(0xFF38BDF8),       13500),
+  (10000, '다이아',   Icons.diamond,                 AppColors.brandPurple,   15000),
 ];
 
 UserLevel computeLevel(int points) {
@@ -62,6 +72,7 @@ UserLevel computeLevel(int points) {
     nextTier: nextThr,
     progress: progress.toDouble(),
     points: points,
+    multiplierBps: tier.$5,
   );
 }
 
@@ -95,6 +106,17 @@ class UserLevelChip extends StatelessWidget {
               fontWeight: FontWeight.w900,
             ),
           ),
+          if (lv.multiplierLabel.isNotEmpty) ...[
+            SizedBox(width: dense ? 3 : 4),
+            Text(
+              lv.multiplierLabel,
+              style: TextStyle(
+                fontSize: dense ? 8 : 10,
+                color: lv.color.withValues(alpha: 0.85),
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -135,11 +157,34 @@ class UserLevelCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Lv ${lv.level} · ${lv.name}',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            color: lv.color)),
+                    Row(
+                      children: [
+                        Text('Lv ${lv.level} · ${lv.name}',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w900,
+                                color: lv.color)),
+                        if (lv.multiplierLabel.isNotEmpty) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: lv.color.withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '🪙 ${lv.multiplierLabel} 보너스',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: lv.color,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                     Text('$points P 누적',
                         style: const TextStyle(
                             fontSize: 12, color: AppColors.textSecondary)),
