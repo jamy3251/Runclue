@@ -10,19 +10,46 @@
 ## P0 — 출시 전 필수
 
 ### 1. 토스페이먼츠 가맹점 가입 (Step 6~8 release 전제)
-- [ ] 사업자등록증 발급 (개인사업자 또는 법인). 통신판매업 신고 필수.
-- [ ] [tosspayments.com](https://www.tosspayments.com) 가입 → 가맹점 심사 (대학가 1인 사장 도와주는 마케팅 플랫폼으로 포지셔닝)
-- [ ] 결제 키 발급:
-  - 클라이언트 키 (`TOSS_CLIENT_KEY`) — Flutter 앱에 .env로 주입
-  - 시크릿 키 (`TOSS_SECRET_KEY`) — **Supabase Edge Function env에만** 저장 (절대 git에 X)
-- [ ] Supabase Edge Function deploy:
-  ```bash
-  supabase functions deploy toss-confirm
-  supabase secrets set TOSS_SECRET_KEY=<your-secret-key>
-  ```
-- [ ] webhook 엔드포인트 추가 (Phase 2) — 토스 콘솔에 `https://<project>.functions.supabase.co/toss-webhook` 등록
 
-검증: 클루 생성 → 1000원 결제 → `wallet_topups.status='approved'` + `clues.reward_pool_net=850` 확인
+**가입 단계 (1인 사장도 무료, 5~10분)**
+
+1. **사업자등록** (없으면)
+   - 토스페이먼츠 홈페이지 → [사업 시작] → [사업자등록 바로신청]
+   - 통신판매업 준비 중인 개인사업자만 간이 신청 가능. 사업자등록번호 발급까지 ~3일 소요 (국세청 안내 문자).
+   - 이미 있으면 skip.
+
+2. **통신판매업 신고** (필수 — 기프티콘 발급 근거)
+   - 토스페이먼츠 → [사업 시작] → [통신판매업 바로신청] (5분, 무료)
+   - 구매안전서비스 이용확인증 자동 발급
+   - 입력: 사업자등록번호 / 이메일 / 사업자등록증 사본 / 상호 / 사업장 주소 / 개업일 / 대표자 정보 / 정산 계좌 / 거주지 주소
+
+3. **토스 비즈니스 가입** → **토스페이 가맹점 신청**
+   - 신청 후 ~1~2 영업일 심사
+   - 가맹점 ID + 클라이언트키(테스트/운영) + 시크릿키(테스트/운영) 발급
+   - 클라이언트 키 (`TOSS_CLIENT_KEY`) — Flutter 앱에 `.env`로 주입
+   - 시크릿 키 (`TOSS_SECRET_KEY`) — **Supabase Edge Function env에만** 저장 (절대 git에 X)
+
+4. **Supabase Edge Function deploy**
+   ```bash
+   # toss-confirm (Step 6, 결제 승인 검증)
+   supabase functions deploy toss-confirm
+   supabase secrets set TOSS_SECRET_KEY=<your-secret-key>
+
+   # toss-webhook (Phase 2, 환불·취소 처리) — 보안 강화 완료
+   supabase functions deploy toss-webhook
+   ```
+
+5. **토스 콘솔 webhook URL 등록**
+   - 토스 → 개발자센터 → webhook 설정
+   - URL: `https://<project>.functions.supabase.co/toss-webhook`
+   - 구독 이벤트: `PAYMENT_STATUS_CHANGED` (결제 상태 변경, 취소·환불)
+
+**참고 링크**
+- 토스페이먼츠 사업자등록 바로신청: https://www.tosspayments.com/blog/business-registration
+- 통신판매업 신고 가이드 (2025): https://www.tosspayments.com/blog/articles/sales-registration
+- 토스페이 가맹점 가입 단계: https://www.tosspayments.com
+
+검증: 클루 생성 → 1000원 테스트 결제 → `wallet_topups.status='approved'` + `clues.reward_pool_net=850` 확인
 
 ### 2. 약관/개인정보처리방침 업데이트
 - [ ] 약관에 명시적으로 추가:
@@ -189,15 +216,32 @@ DB·RPC는 모두 적용됨. 다음 세션에 이어서:
 - 사용자 메뉴 결제 + QR 발급
 - 사용자 QR 표시 + 사장 QR 스캔
 
-### 17. Phase 2 광고 SSV
-현재 클라이언트 신뢰. 어뷰 위험은 일일 캡 5회로 완화됨.
-- Edge Function `ad-ssv-callback` 추가
-- Google SSV 토큰 RSA 공개키 검증
+### 17. Phase 2 광고 SSV ✅ 코드 완료, deploy 대기
+Edge Function `admob-ssv` 작성 완료 — Google ECDSA-P256 서명 검증 + grant_coin_admin 호출.
 
-### 18. Phase 2 토스 webhook
-결제 검증은 confirm API로 충분하나, 환불·취소 이벤트는 webhook 필요:
-- Edge Function `toss-webhook` 추가
-- `x-toss-signature` HMAC 검증
+운영 활성화 단계:
+1. **Edge Function deploy**
+   ```bash
+   supabase functions deploy admob-ssv
+   ```
+2. **AdMob 콘솔 → 광고 단위 → 보상 설정 → 서버측 인증 URL**
+   ```
+   https://<project>.functions.supabase.co/admob-ssv
+   ```
+3. **Flutter 빌드 시 SSV 모드 활성화**
+   ```bash
+   flutter build apk --release \
+     --dart-define=ADMOB_USE_SSV=true \
+     --dart-define-from-file=.env
+   ```
+4. 검증: 광고 시청 → 우리 Edge Function 로그에 `ok: true` → `ad_views` row 생성 → 코인 +20
+
+활성화 안 한 상태 (MVP) — 클라이언트가 `claim_ad_reward` RPC 직접 호출. 어뷰 위험은 일일 캡 5회·일일 +500 코인으로 완화.
+
+### 18. Phase 2 토스 webhook ✅ 코드 완료, deploy 대기
+Edge Function `toss-webhook` 작성 완료 — HMAC-SHA256 서명 검증 + 결제 취소 시 풀 자동 차감 (committed 이상은 보호).
+
+운영 활성화는 위 1번 항목의 4~5 단계 참조.
 
 ### 19. Step 18 Lobby 타임아웃
 `pg_cron`으로 30분 초과 recruiting 클루 자동 취소 + 풀 복원.

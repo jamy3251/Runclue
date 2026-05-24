@@ -29,6 +29,11 @@ class AdsService {
   static const _testAndroid = 'ca-app-pub-3940256099942544/5224354917';
   static const _testIos = 'ca-app-pub-3940256099942544/1712485313';
 
+  /// SSV 모드 — Google이 보상 검증 콜백 보냄. 클라이언트는 grant 직접 호출 X.
+  /// 활성화: --dart-define=ADMOB_USE_SSV=true (Edge Function admob-ssv deploy 후)
+  static const _useSsv =
+      bool.fromEnvironment('ADMOB_USE_SSV', defaultValue: false);
+
   String get _adUnitId {
     if (kReleaseMode) {
       final env = Platform.isAndroid
@@ -90,6 +95,17 @@ class AdsService {
     }
     _ready = null;
 
+    // SSV 모드면 Google이 우리 Edge Function에 user_id 전달하도록 customData 설정
+    if (_useSsv) {
+      final uid = _client.auth.currentUser?.id;
+      if (uid != null) {
+        ad.setServerSideOptions(ServerSideVerificationOptions(
+          customData: uid,
+          userId: uid,
+        ));
+      }
+    }
+
     final dismissed = Completer<void>();
     var earned = false;
 
@@ -122,7 +138,18 @@ class AdsService {
       return {'ok': false, 'reason': 'not_completed'};
     }
 
-    // 보상 적립 (SSV는 Phase 2)
+    if (_useSsv) {
+      // SSV 모드: Google → Edge Function admob-ssv → grant_coin_admin.
+      // 클라이언트는 grant 직접 호출 X. 잠시 대기 후 잔액 새로고침을 UI 측에서.
+      // Google SSV는 일반적으로 수 초 내 도착. 응답에 today_count는 모름.
+      return {
+        'ok': true,
+        'ssv_pending': true,
+        'reward_coin': 20,
+      };
+    }
+
+    // 클라이언트 신뢰 모드 (MVP): claim_ad_reward RPC 직접 호출.
     final token = _uuid.v4();
     final res = await _client.rpc('claim_ad_reward', params: {
       'ad_unit_id_in': _adUnitId,
