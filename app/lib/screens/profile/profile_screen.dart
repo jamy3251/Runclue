@@ -360,6 +360,11 @@ class ProfileScreen extends ConsumerWidget {
                   onTap: () => context.push('/minigames'),
                 ),
                 _SettingsTile(
+                  icon: Icons.sports_kabaddi,
+                  title: 'Battle — 코인 베팅 RPS',
+                  onTap: () => context.push('/battle'),
+                ),
+                _SettingsTile(
                   icon: Icons.card_giftcard,
                   title: '기프티콘 상점 (다이아 교환)',
                   onTap: () => context.push('/shop/gifticons'),

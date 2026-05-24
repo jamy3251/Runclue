@@ -39,6 +39,8 @@ import '../screens/store/store_menu_list_screen.dart';
 import '../screens/store/qr_redeem_screen.dart';
 import '../screens/biz/wallet_history_screen.dart';
 import '../screens/seasons/season_leaderboard_screen.dart';
+import '../screens/battle/battle_lobby_screen.dart';
+import '../screens/battle/battle_game_screen.dart';
 import '../screens/minigames/rps_game.dart';
 import '../screens/minigames/coin_grab_game.dart';
 import '../screens/minigames/tap_battle_game.dart';
@@ -414,6 +416,23 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'seasons',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SeasonLeaderboardScreen(),
+      ),
+
+      // Battle 모드 (#22) — 코인 베팅 1v1 RPS
+      GoRoute(
+        path: '/battle',
+        name: 'battle',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const BattleLobbyScreen(),
+      ),
+      GoRoute(
+        path: '/battle/game/:matchId',
+        name: 'battleGame',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final matchId = state.pathParameters['matchId']!;
+          return BattleGameScreen(matchId: matchId);
+        },
       ),
 
       // 보상함 — 선물함(미수령) + 인벤토리(수령) 2탭
