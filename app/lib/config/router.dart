@@ -38,6 +38,7 @@ import '../screens/store/menu_manage_screen.dart';
 import '../screens/store/store_menu_list_screen.dart';
 import '../screens/store/qr_redeem_screen.dart';
 import '../screens/biz/wallet_history_screen.dart';
+import '../screens/seasons/season_leaderboard_screen.dart';
 import '../screens/minigames/rps_game.dart';
 import '../screens/minigames/coin_grab_game.dart';
 import '../screens/minigames/tap_battle_game.dart';
@@ -405,6 +406,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'bizWallet',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const WalletHistoryScreen(),
+      ),
+
+      // 주간 시즌 리더보드 (#16)
+      GoRoute(
+        path: '/seasons',
+        name: 'seasons',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SeasonLeaderboardScreen(),
       ),
 
       // 보상함 — 선물함(미수령) + 인벤토리(수령) 2탭

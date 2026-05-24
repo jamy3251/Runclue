@@ -15,6 +15,7 @@ import '../../widgets/cards/persona_card.dart';
 import '../../widgets/clue_card.dart';
 import '../../widgets/common/ad_reward_card.dart';
 import '../../widgets/common/daily_quests_card.dart';
+import '../../widgets/common/season_banner_card.dart';
 import '../../widgets/common/walk_reward_card.dart';
 
 enum _RoleTab { explorer, creator, business }
@@ -112,6 +113,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             SliverToBoxAdapter(child: _buildPlatformGradeCard()),
             SliverToBoxAdapter(child: _buildRoleTabs()),
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
+            const SliverToBoxAdapter(child: SeasonBannerCard()),
             const SliverToBoxAdapter(child: DailyQuestsCard()),
             const SliverToBoxAdapter(child: AdRewardCard()),
             const SliverToBoxAdapter(child: WalkRewardCard()),
