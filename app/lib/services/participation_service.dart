@@ -175,6 +175,16 @@ class ParticipationService {
         earnedPoints = minP > 0 ? (prizeBase / minP).floor() : 0;
         rewardStatus = earnedPoints > 0 ? 'eligible' : 'not_eligible';
         break;
+      case 'versus_first':
+        // versus 모드 #23 — 1등(첫 완료자)이 풀 독식, 나머지 0
+        if (rank == 1) {
+          earnedPoints = prizeBase;
+          rewardStatus = 'eligible';
+        } else {
+          earnedPoints = 0;
+          rewardStatus = 'not_eligible';
+        }
+        break;
       case 'all':
         earnedPoints = prizeBase;
         rewardStatus = 'eligible';

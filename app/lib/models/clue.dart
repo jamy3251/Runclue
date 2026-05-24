@@ -32,7 +32,9 @@ enum ClueGameMode {
   @JsonValue('solo')
   solo('solo'),
   @JsonValue('coop')
-  coop('coop');
+  coop('coop'),
+  @JsonValue('versus')
+  versus('versus');
 
   const ClueGameMode(this.value);
   final String value;

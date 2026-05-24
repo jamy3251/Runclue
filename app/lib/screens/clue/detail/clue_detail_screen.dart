@@ -830,10 +830,12 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
     final completed = existing != null && existing['status'] == 'completed';
     final inLobby = existing != null && existing['status'] == 'in_lobby';
 
-    // ── 그룹 미션 #15 ──
-    // coop 클루의 모집/진행 상태는 5초 polling으로 받음 — clue raw 값보다 신선함.
-    final isCoop = (clue['game_mode'] ?? 'solo') == 'coop';
-    final coopAsync = isCoop
+    // ── 그룹 미션 #15 + versus #23 ──
+    // coop/versus 클루의 모집/진행 상태는 5초 polling으로 받음 — clue raw 값보다 신선함.
+    final gameMode = (clue['game_mode'] ?? 'solo') as String;
+    final isLobbyMode = gameMode == 'coop' || gameMode == 'versus';
+    final isVersus = gameMode == 'versus';
+    final coopAsync = isLobbyMode
         ? ref.watch(coopStateProvider(widget.clueId))
         : const AsyncValue<Map<String, dynamic>?>.data(null);
     final coopRow = coopAsync.valueOrNull;
@@ -845,14 +847,18 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
         clue['current_participants'] ??
         0) as int;
     final lobbyOpen =
-        isCoop && (coopState == 'idle' || coopState == 'recruiting');
-    final coopStarted = isCoop && coopState == 'started';
-    final coopCancelled = isCoop && coopState == 'cancelled';
+        isLobbyMode && (coopState == 'idle' || coopState == 'recruiting');
+    final coopStarted = isLobbyMode && coopState == 'started';
+    final coopCancelled = isLobbyMode && coopState == 'cancelled';
+    // 호환: 기존 isCoop을 참조하는 코드 흐름 유지
+    final isCoop = isLobbyMode;
 
     String label;
     IconData icon;
     if (ended || coopCancelled) {
-      label = coopCancelled ? '그룹 모집이 취소되었습니다' : '이미 마감된 미션입니다';
+      label = coopCancelled
+          ? (isVersus ? '대결 모집이 취소되었습니다' : '그룹 모집이 취소되었습니다')
+          : '이미 마감된 미션입니다';
       icon = Icons.lock;
     } else if (completed) {
       label = '이미 완료한 미션 — 결과 보기';
@@ -861,11 +867,13 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
       label = '모집 대기 중 ($curP/$minP)';
       icon = Icons.hourglass_top;
     } else if (lobbyOpen) {
-      label = '함께 모집 참여 ($curP/$minP)';
-      icon = Icons.group_add;
+      label = isVersus
+          ? '⚔️ 대결 참여 ($curP/$minP)'
+          : '함께 모집 참여 ($curP/$minP)';
+      icon = isVersus ? Icons.flag : Icons.group_add;
     } else if (coopStarted && inLobby) {
       // 자동 시작 직후 상태 — 진입 가능
-      label = '🎉 모집 완료! 시작하기';
+      label = isVersus ? '⚔️ 대결 시작!' : '🎉 모집 완료! 시작하기';
       icon = Icons.play_arrow;
     } else if (inProgress) {
       label = '이어서 하기';
@@ -903,8 +911,8 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                       children: [
                         Text(
                           coopStarted
-                              ? '🎉 모집 완료'
-                              : '👥 함께 모집 중',
+                              ? (isVersus ? '⚔️ 대결 시작' : '🎉 모집 완료')
+                              : (isVersus ? '⚔️ 1등 독식 대결 모집 중' : '👥 함께 모집 중'),
                           style: GoogleFonts.notoSansKr(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,

@@ -316,14 +316,19 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         'reward_type': _rewardKind,
         'reward_value': rewardValue,
         'reward_label': _rewardLabelController.text.trim(),
-        'distribution_mode': _gameMode == 'coop' ? 'coop_split' : _distributionMode,
+        'distribution_mode': _gameMode == 'coop'
+            ? 'coop_split'
+            : _gameMode == 'versus'
+                ? 'versus_first'
+                : _distributionMode,
         'max_participants': winnerCount,
         'current_participants': 0,
         'game_mode': _gameMode,
-        if (_gameMode == 'coop')
+        if (_gameMode == 'coop' || _gameMode == 'versus')
           'min_participants':
               int.tryParse(_minParticipantsController.text) ?? 3,
-        if (_gameMode == 'coop') 'coop_state': 'recruiting',
+        if (_gameMode == 'coop' || _gameMode == 'versus')
+          'coop_state': 'recruiting',
         if (_startsAt != null) 'starts_at': _startsAt!.toUtc().toIso8601String(),
         if (_endsAt != null)
           'ends_at': _endsAt!.toUtc().toIso8601String()
@@ -1061,95 +1066,46 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
 
         const SizedBox(height: 28),
 
-        // ── 그룹 미션 #15 — solo / coop 토글 ──
+        // ── 게임 모드 (#15 + #23) — solo / coop / versus 3선택 ──
         _DarkLabel('게임 모드 *'),
         const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
-              child: GestureDetector(
+              child: _GameModeTile(
+                selected: _gameMode == 'solo',
                 onTap: () => setState(() => _gameMode = 'solo'),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: _gameMode == 'solo'
-                        ? AppColors.brandYellow.withValues(alpha: 0.12)
-                        : AppColors.bgSurface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: _gameMode == 'solo'
-                          ? AppColors.brandYellow
-                          : AppColors.borderDefault,
-                      width: _gameMode == 'solo' ? 1.5 : 1,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(Icons.person,
-                          color: _gameMode == 'solo'
-                              ? AppColors.brandYellow
-                              : AppColors.textMuted),
-                      const SizedBox(height: 4),
-                      Text('솔로',
-                          style: GoogleFonts.notoSansKr(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: _gameMode == 'solo'
-                                ? AppColors.brandYellow
-                                : AppColors.textPrimary,
-                          )),
-                      Text('혼자 도전',
-                          style: GoogleFonts.notoSansKr(
-                              fontSize: 10, color: AppColors.textMuted)),
-                    ],
-                  ),
-                ),
+                color: AppColors.brandYellow,
+                icon: Icons.person,
+                label: '솔로',
+                desc: '혼자 도전',
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Expanded(
-              child: GestureDetector(
+              child: _GameModeTile(
+                selected: _gameMode == 'coop',
                 onTap: () => setState(() => _gameMode = 'coop'),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: _gameMode == 'coop'
-                        ? AppColors.brandBlue.withValues(alpha: 0.12)
-                        : AppColors.bgSurface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: _gameMode == 'coop'
-                          ? AppColors.brandBlue
-                          : AppColors.borderDefault,
-                      width: _gameMode == 'coop' ? 1.5 : 1,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(Icons.groups,
-                          color: _gameMode == 'coop'
-                              ? AppColors.brandBlue
-                              : AppColors.textMuted),
-                      const SizedBox(height: 4),
-                      Text('그룹 (3명 모집)',
-                          style: GoogleFonts.notoSansKr(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: _gameMode == 'coop'
-                                ? AppColors.brandBlue
-                                : AppColors.textPrimary,
-                          )),
-                      Text('N명 모이면 시작',
-                          style: GoogleFonts.notoSansKr(
-                              fontSize: 10, color: AppColors.textMuted)),
-                    ],
-                  ),
-                ),
+                color: AppColors.brandBlue,
+                icon: Icons.groups,
+                label: '그룹',
+                desc: 'N명 공동 보상',
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _GameModeTile(
+                selected: _gameMode == 'versus',
+                onTap: () => setState(() => _gameMode = 'versus'),
+                color: AppColors.brandRed,
+                icon: Icons.flag,
+                label: '대결',
+                desc: '1등 독식',
               ),
             ),
           ],
         ),
-        if (_gameMode == 'coop') ...[
+        if (_gameMode == 'coop' || _gameMode == 'versus') ...[
           const SizedBox(height: 12),
           _DarkLabel('필요 인원 (2~10명)'),
           const SizedBox(height: 8),
@@ -1160,7 +1116,9 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            '※ 그룹 모드는 풀을 N등분 — 모두 동일한 보상을 받습니다.',
+            _gameMode == 'coop'
+                ? '※ 그룹 모드는 풀을 N등분 — 모두 동일한 보상을 받습니다.'
+                : '※ 대결 모드는 첫 완료자가 풀을 독식 — 나머지는 보상 없음.',
             style: GoogleFonts.notoSansKr(
                 fontSize: 11, color: AppColors.textMuted),
           ),
@@ -1170,25 +1128,39 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
 
         _DarkLabel('분배 방식 *'),
         const SizedBox(height: 8),
-        if (_gameMode == 'coop') ...[
+        if (_gameMode == 'coop' || _gameMode == 'versus') ...[
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.brandBlue.withValues(alpha: 0.08),
+              color: (_gameMode == 'coop'
+                      ? AppColors.brandBlue
+                      : AppColors.brandRed)
+                  .withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                  color: AppColors.brandBlue.withValues(alpha: 0.3)),
+                  color: (_gameMode == 'coop'
+                          ? AppColors.brandBlue
+                          : AppColors.brandRed)
+                      .withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.lock_outline,
-                    size: 16, color: AppColors.brandBlue),
+                Icon(Icons.lock_outline,
+                    size: 16,
+                    color: _gameMode == 'coop'
+                        ? AppColors.brandBlue
+                        : AppColors.brandRed),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '그룹 모드 — 자동으로 N등분 분배',
+                    _gameMode == 'coop'
+                        ? '그룹 모드 — 자동으로 N등분 분배'
+                        : '대결 모드 — 첫 완료자 풀 독식',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 12, color: AppColors.brandBlue),
+                        fontSize: 12,
+                        color: _gameMode == 'coop'
+                            ? AppColors.brandBlue
+                            : AppColors.brandRed),
                   ),
                 ),
               ],
@@ -2134,6 +2106,58 @@ class _StepHeader extends StatelessWidget {
               color: AppColors.textMuted,
             )),
       ],
+    );
+  }
+}
+
+class _GameModeTile extends StatelessWidget {
+  final bool selected;
+  final VoidCallback onTap;
+  final Color color;
+  final IconData icon;
+  final String label;
+  final String desc;
+  const _GameModeTile({
+    required this.selected,
+    required this.onTap,
+    required this.color,
+    required this.icon,
+    required this.label,
+    required this.desc,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: selected
+              ? color.withValues(alpha: 0.12)
+              : AppColors.bgSurface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected ? color : AppColors.borderDefault,
+            width: selected ? 1.5 : 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: selected ? color : AppColors.textMuted),
+            const SizedBox(height: 4),
+            Text(label,
+                style: GoogleFonts.notoSansKr(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: selected ? color : AppColors.textPrimary,
+                )),
+            Text(desc,
+                style: GoogleFonts.notoSansKr(
+                    fontSize: 9, color: AppColors.textMuted)),
+          ],
+        ),
+      ),
     );
   }
 }

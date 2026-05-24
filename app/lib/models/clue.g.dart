@@ -125,6 +125,7 @@ const _$ClueStatusEnumMap = {
 const _$ClueGameModeEnumMap = {
   ClueGameMode.solo: 'solo',
   ClueGameMode.coop: 'coop',
+  ClueGameMode.versus: 'versus',
 };
 
 const _$CoopStateEnumMap = {
