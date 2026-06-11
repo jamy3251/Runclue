@@ -389,6 +389,8 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
             stepData['validation_type'] = 'auto';
             break;
           case 'SNAPSHOT':
+          case 'GROUP_PHOTO':
+          case 'PARTY_MISSION':
             stepData['validation_type'] = 'manual';
             break;
           case 'LIST':
@@ -960,6 +962,8 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         'QUEST' => '정답 입력 퀘스트',
         'OX_QUIZ' => 'OX 퀴즈',
         'LIST' => '체크리스트',
+        'GROUP_PHOTO' => '단체 인증샷',
+        'PARTY_MISSION' => '파티 미션',
         _ => type,
       };
 
@@ -1690,6 +1694,11 @@ class _AddStepSheetState extends State<_AddStepSheet> {
         Icons.check_circle_outline, AppColors.brandGreen),
     ('LIST', '체크리스트', '여러 항목 완료',
         Icons.checklist, AppColors.brandYellow),
+    // 단체전 (MT 시즌/학교 대항/파티)
+    ('GROUP_PHOTO', '단체 인증샷', '조원 모두와 함께 찍기',
+        Icons.groups, AppColors.brandGreen),
+    ('PARTY_MISSION', '파티 미션', '지정 미션 수행 인증 (응원·포즈 등)',
+        Icons.celebration, AppColors.brandRed),
   ];
 
   File? _referenceImage;
