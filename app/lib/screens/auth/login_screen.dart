@@ -92,9 +92,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // OAuth 외부 브라우저 복귀 시 세션 수립 감지 → 자동 라우팅
     ref.listen(authStateProvider, (prev, next) async {
       final event = next.valueOrNull?.event;
-      if (event == AuthChangeEvent.signedIn && mounted && !_isLoading) {
+      if (event == AuthChangeEvent.signedIn && context.mounted && !_isLoading) {
         final route = await postLoginRoute(ref);
-        if (mounted) context.go(route);
+        if (context.mounted) context.go(route);
       }
     });
 

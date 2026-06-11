@@ -62,9 +62,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
     // OAuth 딥링크 복귀 시 세션이 수립되면 자동 라우팅 (닉네임 미설정자는 설정으로)
     ref.listen(authStateProvider, (prev, next) async {
       final event = next.valueOrNull?.event;
-      if (event == AuthChangeEvent.signedIn && mounted) {
+      if (event == AuthChangeEvent.signedIn && context.mounted) {
         final route = await postLoginRoute(ref);
-        if (mounted) context.go(route);
+        if (context.mounted) context.go(route);
       }
     });
 
