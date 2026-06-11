@@ -37,6 +37,20 @@ class BattleService {
     return {'ok': false, 'reason': 'unexpected_response'};
   }
 
+  /// 오셀로 수 제출 (PvP: 매 수 / vs CPU: 최종 보드 1회).
+  /// state: {board: [36칸 0/1/2], turn: 1|2, finished: bool}
+  Future<Map<String, dynamic>> move({
+    required String matchId,
+    required Map<String, dynamic> state,
+  }) async {
+    final res = await _client.rpc('battle_move', params: {
+      'match_id_in': matchId,
+      'state_in': state,
+    });
+    if (res is Map) return Map<String, dynamic>.from(res);
+    return {'ok': false, 'reason': 'unexpected_response'};
+  }
+
   Future<Map<String, dynamic>> cancel(String matchId) async {
     final res = await _client.rpc('battle_cancel', params: {
       'match_id_in': matchId,
@@ -51,7 +65,7 @@ class BattleService {
         .from('battle_matches')
         .select('id, game_type, stake_coin, challenger_id, opponent_id, '
             'vs_cpu, status, challenger_choice, opponent_choice, '
-            'winner_id, payout_to_winner, fee_coin, '
+            'winner_id, payout_to_winner, fee_coin, game_state, '
             'created_at, matched_at, finished_at')
         .eq('id', matchId)
         .maybeSingle();

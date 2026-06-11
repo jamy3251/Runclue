@@ -29,6 +29,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
     ('rps', '가위바위보', '3초 안에 결판', Icons.front_hand),
     ('tap', '서로 때리기', '10초 탭 연사', Icons.sports_mma),
     ('coin_grab', '동전 줍기', '15초 동전 탭', Icons.monetization_on),
+    ('othello', '오셀로', '6×6 턴제 전략', Icons.grid_4x4),
   ];
 
   @override
@@ -181,54 +182,65 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
             style: GoogleFonts.notoSansKr(
                 fontSize: 13, fontWeight: FontWeight.w800,),),
         const SizedBox(height: 8),
-        Row(
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          crossAxisSpacing: 6,
+          mainAxisSpacing: 6,
+          childAspectRatio: 2.1,
           children: _games.map((g) {
             final selected = _gameType == g.$1;
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 3),
-                child: InkWell(
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                    setState(() => _gameType = g.$1);
-                  },
+            return InkWell(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                setState(() => _gameType = g.$1);
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: selected
+                      ? AppColors.brandRed.withValues(alpha: 0.14)
+                      : AppColors.bgSurface,
                   borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 12,),
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? AppColors.brandRed.withValues(alpha: 0.14)
-                          : AppColors.bgSurface,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
+                  border: Border.all(
+                    color: selected
+                        ? AppColors.brandRed
+                        : AppColors.brandRed.withValues(alpha: 0.15),
+                    width: selected ? 2 : 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(g.$4,
+                        size: 22,
                         color: selected
                             ? AppColors.brandRed
-                            : AppColors.brandRed.withValues(alpha: 0.15),
-                        width: selected ? 2 : 1,
+                            : AppColors.textMuted,),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(g.$2,
+                              style: GoogleFonts.notoSansKr(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w900,
+                                  color: selected
+                                      ? AppColors.brandRed
+                                      : AppColors.textPrimary,),),
+                          Text(g.$3,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.notoSansKr(
+                                  fontSize: 9,
+                                  color: AppColors.textMuted,),),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        Icon(g.$4,
-                            size: 24,
-                            color: selected
-                                ? AppColors.brandRed
-                                : AppColors.textMuted,),
-                        const SizedBox(height: 6),
-                        Text(g.$2,
-                            style: GoogleFonts.notoSansKr(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w900,
-                                color: selected
-                                    ? AppColors.brandRed
-                                    : AppColors.textPrimary,),),
-                        Text(g.$3,
-                            style: GoogleFonts.notoSansKr(
-                                fontSize: 9, color: AppColors.textMuted,),),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
               ),
             );

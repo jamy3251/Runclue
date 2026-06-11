@@ -8,6 +8,7 @@ import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/battle_provider.dart';
 import '../../providers/currency_provider.dart';
+import 'battle_othello_round.dart';
 import 'battle_score_rounds.dart';
 
 /// Battle 1판 — game_type별 분기 (rps / tap / coin_grab).
@@ -106,8 +107,45 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
   static String _gameLabel(String gameType) => switch (gameType) {
         'tap' => '서로 때리기',
         'coin_grab' => '동전 줍기',
+        'othello' => '오셀로',
         _ => '가위바위보',
       };
+
+  /// 오셀로 수/최종보드 제출 — finished면 결과 표시, ongoing이면 폴링이 갱신.
+  Future<void> _submitOthelloState(Map<String, dynamic> state) async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      final res = await ref
+          .read(battleServiceProvider)
+          .move(matchId: widget.matchId, state: state);
+      if (!mounted) return;
+      if (res['ok'] != true) {
+        // not_your_turn 등은 폴링이 곧 정합 — 치명 오류만 표시
+        if (res['reason'] != 'not_your_turn') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('제출 실패: ${res['reason']}')),
+          );
+        }
+        return;
+      }
+      if (res['status'] == 'finished' || res['status'] == 'draw') {
+        ref.invalidate(balancesProvider);
+        HapticFeedback.heavyImpact();
+        setState(() => _finalResult = {
+              'ok': true,
+              'status': res['status'],
+              'winner': res['winner'],
+              'payout': res['payout'] ?? 0,
+              'refund': res['refund'] ?? 0,
+              'my_choice': '${res['my_count'] ?? ''}',
+              'opp_choice': '${res['opp_count'] ?? ''}',
+            },);
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   Widget _buildPlay(Map<String, dynamic>? row, String gameType) {
     final stake = (row?['stake_coin'] as int?) ?? 0;
@@ -162,6 +200,30 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
               vsCpu ? 'CPU 플레이 중...' : '상대방 제출 대기 중...',
               style: GoogleFonts.notoSansKr(
                   fontSize: 14, fontWeight: FontWeight.w700,),
+            ),
+          ] else if (gameType == 'othello') ...[
+            Expanded(
+              child: SingleChildScrollView(
+                child: vsCpu
+                    ? BattleOthelloCpuRound(
+                        onDone: (board) => _submitOthelloState({
+                          'board': board,
+                          'turn': 0,
+                          'finished': true,
+                        }),
+                      )
+                    : BattleOthelloPvpBoard(
+                        state: (row?['game_state'] as Map?)
+                                ?.cast<String, dynamic>() ??
+                            const {'turn': 1, 'finished': false},
+                        myRole: row?['challenger_id'] ==
+                                ref.read(currentUserIdProvider)
+                            ? 1
+                            : 2,
+                        submitting: _busy,
+                        onMove: _submitOthelloState,
+                      ),
+              ),
             ),
           ] else if (gameType == 'tap') ...[
             Expanded(
