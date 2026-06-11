@@ -1,7 +1,17 @@
 # RunClue — 운영자(사용자) 액션 체크리스트
 
-마지막 갱신: 2026-05-24
-관련 플랜: `~/.claude/plans/wobbly-mixing-stroustrup.md`
+마지막 갱신: 2026-06-11
+관련 문서: `PROJECT_STATUS_2026-06-10.md`, `STRATEGY_NEEDS_2026-06.md`
+
+> **2026-06-11 업데이트**
+> - ✅ Edge Function 4종 **배포 완료** (toss-confirm / toss-webhook / admob-ssv / toss-diamond-confirm)
+>   → 아래 deploy 단계들은 끝남. **키 발급 + `supabase secrets set TOSS_SECRET_KEY=...`만 남음**
+> - ✅ DB 적용 완료: 미니게임 PvP 3종(031) + **사용자 다이아 충전(032)** + versus 레이스(033) + 프로필 backfill(030)
+> - 🆕 다이아 충전 활성화 추가 조건: ① `landing/pay*.html` 정적 호스팅 (runclue.app)
+>   ② `pay-success.html`의 `SUPABASE_FUNCTIONS_URL`을 `https://cwhhekrtqkwaaabztmrq.functions.supabase.co`로 교체
+>   ③ 빌드 시 `TOSS_CLIENT_KEY` 주입 (.env)
+> - 🆕 파일럿 시작 시: `app/scripts/comeback_campaign.sql` 실행 → 기존 유저 8명에게 웰컴백 100코인 + 인앱 알림 (멱등)
+> - ⚠️ 다이아(현금→가상재화→타사 기프티콘) 경로가 생겼으므로 **출시 전 P3 §12 법무 검토 권장도가 올라감**
 
 지금까지 코드·DB·인프라는 진행됐지만, **현실 세계의 가입·등록·운영 작업**은 사용자(jamy)가 직접 해야 합니다. 우선순위 순.
 
