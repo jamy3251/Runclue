@@ -23,6 +23,7 @@ import '../screens/host/host_dashboard_screen.dart';
 import '../screens/join/join_via_link_screen.dart';
 import '../screens/mission/mission_map_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/onboarding/nickname_setup_screen.dart';
 import '../screens/progress/my_progress_screen.dart';
 import '../screens/biz/biz_landing_screen.dart';
 import '../screens/landing/why_runclue_screen.dart';
@@ -96,6 +97,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/onboarding',
         name: 'onboarding',
         builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding/nickname',
+        name: 'nicknameSetup',
+        builder: (context, state) => const NicknameSetupScreen(),
       ),
 
       // Auth

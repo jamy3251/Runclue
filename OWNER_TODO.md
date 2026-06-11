@@ -61,6 +61,30 @@
 
 검증: 클루 생성 → 1000원 테스트 결제 → `wallet_topups.status='approved'` + `clues.reward_pool_net=850` 확인
 
+### 1.5 소셜 로그인 활성화 (2026-06-11 코드 완료 — 콘솔 설정만 남음)
+
+앱에 카카오/Google/Apple 로그인 버튼과 플로우는 전부 구현됨. 각 콘솔 등록 + Supabase 활성화가 사용자 액션:
+
+**카카오 (필수 — 한국 사용자 대부분)**
+1. [Kakao Developers](https://developers.kakao.com) → 애플리케이션 추가 → REST API 키 확보
+2. 앱 설정 → 플랫폼 → Web 플랫폼 등록: `https://cwhhekrtqkwaaabztmrq.supabase.co`
+3. 카카오 로그인 활성화 → Redirect URI 등록:
+   `https://cwhhekrtqkwaaabztmrq.supabase.co/auth/v1/callback`
+4. 동의 항목: 닉네임/프로필사진 (이메일은 검수 필요 — 선택)
+5. Supabase Dashboard → Authentication → Providers → **Kakao** ON → REST API 키 + Client Secret 입력
+
+**Google**
+1. [Google Cloud Console](https://console.cloud.google.com) → OAuth 동의 화면 구성 → OAuth 2.0 클라이언트 ID (웹) 생성
+2. 승인된 리디렉션 URI: `https://cwhhekrtqkwaaabztmrq.supabase.co/auth/v1/callback`
+3. Supabase → Providers → **Google** ON → Client ID + Secret 입력
+
+**Apple (iOS 출시 시 필수 — 소셜 로그인 제공 앱은 Apple 로그인 의무)**
+1. Apple Developer → Identifiers → Services ID 생성 + Sign in with Apple 활성화
+2. Return URL: `https://cwhhekrtqkwaaabztmrq.supabase.co/auth/v1/callback`
+3. Key 생성 (Sign in with Apple) → Supabase → Providers → **Apple** ON → 입력
+
+검증: 앱 → 카카오 버튼 → 외부 브라우저 인증 → 앱 복귀 → 닉네임 설정 화면(첫 가입) → 홈
+
 ### 2. 약관/개인정보처리방침 업데이트
 - [ ] 약관에 명시적으로 추가:
   > "코인·다이아는 게임 내 가상 재화이며, **현금 환급이 불가**합니다. 다이아는 운영자가 정한 카탈로그(기프티콘·가게 메뉴) 내에서만 사용 가능합니다."

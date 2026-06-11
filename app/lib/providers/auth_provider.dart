@@ -54,3 +54,15 @@ final currentProfileProvider =
     throw Exception('Failed to fetch profile: $e');
   }
 });
+
+/// 로그인 직후 라우팅 결정 — 소셜/익명 가입자(guest_*)는 닉네임 설정으로,
+/// 이미 닉네임이 있으면 홈으로. 프로필 조회 실패 시 홈 (graceful).
+Future<String> postLoginRoute(WidgetRef ref) async {
+  try {
+    ref.invalidate(currentProfileProvider);
+    final profile = await ref.read(currentProfileProvider.future);
+    final nickname = profile?['nickname'] as String? ?? '';
+    if (nickname.startsWith('guest_')) return '/onboarding/nickname';
+  } catch (_) {/* 프로필 조회 실패 → 홈 */}
+  return '/home';
+}

@@ -1,5 +1,6 @@
 import '../config/supabase_safe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart' show LaunchMode;
 
 class AuthService {
   final SupabaseClient _client = safeClient;
@@ -44,10 +45,16 @@ class AuthService {
     }
   }
 
-  // Sign in with OAuth (Kakao, Google, etc.)
+  // Sign in with OAuth (Kakao, Google, Apple)
+  // 외부 브라우저에서 인증 → runclue://login-callback 딥링크로 복귀,
+  // supabase_flutter가 세션을 자동 수립한다 (onAuthStateChange로 감지).
   Future<bool> signInWithOAuth(OAuthProvider provider) async {
     try {
-      return await _client.auth.signInWithOAuth(provider);
+      return await _client.auth.signInWithOAuth(
+        provider,
+        redirectTo: 'runclue://login-callback',
+        authScreenLaunchMode: LaunchMode.externalApplication,
+      );
     } catch (e) {
       throw _toFriendlyError(e, '소셜 로그인');
     }

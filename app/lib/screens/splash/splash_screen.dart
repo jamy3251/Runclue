@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../config/theme.dart';
 import '../../config/supabase_safe.dart';
+import '../../providers/auth_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -31,7 +32,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     String target = '/auth';
     try {
       final session = safeClient.auth.currentSession;
-      target = session != null ? '/home' : '/auth';
+      // 세션 있으면 닉네임 미설정자(guest_*)는 닉네임 설정으로
+      target = session != null ? await postLoginRoute(ref) : '/auth';
     } catch (e) {
       debugPrint('Splash navigation error: $e');
     }

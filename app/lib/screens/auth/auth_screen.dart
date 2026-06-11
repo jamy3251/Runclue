@@ -1,4 +1,6 @@
+import 'dart:io' show Platform;
 import 'dart:math';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/platform_stats_service.dart';
 
 /// 로그인 화면 — PDF spec Page 4 (Login.tsx)
 ///
@@ -56,6 +59,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
 
   @override
   Widget build(BuildContext context) {
+    // OAuth 딥링크 복귀 시 세션이 수립되면 자동 라우팅 (닉네임 미설정자는 설정으로)
+    ref.listen(authStateProvider, (prev, next) async {
+      final event = next.valueOrNull?.event;
+      if (event == AuthChangeEvent.signedIn && mounted) {
+        final route = await postLoginRoute(ref);
+        if (mounted) context.go(route);
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.bgHero,
       body: Stack(
@@ -111,33 +123,43 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                           ),
                         ),
                         const Spacer(),
-                        // 실시간 활동자 수
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.06),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 6, height: 6,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.brandGreen,
-                                  shape: BoxShape.circle,
+                        // 실시간 활동자 수 (실데이터 — platformStatsProvider)
+                        Builder(builder: (context) {
+                          final stats =
+                              ref.watch(platformStatsProvider).valueOrNull;
+                          final n = stats?.totalParticipants ?? 0;
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.06),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                  color:
+                                      Colors.white.withValues(alpha: 0.08)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 6, height: 6,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.brandGreen,
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text('1,247명 활동 중',
-                                style: GoogleFonts.notoSansKr(
-                                  fontSize: 11, color: AppColors.textSecondary,
+                                const SizedBox(width: 6),
+                                Text(
+                                  n > 0 ? '탐험가 $n명' : '얼리 액세스',
+                                  style: GoogleFonts.notoSansKr(
+                                    fontSize: 11,
+                                    color: AppColors.textSecondary,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                              ],
+                            ),
+                          );
+                        }),
                       ],
                     ),
 
@@ -207,24 +229,46 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                           ),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                style: GoogleFonts.notoSansKr(fontSize: 12),
-                                children: [
-                                  TextSpan(
-                                    text: '1,247명',
-                                    style: TextStyle(
-                                      color: AppColors.brandGreen,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: '이 지금 클루를 탐험하고 있어요',
-                                    style: TextStyle(color: AppColors.textSecondary),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            child: Builder(builder: (context) {
+                              final stats = ref
+                                  .watch(platformStatsProvider)
+                                  .valueOrNull;
+                              final n = stats?.totalParticipants ?? 0;
+                              final clues = stats?.totalClues ?? 0;
+                              return RichText(
+                                text: TextSpan(
+                                  style:
+                                      GoogleFonts.notoSansKr(fontSize: 12),
+                                  children: n > 0
+                                      ? [
+                                          TextSpan(
+                                            text: '탐험가 $n명',
+                                            style: const TextStyle(
+                                              color: AppColors.brandGreen,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: clues > 0
+                                                ? '과 클루 $clues개가 기다리고 있어요'
+                                                : '이 함께하고 있어요',
+                                            style: const TextStyle(
+                                                color: AppColors
+                                                    .textSecondary),
+                                          ),
+                                        ]
+                                      : [
+                                          const TextSpan(
+                                            text:
+                                                '지금 합류하면 첫 시즌의 개척자가 됩니다',
+                                            style: TextStyle(
+                                                color: AppColors
+                                                    .textSecondary),
+                                          ),
+                                        ],
+                                ),
+                              );
+                            }),
                           ),
                         ],
                       ),
@@ -251,30 +295,20 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
 
                     const SizedBox(height: 16),
 
-                    // F) 소셜 로그인 3종
+                    // F) 소셜 로그인 — 카카오 / Google (+ iOS는 Apple, 심사 요건)
                     Row(
                       children: [
-                        // 카카오
                         Expanded(
                           child: _SocialButton(
                             color: const Color(0xFFFAE100),
                             icon: Icons.chat_bubble_rounded,
+                            iconColor: Colors.black,
                             label: '카카오',
+                            labelColor: Colors.black,
                             onPressed: () => _handleOAuthLogin(context, ref, 'kakao'),
                           ),
                         ),
                         const SizedBox(width: 10),
-                        // 네이버
-                        Expanded(
-                          child: _SocialButton(
-                            color: const Color(0xFF03C75A),
-                            icon: Icons.north_east_rounded,
-                            label: '네이버',
-                            onPressed: () => _handleOAuthLogin(context, ref, 'naver'),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        // Google
                         Expanded(
                           child: _SocialButton(
                             color: Colors.white,
@@ -285,6 +319,18 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                             onPressed: () => _handleOAuthLogin(context, ref, 'google'),
                           ),
                         ),
+                        if (!kIsWeb && Platform.isIOS) ...[
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _SocialButton(
+                              color: Colors.black,
+                              icon: Icons.apple,
+                              label: 'Apple',
+                              onPressed: () =>
+                                  _handleOAuthLogin(context, ref, 'apple'),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
 
@@ -330,14 +376,23 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
       final oauthProvider = switch (provider) {
         'kakao' => OAuthProvider.kakao,
         'google' => OAuthProvider.google,
+        'apple' => OAuthProvider.apple,
         _ => OAuthProvider.kakao,
       };
+      // 외부 브라우저에서 인증 진행 — 복귀 시 authStateProvider listen이 라우팅
       await authService.signInWithOAuth(oauthProvider);
-      if (context.mounted) context.go('/home');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('브라우저에서 로그인을 완료하면 자동으로 이동합니다'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('로그인 실패: $e')),
+          SnackBar(content: Text('$e'.replaceAll('Exception: ', ''))),
         );
       }
     }

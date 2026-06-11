@@ -1,7 +1,10 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show OAuthProvider, AuthChangeEvent;
 
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
@@ -47,7 +50,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
         // 자동 confirm 트리거 또는 confirm email 비활성화로 session 있으면 바로 로그인
         if (response.session != null) {
-          if (mounted) context.go('/home');
+          if (mounted) context.go(await postLoginRoute(ref));
         } else {
           // session 없으면 즉시 로그인 시도 (트리거로 confirm된 경우)
           try {
@@ -55,7 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               email: _emailController.text.trim(),
               password: _passwordController.text,
             );
-            if (mounted) context.go('/home');
+            if (mounted) context.go(await postLoginRoute(ref));
           } catch (_) {
             // 로그인까지 실패하면 진짜 인증 메일 필요한 상태
             if (mounted) {
@@ -71,7 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
-        if (mounted) context.go('/home');
+        if (mounted) context.go(await postLoginRoute(ref));
       }
     } catch (e) {
       if (mounted) {
@@ -86,6 +89,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // OAuth 외부 브라우저 복귀 시 세션 수립 감지 → 자동 라우팅
+    ref.listen(authStateProvider, (prev, next) async {
+      final event = next.valueOrNull?.event;
+      if (event == AuthChangeEvent.signedIn && mounted && !_isLoading) {
+        final route = await postLoginRoute(ref);
+        if (mounted) context.go(route);
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.bgHero,
       body: Stack(
@@ -285,7 +297,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   const SizedBox(height: 16),
 
-                  // 소셜 로그인 3열
+                  // 소셜 로그인 — 카카오 / Google (+ iOS는 Apple)
                   Row(
                     children: [
                       Expanded(
@@ -297,17 +309,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: _SocialButton(
-                          provider: _SocialProvider.naver,
-                          onPressed: () => _handleOAuth('naver'),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _SocialButton(
                           provider: _SocialProvider.google,
                           onPressed: () => _handleOAuth('google'),
                         ),
                       ),
+                      if (!kIsWeb && Platform.isIOS) ...[
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _SocialButton(
+                            provider: _SocialProvider.apple,
+                            onPressed: () => _handleOAuth('apple'),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ],
@@ -350,13 +364,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleOAuth(String providerKey) async {
-    // OAuth는 auth_screen에서 처리하던 흐름과 동일하게 단순화
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$providerKey 로그인은 곧 지원됩니다'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    try {
+      final oauthProvider = switch (providerKey) {
+        'kakao' => OAuthProvider.kakao,
+        'google' => OAuthProvider.google,
+        'apple' => OAuthProvider.apple,
+        _ => OAuthProvider.kakao,
+      };
+      // 외부 브라우저 인증 — 복귀 시 authStateProvider listen이 라우팅 (build 참조)
+      await ref.read(authServiceProvider).signInWithOAuth(oauthProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('브라우저에서 로그인을 완료하면 자동으로 이동합니다'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e'.replaceAll('Exception: ', ''))),
+        );
+      }
+    }
   }
 
   void _showForgotPasswordDialog() {
@@ -631,7 +662,7 @@ class _PrimaryYellowCTA extends StatelessWidget {
 // 소셜 로그인 버튼
 // ─────────────────────────────────────────────────────────────
 
-enum _SocialProvider { kakao, naver, google }
+enum _SocialProvider { kakao, apple, google }
 
 class _SocialButton extends StatelessWidget {
   final _SocialProvider provider;
@@ -648,11 +679,11 @@ class _SocialButton extends StatelessWidget {
           Icons.chat_bubble,
           '카카오',
         ),
-      _SocialProvider.naver => (
-          const Color(0xFF03C75A),
+      _SocialProvider.apple => (
+          Colors.black,
           Colors.white,
-          Icons.eco,
-          '네이버',
+          Icons.apple,
+          'Apple',
         ),
       _SocialProvider.google => (
           Colors.white,
