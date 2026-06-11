@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../providers/auth_provider.dart';
@@ -22,6 +23,7 @@ import '../../../widgets/common/loading_widget.dart';
 import '../../../widgets/common/error_widget.dart' as app;
 import '../../../widgets/clue/versus_race_bar.dart';
 import '../../../widgets/step_type_icon.dart';
+import 'ar_treasure_screen.dart';
 
 class CluePlayScreen extends ConsumerStatefulWidget {
   final String clueId;
@@ -547,6 +549,9 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
   }
 
   Widget _buildCheckpointContent() {
+    final step = _currentStepData;
+    final targetLat = (step['target_lat'] as num?)?.toDouble();
+    final targetLng = (step['target_lng'] as num?)?.toDouble();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -560,8 +565,52 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
               50,
           onManualCheck: _checkGpsProximity,
         ),
+        if (targetLat != null && targetLng != null && !_checkpointArrived) ...[
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 52,
+            child: OutlinedButton.icon(
+              onPressed: () => _openArTreasure(targetLat, targetLng),
+              icon: const Icon(Icons.view_in_ar, size: 20),
+              label: Text('AR 카메라로 보물찾기',
+                  style: GoogleFonts.notoSansKr(
+                      fontSize: 14, fontWeight: FontWeight.w800)),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.brandYellow,
+                side: const BorderSide(color: AppColors.brandYellow),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+          ),
+        ],
       ],
     );
+  }
+
+  /// AR 보물찾기 — 카메라+나침반으로 목표를 찾고, 보물 탭 = 도착 처리.
+  Future<void> _openArTreasure(double lat, double lng) async {
+    HapticFeedback.mediumImpact();
+    final radius = (_currentStepData['location_radius_meters'] as num?)
+            ?.toDouble() ??
+        50.0;
+    final found = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => ArTreasureScreen(
+          targetLat: lat,
+          targetLng: lng,
+          radiusM: radius,
+          title: (_currentStepData['title'] as String?) ?? '보물을 찾아라!',
+        ),
+      ),
+    );
+    if (found == true && mounted) {
+      setState(() => _checkpointArrived = true);
+      HapticFeedback.heavyImpact();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('🎉 보물 발견! 도착이 인증되었습니다')),
+      );
+    }
   }
 
   Future<void> _checkGpsProximity() async {
