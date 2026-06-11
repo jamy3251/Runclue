@@ -2,8 +2,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_safe.dart';
 
-/// Battle 보상 모드 (#22) — 코인 베팅 1v1 미니게임.
+/// Battle 보상 모드 (#22/#24) — 코인 베팅 1v1 미니게임.
 /// 비동기 큐 + 5분 후 CPU fallback (cron).
+/// game_type: 'rps'(가위바위보) | 'tap'(서로 때리기) | 'coin_grab'(동전 줍기)
 class BattleService {
   final SupabaseClient _client = safeClient;
 
@@ -23,9 +24,10 @@ class BattleService {
   }
 
   /// 결과 확정. 양측 호출 시 두 번째 호출에서 winner 확정.
+  /// choice — rps: 'rock'|'paper'|'scissors', tap/coin_grab: 점수 문자열 (예: '87')
   Future<Map<String, dynamic>> finish({
     required String matchId,
-    required String choice, // 'rock' | 'paper' | 'scissors'
+    required String choice,
   }) async {
     final res = await _client.rpc('battle_finish', params: {
       'match_id_in': matchId,

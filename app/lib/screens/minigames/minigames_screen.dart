@@ -6,8 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../config/theme.dart';
 
 /// 미니게임 허브 — 4종.
-/// Phase A: 솔로/CPU 모드 (게임 메카닉 검증).
-/// Phase B: PvP 매칭 (#22 battle 모드와 결합).
+/// 솔로/CPU 연습 모드 + PvP 베팅 대전 진입 (battle 모드, #22/#24).
+/// 오셀로는 턴제 특성상 PvP 미지원 (솔로 전용).
 class MinigamesScreen extends StatelessWidget {
   const MinigamesScreen({super.key});
 
@@ -63,24 +63,70 @@ class MinigamesScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          InkWell(
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              context.push('/battle');
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  AppColors.brandRed.withValues(alpha: 0.14),
+                  AppColors.brandYellow.withValues(alpha: 0.08),
+                ]),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: AppColors.brandRed.withValues(alpha: 0.35)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.sports_kabaddi,
+                      color: AppColors.brandRed, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'PvP 베팅 대전',
+                          style: GoogleFonts.notoSansKr(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.brandRed),
+                        ),
+                        Text(
+                          '코인을 걸고 실시간 대결 — 이기면 베팅 × 1.9',
+                          style: GoogleFonts.notoSansKr(
+                              fontSize: 11, color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right,
+                      color: AppColors.brandRed, size: 20),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: AppColors.brandPurple.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                  color: AppColors.brandPurple.withValues(alpha: 0.25)),
             ),
             child: Row(
               children: [
                 const Icon(Icons.info_outline,
-                    color: AppColors.brandPurple, size: 18),
+                    color: AppColors.brandPurple, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '솔로 모드 — PvP 매칭은 곧 추가 (battle 모드와 결합)',
+                    '아래는 솔로 연습 모드 — 무료로 플레이하고 코인 적립',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 12, color: AppColors.brandPurple),
+                        fontSize: 11, color: AppColors.brandPurple),
                   ),
                 ),
               ],

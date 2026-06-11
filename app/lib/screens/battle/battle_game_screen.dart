@@ -5,12 +5,14 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../config/theme.dart';
+import '../../providers/auth_provider.dart';
 import '../../providers/battle_provider.dart';
 import '../../providers/currency_provider.dart';
+import 'battle_score_rounds.dart';
 
-/// 가위바위보 1판 (Battle game_type='rps').
-/// 사용자 선택 → battle_finish RPC.
-/// vs CPU: 즉시 결과. vs 사용자: 상대 선택 대기.
+/// Battle 1판 — game_type별 분기 (rps / tap / coin_grab).
+/// rps: 선택 제출. tap/coin_grab: 라운드 플레이 후 점수 제출.
+/// vs CPU: 즉시 결과. vs 사용자: 상대 제출 대기.
 class BattleGameScreen extends ConsumerStatefulWidget {
   const BattleGameScreen({super.key, required this.matchId});
   final String matchId;
@@ -64,36 +66,50 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
     final row = matchAsync.valueOrNull;
 
     // 매치 polling이 status='finished' 또는 'draw'를 감지하면 결과 표시
+    // (상대가 마지막 제출자라 우리 finish 응답으로 결과를 못 받은 경우)
     if (_finalResult == null && row != null &&
         (row['status'] == 'finished' || row['status'] == 'draw')) {
+      final uid = ref.read(currentUserIdProvider);
+      final amChallenger = row['challenger_id'] == uid;
+      final winnerId = row['winner_id'];
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        // 우리 finish 호출 안 했어도 표시 가능 (상대가 끝낸 경우)
         setState(() => _finalResult = {
           'ok': true,
           'status': row['status'],
-          'opp_choice': row['challenger_id'] == row['winner_id']
+          'my_choice': amChallenger
               ? row['challenger_choice']
               : row['opponent_choice'],
-          'my_choice': null,
-          'winner': row['winner_id'] == null ? 'cpu'
-              : 'opponent',
-          'payout': 0,
+          'opp_choice': amChallenger
+              ? row['opponent_choice']
+              : row['challenger_choice'],
+          'winner': winnerId == null
+              ? 'cpu'
+              : (winnerId == uid ? 'me' : 'opponent'),
+          'payout': winnerId == uid ? (row['payout_to_winner'] ?? 0) : 0,
+          'refund': row['status'] == 'draw' ? row['stake_coin'] : 0,
         });
       });
     }
 
+    final gameType = (row?['game_type'] as String?) ?? 'rps';
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Battle — RPS'),
+        title: Text('Battle — ${_gameLabel(gameType)}'),
       ),
       body: _finalResult != null
-          ? _buildResult(_finalResult!)
-          : _buildPlay(row),
+          ? _buildResult(_finalResult!, gameType)
+          : _buildPlay(row, gameType),
     );
   }
 
-  Widget _buildPlay(Map<String, dynamic>? row) {
+  static String _gameLabel(String gameType) => switch (gameType) {
+        'tap' => '서로 때리기',
+        'coin_grab' => '동전 줍기',
+        _ => '가위바위보',
+      };
+
+  Widget _buildPlay(Map<String, dynamic>? row, String gameType) {
     final stake = (row?['stake_coin'] as int?) ?? 0;
     final vsCpu = row?['vs_cpu'] == true;
     return Padding(
@@ -143,9 +159,21 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
             const CircularProgressIndicator(color: AppColors.brandRed),
             const SizedBox(height: 16),
             Text(
-              vsCpu ? 'CPU 선택 중...' : '상대방 선택 대기 중...',
+              vsCpu ? 'CPU 플레이 중...' : '상대방 제출 대기 중...',
               style: GoogleFonts.notoSansKr(
                   fontSize: 14, fontWeight: FontWeight.w700),
+            ),
+          ] else if (gameType == 'tap') ...[
+            Expanded(
+              child: BattleTapRound(
+                onDone: (score) => _onChoose(score.toString()),
+              ),
+            ),
+          ] else if (gameType == 'coin_grab') ...[
+            Expanded(
+              child: BattleCoinRound(
+                onDone: (score) => _onChoose(score.toString()),
+              ),
             ),
           ] else ...[
             Text(
@@ -172,7 +200,7 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
     );
   }
 
-  Widget _buildResult(Map<String, dynamic> res) {
+  Widget _buildResult(Map<String, dynamic> res, String gameType) {
     final status = res['status'] as String? ?? '';
     final winner = res['winner'] as String?;
     final payout = (res['payout'] as int?) ?? 0;
@@ -220,13 +248,17 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _ChoiceLabel(label: '나', choice: myChoice),
+                  gameType == 'rps'
+                      ? _ChoiceLabel(label: '나', choice: myChoice)
+                      : _ScoreLabel(label: '나', score: myChoice),
                   const SizedBox(width: 20),
                   const Text('vs',
                       style: TextStyle(
                           fontSize: 16, color: AppColors.textMuted)),
                   const SizedBox(width: 20),
-                  _ChoiceLabel(label: '상대', choice: oppChoice),
+                  gameType == 'rps'
+                      ? _ChoiceLabel(label: '상대', choice: oppChoice)
+                      : _ScoreLabel(label: '상대', score: oppChoice),
                 ],
               ),
               const SizedBox(height: 32),
@@ -298,6 +330,33 @@ class _ChoiceButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ScoreLabel extends StatelessWidget {
+  const _ScoreLabel({required this.label, required this.score});
+  final String label;
+  final String score;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(label,
+            style: GoogleFonts.notoSansKr(
+                fontSize: 11, color: AppColors.textMuted)),
+        const SizedBox(height: 4),
+        Text(score,
+            style: GoogleFonts.notoSansKr(
+                fontSize: 32,
+                fontWeight: FontWeight.w900,
+                color: AppColors.brandRed)),
+        const SizedBox(height: 2),
+        Text('점',
+            style: GoogleFonts.notoSansKr(
+                fontSize: 12, fontWeight: FontWeight.w800)),
+      ],
     );
   }
 }

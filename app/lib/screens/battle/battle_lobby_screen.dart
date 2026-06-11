@@ -20,9 +20,16 @@ class BattleLobbyScreen extends ConsumerStatefulWidget {
 
 class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
   final _stake = TextEditingController(text: '100');
+  String _gameType = 'rps';
   String? _matchId;
   bool _busy = false;
   bool _navigated = false;
+
+  static const _games = <(String, String, String, IconData)>[
+    ('rps', '가위바위보', '3초 안에 결판', Icons.front_hand),
+    ('tap', '서로 때리기', '10초 탭 연사', Icons.sports_mma),
+    ('coin_grab', '동전 줍기', '15초 동전 탭', Icons.monetization_on),
+  ];
 
   @override
   void dispose() {
@@ -42,7 +49,9 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
     HapticFeedback.mediumImpact();
     setState(() => _busy = true);
     try {
-      final res = await ref.read(battleServiceProvider).enqueue(stakeCoin: stake);
+      final res = await ref
+          .read(battleServiceProvider)
+          .enqueue(stakeCoin: stake, gameType: _gameType);
       if (!mounted) return;
       if (res['ok'] == true) {
         ref.invalidate(balancesProvider);
@@ -130,8 +139,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
   }
 
   Widget _buildEnqueue() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
       children: [
         Container(
           padding: const EdgeInsets.all(16),
@@ -150,7 +158,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
                   const Icon(Icons.sports_kabaddi,
                       color: AppColors.brandRed, size: 22),
                   const SizedBox(width: 6),
-                  Text('가위바위보 베팅',
+                  Text('미니게임 베팅 대전',
                       style: GoogleFonts.notoSansKr(
                           fontSize: 16,
                           fontWeight: FontWeight.w900,
@@ -159,7 +167,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                '같은 베팅액으로 큐에 진입한 다른 사용자와 매칭됩니다.\n'
+                '같은 게임·베팅액으로 큐에 진입한 다른 사용자와 매칭됩니다.\n'
                 '5분 안 매칭되면 CPU와 자동 대전.\n'
                 '이기면 베팅 × 1.9 코인 획득 (수수료 5%).',
                 style: GoogleFonts.notoSansKr(
@@ -167,6 +175,64 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
               ),
             ],
           ),
+        ),
+        const SizedBox(height: 20),
+        Text('게임 선택',
+            style: GoogleFonts.notoSansKr(
+                fontSize: 13, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 8),
+        Row(
+          children: _games.map((g) {
+            final selected = _gameType == g.$1;
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3),
+                child: InkWell(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _gameType = g.$1);
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? AppColors.brandRed.withValues(alpha: 0.14)
+                          : AppColors.bgSurface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: selected
+                            ? AppColors.brandRed
+                            : AppColors.brandRed.withValues(alpha: 0.15),
+                        width: selected ? 2 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(g.$4,
+                            size: 24,
+                            color: selected
+                                ? AppColors.brandRed
+                                : AppColors.textMuted),
+                        const SizedBox(height: 6),
+                        Text(g.$2,
+                            style: GoogleFonts.notoSansKr(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w900,
+                                color: selected
+                                    ? AppColors.brandRed
+                                    : AppColors.textPrimary)),
+                        Text(g.$3,
+                            style: GoogleFonts.notoSansKr(
+                                fontSize: 9, color: AppColors.textMuted)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
         ),
         const SizedBox(height: 20),
         Text('베팅액 (10 ~ 2000 코인)',
