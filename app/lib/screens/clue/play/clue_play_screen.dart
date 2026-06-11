@@ -20,6 +20,7 @@ import '../../../services/similarity_service.dart';
 import '../../../services/storage_service.dart';
 import '../../../widgets/common/loading_widget.dart';
 import '../../../widgets/common/error_widget.dart' as app;
+import '../../../widgets/clue/versus_race_bar.dart';
 import '../../../widgets/step_type_icon.dart';
 
 class CluePlayScreen extends ConsumerStatefulWidget {
@@ -63,6 +64,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
   // Data
   List<Map<String, dynamic>> _steps = [];
   Map<String, dynamic>? _participation;
+  String _gameMode = 'solo';
   bool _isLoading = true;
   String? _error;
 
@@ -189,6 +191,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
       setState(() {
         _steps = steps;
         _participation = participation;
+        _gameMode = gameMode;
         _currentStep = participation?['current_step_index'] ?? 0;
         _isLoading = false;
         _startedAt = DateTime.now();
@@ -299,6 +302,9 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
               ),
             ),
           ),
+          // versus: 참가자 실시간 진행률 레이스 (#23)
+          if (_gameMode == 'versus')
+            VersusRaceBar(clueId: widget.clueId, totalSteps: totalSteps),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
