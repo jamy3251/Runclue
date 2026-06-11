@@ -1,6 +1,5 @@
 import '../config/supabase_safe.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart' show LaunchMode;
 
 class AuthService {
   final SupabaseClient _client = safeClient;
@@ -84,7 +83,7 @@ class AuthService {
         msg.contains('523') ||
         msg.contains('Web server is down')) {
       return Exception(
-          '$action 실패: 서버가 일시 정지 상태입니다.\n잠시 후 다시 시도해주세요.');
+          '$action 실패: 서버가 일시 정지 상태입니다.\n잠시 후 다시 시도해주세요.',);
     }
 
     // 네트워크 / DNS
@@ -115,6 +114,6 @@ class AuthService {
     // 기타 — 짧게 자르기
     final clean = msg.replaceAll('Exception: ', '').trim();
     return Exception(
-        '$action 실패: ${clean.length > 80 ? '${clean.substring(0, 80)}...' : clean}');
+        '$action 실패: ${clean.length > 80 ? '${clean.substring(0, 80)}...' : clean}',);
   }
 }

@@ -109,7 +109,7 @@ class _MissionMapScreenState extends ConsumerState<MissionMapScreen> {
           position: LatLng(lat, lng),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
           infoWindow: InfoWindow(title: cp['title'] ?? 'Step ${i + 1}'),
-        ));
+        ),);
       }
     }
 
@@ -123,7 +123,7 @@ class _MissionMapScreenState extends ConsumerState<MissionMapScreen> {
         infoWindow: InfoWindow(
           title: loc.nickname ?? loc.userId.substring(0, 8),
         ),
-      ));
+      ),);
     }
 
     return Scaffold(

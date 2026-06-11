@@ -83,7 +83,9 @@ class _RpsGameState extends ConsumerState<RpsGame> {
     if (u == c) return 'draw';
     if ((u == _Choice.rock && c == _Choice.scissors) ||
         (u == _Choice.paper && c == _Choice.rock) ||
-        (u == _Choice.scissors && c == _Choice.paper)) return 'win';
+        (u == _Choice.scissors && c == _Choice.paper)) {
+      return 'win';
+    }
     return 'lose';
   }
 
@@ -114,7 +116,7 @@ class _RpsGameState extends ConsumerState<RpsGame> {
         title: Text('가위바위보',
             style: GoogleFonts.notoSansKr(
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary)),
+                color: AppColors.textPrimary,),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -136,7 +138,7 @@ class _RpsGameState extends ConsumerState<RpsGame> {
               children: [
                 Text('CPU',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 12, color: AppColors.textMuted)),
+                        fontSize: 12, color: AppColors.textMuted,),),
                 const SizedBox(height: 8),
                 Container(
                   width: 120,
@@ -169,7 +171,7 @@ class _RpsGameState extends ConsumerState<RpsGame> {
                   style: TextStyle(
                       color: _resultColor,
                       fontSize: 18,
-                      fontWeight: FontWeight.w900)),
+                      fontWeight: FontWeight.w900,),),
             ),
             const SizedBox(height: 24),
             // User choice
@@ -183,7 +185,7 @@ class _RpsGameState extends ConsumerState<RpsGame> {
                     shape: BoxShape.circle,
                     border: Border.all(
                         color: AppColors.brandBlue.withValues(alpha: 0.4),
-                        width: 2),
+                        width: 2,),
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -194,7 +196,7 @@ class _RpsGameState extends ConsumerState<RpsGame> {
                 const SizedBox(height: 6),
                 Text('나',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 12, color: AppColors.textMuted)),
+                        fontSize: 12, color: AppColors.textMuted,),),
               ],
             ),
             const Spacer(),
@@ -225,13 +227,13 @@ class _RpsGameState extends ConsumerState<RpsGame> {
           children: [
             Text(label,
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 11, color: AppColors.textMuted)),
+                    fontSize: 11, color: AppColors.textMuted,),),
             const SizedBox(height: 2),
             Text('$v',
                 style: GoogleFonts.notoSansKr(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
-                    color: color)),
+                    color: color,),),
           ],
         ),
       ),

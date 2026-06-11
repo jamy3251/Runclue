@@ -56,12 +56,12 @@ class SeasonBannerCard extends ConsumerWidget {
               ),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                  color: AppColors.brandYellow.withValues(alpha: 0.35)),
+                  color: AppColors.brandYellow.withValues(alpha: 0.35),),
             ),
             child: Row(
               children: [
                 const Icon(Icons.emoji_events,
-                    size: 28, color: AppColors.brandYellow),
+                    size: 28, color: AppColors.brandYellow,),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -71,20 +71,20 @@ class SeasonBannerCard extends ConsumerWidget {
                           style: GoogleFonts.notoSansKr(
                               fontSize: 13,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary)),
+                              color: AppColors.textPrimary,),),
                       const SizedBox(height: 2),
                       Text(
                         myRank != null
                             ? '내 순위 $myRank등 · 점수 $myScore · $ends 종료'
                             : '아직 점수 0 · $ends 종료',
                         style: GoogleFonts.notoSansKr(
-                            fontSize: 11, color: AppColors.textMuted),
+                            fontSize: 11, color: AppColors.textMuted,),
                       ),
                     ],
                   ),
                 ),
                 const Icon(Icons.arrow_forward_ios,
-                    size: 14, color: AppColors.textMuted),
+                    size: 14, color: AppColors.textMuted,),
               ],
             ),
           ),

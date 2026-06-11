@@ -60,7 +60,7 @@ class WalletHistoryScreen extends ConsumerWidget {
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Text('아직 만든 클루가 없어요.',
-                    style: TextStyle(color: AppColors.textMuted)),
+                    style: TextStyle(color: AppColors.textMuted),),
               ),
             const SizedBox(height: 16),
 
@@ -71,7 +71,7 @@ class WalletHistoryScreen extends ConsumerWidget {
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Text('아직 가게 매출이 없어요.',
-                    style: TextStyle(color: AppColors.textMuted)),
+                    style: TextStyle(color: AppColors.textMuted),),
               ),
             const SizedBox(height: 16),
 
@@ -82,7 +82,7 @@ class WalletHistoryScreen extends ConsumerWidget {
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Text('아직 충전 기록이 없어요.',
-                    style: TextStyle(color: AppColors.textMuted)),
+                    style: TextStyle(color: AppColors.textMuted),),
               ),
           ],
         ),
@@ -116,14 +116,14 @@ class _StatsRow extends StatelessWidget {
                     label: '총 충전',
                     value: '₩${_formatKrw(gross)}',
                     color: AppColors.brandBlue,
-                    icon: Icons.account_balance_wallet)),
+                    icon: Icons.account_balance_wallet,),),
             const SizedBox(width: 8),
             Expanded(
                 child: _StatCard(
                     label: '수수료 15%',
                     value: '₩${_formatKrw(fee)}',
                     color: AppColors.brandRed,
-                    icon: Icons.percent)),
+                    icon: Icons.percent,),),
           ],
         ),
         const SizedBox(height: 8),
@@ -134,14 +134,14 @@ class _StatsRow extends StatelessWidget {
                     label: '남은 클루 풀',
                     value: '${_formatKrw(poolRemain)}p',
                     color: AppColors.brandYellow,
-                    icon: Icons.savings)),
+                    icon: Icons.savings,),),
             const SizedBox(width: 8),
             Expanded(
                 child: _StatCard(
                     label: '내 다이아',
-                    value: '${_formatKrw(diamond)}',
+                    value: _formatKrw(diamond),
                     color: AppColors.brandBlue,
-                    icon: Icons.diamond)),
+                    icon: Icons.diamond,),),
           ],
         ),
         const SizedBox(height: 8),
@@ -149,7 +149,7 @@ class _StatsRow extends StatelessWidget {
             label: '가게 매출 누계 (다이아)',
             value: '+${_formatKrw(revenueSum)}',
             color: AppColors.brandGreen,
-            icon: Icons.storefront),
+            icon: Icons.storefront,),
       ],
     );
   }
@@ -197,7 +197,7 @@ class _StatCard extends StatelessWidget {
                   style: GoogleFonts.notoSansKr(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textMuted)),
+                      color: AppColors.textMuted,),),
             ],
           ),
           const SizedBox(height: 6),
@@ -207,7 +207,7 @@ class _StatCard extends StatelessWidget {
               style: GoogleFonts.notoSansKr(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
-                  color: color)),
+                  color: color,),),
         ],
       ),
     );
@@ -229,11 +229,11 @@ class _SectionHeader extends StatelessWidget {
               style: GoogleFonts.notoSansKr(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary)),
+                  color: AppColors.textPrimary,),),
           const SizedBox(width: 6),
           Text('($count)',
               style: GoogleFonts.notoSansKr(
-                  fontSize: 12, color: AppColors.textMuted)),
+                  fontSize: 12, color: AppColors.textMuted,),),
         ],
       ),
     );
@@ -271,11 +271,11 @@ class _CluePoolTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 13, fontWeight: FontWeight.w800)),
+                        fontSize: 13, fontWeight: FontWeight.w800,),),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 6, vertical: 2),
+                    horizontal: 6, vertical: 2,),
                 decoration: BoxDecoration(
                   color: _statusColor(status).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
@@ -284,7 +284,7 @@ class _CluePoolTile extends StatelessWidget {
                     style: GoogleFonts.notoSansKr(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
-                        color: _statusColor(status))),
+                        color: _statusColor(status),),),
               ),
             ],
           ),
@@ -293,7 +293,7 @@ class _CluePoolTile extends StatelessWidget {
               style: GoogleFonts.notoSansKr(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.brandYellow)),
+                  color: AppColors.brandYellow,),),
           const SizedBox(height: 4),
           ClipRRect(
             borderRadius: BorderRadius.circular(3),
@@ -353,19 +353,19 @@ class _RevenueTile extends StatelessWidget {
       child: Row(
         children: [
           const Icon(Icons.diamond,
-              size: 14, color: AppColors.brandBlue),
+              size: 14, color: AppColors.brandBlue,),
           const SizedBox(width: 6),
           Text('+$delta',
               style: GoogleFonts.notoSansKr(
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.brandGreen)),
+                  color: AppColors.brandGreen,),),
           const Spacer(),
           if (created != null)
             Text(
               timeago.format(DateTime.parse(created), locale: 'ko'),
               style: GoogleFonts.notoSansKr(
-                  fontSize: 10, color: AppColors.textMuted),
+                  fontSize: 10, color: AppColors.textMuted,),
             ),
         ],
       ),
@@ -401,7 +401,7 @@ class _TopupTile extends StatelessWidget {
         border: Border.all(
             color: status == 'approved'
                 ? AppColors.borderDefault
-                : AppColors.brandRed),
+                : AppColors.brandRed,),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,7 +413,7 @@ class _TopupTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 13, fontWeight: FontWeight.w800)),
+                        fontSize: 13, fontWeight: FontWeight.w800,),),
               ),
               _topupStatusBadge(status),
             ],
@@ -432,14 +432,14 @@ class _TopupTile extends StatelessWidget {
             const SizedBox(height: 6),
             Text('주문번호: $orderId',
                 style: GoogleFonts.robotoMono(
-                    fontSize: 10, color: AppColors.textMuted)),
+                    fontSize: 10, color: AppColors.textMuted,),),
           ],
           if (created != null) ...[
             const SizedBox(height: 2),
             Text(
               timeago.format(DateTime.parse(created), locale: 'ko'),
               style: GoogleFonts.notoSansKr(
-                  fontSize: 10, color: AppColors.textMuted),
+                  fontSize: 10, color: AppColors.textMuted,),
             ),
           ],
           if (receiptUrl != null) ...[
@@ -451,13 +451,13 @@ class _TopupTile extends StatelessWidget {
                   HapticFeedback.selectionClick();
                   final uri = Uri.parse(receiptUrl);
                   await launchUrl(uri,
-                      mode: LaunchMode.externalApplication);
+                      mode: LaunchMode.externalApplication,);
                 },
                 icon: const Icon(Icons.receipt, size: 16),
                 label: const Text('영수증 보기'),
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 4),
+                      horizontal: 8, vertical: 4,),
                   visualDensity: VisualDensity.compact,
                 ),
               ),
@@ -473,10 +473,10 @@ class _TopupTile extends StatelessWidget {
         children: [
           Text('$k ',
               style: GoogleFonts.notoSansKr(
-                  fontSize: 11, color: AppColors.textMuted)),
+                  fontSize: 11, color: AppColors.textMuted,),),
           Text(v,
               style: GoogleFonts.notoSansKr(
-                  fontSize: 12, fontWeight: FontWeight.w800, color: c)),
+                  fontSize: 12, fontWeight: FontWeight.w800, color: c,),),
         ],
       );
 
@@ -496,7 +496,7 @@ class _TopupTile extends StatelessWidget {
       ),
       child: Text(label,
           style: GoogleFonts.notoSansKr(
-              fontSize: 9, fontWeight: FontWeight.w800, color: color)),
+              fontSize: 9, fontWeight: FontWeight.w800, color: color,),),
     );
   }
 

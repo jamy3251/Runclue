@@ -217,7 +217,7 @@ class AppTheme {
   // Dark Theme (PRIMARY — spec default)
   // ──────────────────────────────────────────────
   static ThemeData get dark {
-    final colorScheme = ColorScheme.dark(
+    const colorScheme = ColorScheme.dark(
       primary: AppColors.brandYellow,
       primaryContainer: AppColors.brandYellowDeep,
       secondary: AppColors.brandBlue,
@@ -374,7 +374,7 @@ class AppTheme {
   // Light Theme (secondary — for accessibility)
   // ──────────────────────────────────────────────
   static ThemeData get light {
-    final colorScheme = ColorScheme.light(
+    const colorScheme = ColorScheme.light(
       primary: AppColors.brandYellowDeep,
       primaryContainer: AppColors.brandYellow,
       secondary: AppColors.brandBlue,

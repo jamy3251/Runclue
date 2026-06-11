@@ -162,7 +162,7 @@ class PlatformGradeCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
+                    const Text(
                       '플랫폼 등급',
                       style: TextStyle(
                         fontSize: 11,
@@ -178,10 +178,10 @@ class PlatformGradeCard extends StatelessWidget {
           Row(
             children: [
               _stat('클루', _fmt(totalClues),
-                  g.isMax ? null : '/ ${_fmt(g.nextClueThreshold)}', g.color),
+                  g.isMax ? null : '/ ${_fmt(g.nextClueThreshold)}', g.color,),
               const SizedBox(width: 12),
               _stat('러너', _fmt(totalUsers),
-                  g.isMax ? null : '/ ${_fmt(g.nextUserThreshold)}', g.color),
+                  g.isMax ? null : '/ ${_fmt(g.nextUserThreshold)}', g.color,),
             ],
           ),
           const SizedBox(height: 12),
@@ -248,7 +248,7 @@ class PlatformGradeCard extends StatelessWidget {
                     child: Text(
                       max,
                       style: const TextStyle(
-                          fontSize: 10, color: AppColors.textMuted),
+                          fontSize: 10, color: AppColors.textMuted,),
                     ),
                   ),
                 ],

@@ -102,7 +102,7 @@ class AdsService {
         ad.setServerSideOptions(ServerSideVerificationOptions(
           customData: uid,
           userId: uid,
-        ));
+        ),);
       }
     }
 
@@ -154,7 +154,7 @@ class AdsService {
     final res = await _client.rpc('claim_ad_reward', params: {
       'ad_unit_id_in': _adUnitId,
       'view_token_in': token,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }

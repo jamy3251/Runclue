@@ -356,7 +356,7 @@ class _CommunityPostCard extends StatelessWidget {
                   const Spacer(),
                   Text(
                     timeAgo,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                     ),
@@ -381,7 +381,7 @@ class _CommunityPostCard extends StatelessWidget {
               // Preview
               Text(
                 preview,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: AppColors.textSecondary,
                   height: 1.4,
@@ -394,23 +394,23 @@ class _CommunityPostCard extends StatelessWidget {
               // Engagement Row
               Row(
                 children: [
-                  Icon(Icons.favorite_border,
-                      size: 18, color: AppColors.textSecondary),
+                  const Icon(Icons.favorite_border,
+                      size: 18, color: AppColors.textSecondary,),
                   const SizedBox(width: 4),
                   Text(
                     '$likeCount',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Icon(Icons.chat_bubble_outline,
-                      size: 18, color: AppColors.textSecondary),
+                  const Icon(Icons.chat_bubble_outline,
+                      size: 18, color: AppColors.textSecondary,),
                   const SizedBox(width: 4),
                   Text(
                     '$commentCount',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,
                     ),

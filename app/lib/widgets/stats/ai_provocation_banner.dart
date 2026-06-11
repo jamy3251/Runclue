@@ -36,7 +36,7 @@ class AIProvocationBanner extends StatelessWidget {
         child: Row(
           children: [
             const Icon(Icons.local_fire_department,
-                size: 18, color: AppColors.brandRed),
+                size: 18, color: AppColors.brandRed,),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Text(
@@ -48,7 +48,7 @@ class AIProvocationBanner extends StatelessWidget {
               ),
             ),
             const Icon(Icons.chevron_right,
-                size: 18, color: AppColors.textMuted),
+                size: 18, color: AppColors.textMuted,),
           ],
         ),
       ),

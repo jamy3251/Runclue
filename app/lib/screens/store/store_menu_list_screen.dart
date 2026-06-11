@@ -103,7 +103,7 @@ class _MenuRowState extends ConsumerState<_MenuRow> {
                   : const ColoredBox(
                       color: AppColors.bgElevated,
                       child: Icon(Icons.restaurant,
-                          color: AppColors.textMuted),
+                          color: AppColors.textMuted,),
                     ),
             ),
           ),
@@ -116,26 +116,26 @@ class _MenuRowState extends ConsumerState<_MenuRow> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 14, fontWeight: FontWeight.w800)),
+                        fontSize: 14, fontWeight: FontWeight.w800,),),
                 if ((r['description'] as String?)?.isNotEmpty == true) ...[
                   const SizedBox(height: 2),
                   Text(r['description'] as String,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.notoSansKr(
-                          fontSize: 11, color: AppColors.textMuted)),
+                          fontSize: 11, color: AppColors.textMuted,),),
                 ],
                 const SizedBox(height: 6),
                 Row(
                   children: [
                     const Icon(Icons.diamond,
-                        size: 14, color: AppColors.brandBlue),
+                        size: 14, color: AppColors.brandBlue,),
                     const SizedBox(width: 4),
                     Text('$price',
                         style: GoogleFonts.notoSansKr(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.brandBlue)),
+                            color: AppColors.brandBlue,),),
                   ],
                 ),
               ],
@@ -159,11 +159,11 @@ class _MenuRowState extends ConsumerState<_MenuRow> {
                     width: 14,
                     height: 14,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2, color: Colors.white,),
                   )
                 : Text(canAfford ? '결제' : '부족',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 12, fontWeight: FontWeight.w800)),
+                        fontSize: 12, fontWeight: FontWeight.w800,),),
           ),
         ],
       ),
@@ -184,15 +184,15 @@ class _MenuRowState extends ConsumerState<_MenuRow> {
           children: [
             Text(name,
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 14, fontWeight: FontWeight.w800)),
+                    fontSize: 14, fontWeight: FontWeight.w800,),),
             const SizedBox(height: 8),
             Row(
               children: [
                 const Icon(Icons.diamond,
-                    size: 14, color: AppColors.brandBlue),
+                    size: 14, color: AppColors.brandBlue,),
                 const SizedBox(width: 4),
                 Text('$price 다이아 차감',
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                    style: const TextStyle(fontWeight: FontWeight.w700),),
               ],
             ),
             const SizedBox(height: 8),
@@ -205,10 +205,10 @@ class _MenuRowState extends ConsumerState<_MenuRow> {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('취소')),
+              child: const Text('취소'),),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('결제')),
+              child: const Text('결제'),),
         ],
       ),
     );
@@ -234,21 +234,21 @@ class _MenuRowState extends ConsumerState<_MenuRow> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.check_circle,
-                    color: AppColors.brandGreen, size: 56),
+                    color: AppColors.brandGreen, size: 56,),
                 const SizedBox(height: 12),
                 Text('"$name" 결제 완료',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 14, fontWeight: FontWeight.w800)),
+                        fontSize: 14, fontWeight: FontWeight.w800,),),
                 const SizedBox(height: 6),
                 Text('내 구매 내역에서 QR을 가게에 보여주세요',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 11, color: AppColors.textMuted)),
+                        fontSize: 11, color: AppColors.textMuted,),),
               ],
             ),
             actions: [
               TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('닫기')),
+                  child: const Text('닫기'),),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(ctx);

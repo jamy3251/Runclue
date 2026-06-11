@@ -25,7 +25,7 @@ class QuestService {
   Future<Map<String, dynamic>> claim(String questKey) async {
     final res = await _client.rpc('claim_quest_reward', params: {
       'quest_key_in': questKey,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }

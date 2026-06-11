@@ -34,7 +34,7 @@ class VersusRaceBar extends ConsumerWidget {
         color: AppColors.bgSurface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: AppColors.brandRed.withValues(alpha: 0.30)),
+            color: AppColors.brandRed.withValues(alpha: 0.30),),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,14 +42,14 @@ class VersusRaceBar extends ConsumerWidget {
           Row(
             children: [
               const Icon(Icons.emoji_events,
-                  size: 14, color: AppColors.brandRed),
+                  size: 14, color: AppColors.brandRed,),
               const SizedBox(width: 4),
               Text(
                 someoneFinished ? '경쟁 종료 — 1등 확정!' : '실시간 레이스 (1등 독식)',
                 style: GoogleFonts.notoSansKr(
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.brandRed),
+                    color: AppColors.brandRed,),
               ),
             ],
           ),
@@ -77,7 +77,7 @@ class VersusRaceBar extends ConsumerWidget {
                               isMe ? FontWeight.w900 : FontWeight.w500,
                           color: isMe
                               ? AppColors.brandBlue
-                              : AppColors.textSecondary),
+                              : AppColors.textSecondary,),
                     ),
                   ),
                   Expanded(
@@ -97,7 +97,7 @@ class VersusRaceBar extends ConsumerWidget {
                         ? '🏁'
                         : '${p.currentStepIndex + 1}/$totalSteps',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 10, color: AppColors.textMuted),
+                        fontSize: 10, color: AppColors.textMuted,),
                   ),
                 ],
               ),
@@ -106,7 +106,7 @@ class VersusRaceBar extends ConsumerWidget {
           if (race.length > 4)
             Text('+${race.length - 4}명 경쟁 중',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 9, color: AppColors.textMuted)),
+                    fontSize: 9, color: AppColors.textMuted,),),
         ],
       ),
     );

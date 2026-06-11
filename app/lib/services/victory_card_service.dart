@@ -124,7 +124,7 @@ class VictoryCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _StatColumn(label: '순위', value: '${rank}위'),
+                _StatColumn(label: '순위', value: '$rank위'),
                 _StatColumn(label: '점수', value: '$points'),
                 _StatColumn(
                   label: '소요시간',

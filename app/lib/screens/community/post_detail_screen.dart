@@ -87,7 +87,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                               ),
                               Text(
                                 createdAt,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12,
                                   color: AppColors.textSecondary,
                                 ),
@@ -152,12 +152,12 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                             likeCount: post['like_count'] ?? 0,
                           ),
                           const SizedBox(width: 16),
-                          Icon(Icons.chat_bubble_outline,
-                              size: 20, color: AppColors.textSecondary),
+                          const Icon(Icons.chat_bubble_outline,
+                              size: 20, color: AppColors.textSecondary,),
                           const SizedBox(width: 4),
                           Text(
                             '${post['comment_count'] ?? 0}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               color: AppColors.textSecondary,
                             ),
@@ -187,8 +187,8 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                         error: (_, __) => const Text('댓글을 불러올 수 없습니다'),
                         data: (comments) {
                           if (comments.isEmpty) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 24),
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24),
                               child: Center(
                                 child: Text(
                                   '아직 댓글이 없습니다',
@@ -214,7 +214,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                                       backgroundImage:
                                           cAuthor['avatar_url'] != null
                                               ? NetworkImage(
-                                                  cAuthor['avatar_url'])
+                                                  cAuthor['avatar_url'],)
                                               : null,
                                       child: cAuthor['avatar_url'] == null
                                           ? const Icon(Icons.person, size: 14)
@@ -242,8 +242,8 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                                                   _formatTimeAgo(
                                                       DateTime.parse(
                                                           comment[
-                                                              'created_at'])),
-                                                  style: TextStyle(
+                                                              'created_at'],),),
+                                                  style: const TextStyle(
                                                     fontSize: 11,
                                                     color: AppColors.textSecondary,
                                                   ),
@@ -320,7 +320,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                                   CircularProgressIndicator(strokeWidth: 2),
                             )
                           : Icon(Icons.send,
-                              color: Theme.of(context).primaryColor),
+                              color: Theme.of(context).primaryColor,),
                     ),
                   ],
                 ),
@@ -428,7 +428,7 @@ class _LikeButtonState extends ConsumerState<_LikeButton> {
           const SizedBox(width: 4),
           Text(
             '$_count',
-            style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+            style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
           ),
         ],
       ),

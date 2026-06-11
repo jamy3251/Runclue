@@ -62,11 +62,11 @@ void main() {
 
     test('LIST: 전체 완료 → auto_approved', () {
       final evidence = {
-        'checked_items': ['a', 'b', 'c']
+        'checked_items': ['a', 'b', 'c'],
       };
       final step = {
         'type': 'LIST',
-        'checklist_items': ['a', 'b', 'c']
+        'checklist_items': ['a', 'b', 'c'],
       };
 
       expect(evidenceService.autoValidateChecklist(evidence, step), isTrue);
@@ -74,11 +74,11 @@ void main() {
 
     test('LIST: 일부 미완료 → auto_rejected', () {
       final evidence = {
-        'checked_items': ['a', 'b']
+        'checked_items': ['a', 'b'],
       };
       final step = {
         'type': 'LIST',
-        'checklist_items': ['a', 'b', 'c']
+        'checklist_items': ['a', 'b', 'c'],
       };
 
       expect(evidenceService.autoValidateChecklist(evidence, step), isFalse);

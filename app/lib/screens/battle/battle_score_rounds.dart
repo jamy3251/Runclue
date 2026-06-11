@@ -100,7 +100,7 @@ class _BattleTapRoundState extends State<BattleTapRound> {
                 border: Border.all(
                     color: (_running ? AppColors.brandRed : AppColors.brandYellow)
                         .withValues(alpha: 0.5),
-                    width: 2),
+                    width: 2,),
               ),
               alignment: Alignment.center,
               child: Column(
@@ -121,7 +121,7 @@ class _BattleTapRoundState extends State<BattleTapRound> {
                         fontWeight: FontWeight.w900,
                         color: _running
                             ? AppColors.brandRed
-                            : AppColors.brandYellow),
+                            : AppColors.brandYellow,),
                   ),
                 ],
               ),
@@ -144,10 +144,10 @@ class _BattleTapRoundState extends State<BattleTapRound> {
         children: [
           Text(value,
               style: GoogleFonts.notoSansKr(
-                  fontSize: 22, fontWeight: FontWeight.w900, color: color)),
+                  fontSize: 22, fontWeight: FontWeight.w900, color: color,),),
           Text(label,
               style: GoogleFonts.notoSansKr(
-                  fontSize: 10, color: AppColors.textMuted)),
+                  fontSize: 10, color: AppColors.textMuted,),),
         ],
       ),
     );
@@ -189,7 +189,7 @@ class _BattleCoinRoundState extends State<BattleCoinRound> {
       _running = true;
     });
     _spawnTimer = Timer.periodic(
-        const Duration(milliseconds: 350), (_) => _spawnCoin());
+        const Duration(milliseconds: 350), (_) => _spawnCoin(),);
     _tickTimer = Timer.periodic(const Duration(milliseconds: 200), (t) {
       if (_remaining <= Duration.zero) {
         _stop();
@@ -218,9 +218,9 @@ class _BattleCoinRoundState extends State<BattleCoinRound> {
     setState(() {
       _coins.add(_CoinDrop(
         Offset(_rng.nextDouble() * (size.width - cs - 16) + 8,
-            _rng.nextDouble() * (size.height - cs - 80) + 64),
+            _rng.nextDouble() * (size.height - cs - 80) + 64,),
         _rng.nextInt(10) > 7 ? 5 : 1,
-      ));
+      ),);
     });
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (mounted && _coins.isNotEmpty) {
@@ -266,22 +266,22 @@ class _BattleCoinRoundState extends State<BattleCoinRound> {
                   backgroundColor: AppColors.brandYellow,
                   foregroundColor: Colors.black,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 32, vertical: 14),
+                      horizontal: 32, vertical: 14,),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),),
                 ),
                 onPressed: _start,
                 icon: const Icon(Icons.play_arrow),
                 label: Text('시작 (15초)',
                     style: GoogleFonts.notoSansKr(
-                        fontWeight: FontWeight.w900, fontSize: 16)),
+                        fontWeight: FontWeight.w900, fontSize: 16,),),
               ),
             if (_done)
               Text('제출 완료',
                   style: GoogleFonts.notoSansKr(
                       fontSize: 16,
                       fontWeight: FontWeight.w900,
-                      color: AppColors.brandGreen)),
+                      color: AppColors.brandGreen,),),
           ],
         ),
         ..._coins.map((c) => Positioned(
@@ -297,17 +297,17 @@ class _BattleCoinRoundState extends State<BattleCoinRound> {
                         ? const LinearGradient(colors: [
                             AppColors.brandRed,
                             AppColors.brandOrange,
-                          ])
+                          ],)
                         : const LinearGradient(colors: [
                             AppColors.brandYellow,
                             AppColors.brandOrange,
-                          ]),
+                          ],),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.brandYellow.withValues(alpha: 0.4),
                         blurRadius: 8,
-                      )
+                      ),
                     ],
                   ),
                   alignment: Alignment.center,
@@ -316,11 +316,11 @@ class _BattleCoinRoundState extends State<BattleCoinRound> {
                     style: GoogleFonts.notoSansKr(
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
-                        color: Colors.black),
+                        color: Colors.black,),
                   ),
                 ),
               ),
-            )),
+            ),),
       ],
     );
   }
@@ -337,10 +337,10 @@ class _BattleCoinRoundState extends State<BattleCoinRound> {
         children: [
           Text(value,
               style: GoogleFonts.notoSansKr(
-                  fontSize: 22, fontWeight: FontWeight.w900, color: color)),
+                  fontSize: 22, fontWeight: FontWeight.w900, color: color,),),
           Text(label,
               style: GoogleFonts.notoSansKr(
-                  fontSize: 10, color: AppColors.textMuted)),
+                  fontSize: 10, color: AppColors.textMuted,),),
         ],
       ),
     );

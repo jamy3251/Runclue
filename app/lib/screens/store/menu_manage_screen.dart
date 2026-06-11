@@ -87,7 +87,7 @@ class _MenuTile extends ConsumerWidget {
         color: AppColors.bgSurface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: active ? AppColors.borderDefault : AppColors.brandRed),
+            color: active ? AppColors.borderDefault : AppColors.brandRed,),
       ),
       child: Row(
         children: [
@@ -102,12 +102,12 @@ class _MenuTile extends ConsumerWidget {
                       fit: BoxFit.cover,
                       errorWidget: (_, __, ___) => const ColoredBox(
                           color: AppColors.bgElevated,
-                          child: Icon(Icons.restaurant)),
+                          child: Icon(Icons.restaurant),),
                     )
                   : const ColoredBox(
                       color: AppColors.bgElevated,
                       child: Icon(Icons.restaurant,
-                          color: AppColors.textMuted)),
+                          color: AppColors.textMuted,),),
             ),
           ),
           const SizedBox(width: 12),
@@ -117,23 +117,23 @@ class _MenuTile extends ConsumerWidget {
               children: [
                 Text(name,
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 14, fontWeight: FontWeight.w800)),
+                        fontSize: 14, fontWeight: FontWeight.w800,),),
                 const SizedBox(height: 4),
                 Row(
                   children: [
                     const Icon(Icons.diamond,
-                        size: 12, color: AppColors.brandBlue),
+                        size: 12, color: AppColors.brandBlue,),
                     const SizedBox(width: 3),
                     Text('$price',
                         style: GoogleFonts.notoSansKr(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.brandBlue)),
+                            color: AppColors.brandBlue,),),
                     const SizedBox(width: 10),
                     if (!active)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                            horizontal: 6, vertical: 2,),
                         decoration: BoxDecoration(
                           color: AppColors.brandRed.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
@@ -142,7 +142,7 @@ class _MenuTile extends ConsumerWidget {
                             style: GoogleFonts.notoSansKr(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
-                                color: AppColors.brandRed)),
+                                color: AppColors.brandRed,),),
                       ),
                   ],
                 ),
@@ -168,10 +168,10 @@ class _MenuTile extends ConsumerWidget {
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.pop(ctx, false),
-                          child: const Text('취소')),
+                          child: const Text('취소'),),
                       TextButton(
                           onPressed: () => Navigator.pop(ctx, true),
-                          child: const Text('삭제')),
+                          child: const Text('삭제'),),
                     ],
                   ),
                 );
@@ -203,13 +203,13 @@ class _MenuEditor extends ConsumerStatefulWidget {
 
 class _MenuEditorState extends ConsumerState<_MenuEditor> {
   late final _name = TextEditingController(
-      text: widget.existing?['name'] as String? ?? '');
+      text: widget.existing?['name'] as String? ?? '',);
   late final _desc = TextEditingController(
-      text: widget.existing?['description'] as String? ?? '');
+      text: widget.existing?['description'] as String? ?? '',);
   late final _price = TextEditingController(
-      text: (widget.existing?['price_diamond'] as int?)?.toString() ?? '500');
+      text: (widget.existing?['price_diamond'] as int?)?.toString() ?? '500',);
   late final _imageUrl = TextEditingController(
-      text: widget.existing?['image_url'] as String? ?? '');
+      text: widget.existing?['image_url'] as String? ?? '',);
   bool _busy = false;
 
   @override
@@ -242,7 +242,7 @@ class _MenuEditorState extends ConsumerState<_MenuEditor> {
           'description': _desc.text.trim(),
           'price_diamond': price,
           'image_url': _imageUrl.text.trim().isEmpty ? null : _imageUrl.text.trim(),
-        });
+        },);
       } else {
         await svc.createMenu(
           ownerId: uid,
@@ -275,19 +275,19 @@ class _MenuEditorState extends ConsumerState<_MenuEditor> {
           children: [
             Text(widget.existing == null ? '새 메뉴' : '메뉴 수정',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 16, fontWeight: FontWeight.w800)),
+                    fontSize: 16, fontWeight: FontWeight.w800,),),
             const SizedBox(height: 12),
             TextField(
               controller: _name,
               decoration: const InputDecoration(
-                  labelText: '메뉴 이름', hintText: '예: 아메리카노'),
+                  labelText: '메뉴 이름', hintText: '예: 아메리카노',),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _desc,
               maxLines: 2,
               decoration: const InputDecoration(
-                  labelText: '설명 (선택)', hintText: '예: 따뜻한 핸드드립'),
+                  labelText: '설명 (선택)', hintText: '예: 따뜻한 핸드드립',),
             ),
             const SizedBox(height: 8),
             TextField(
@@ -295,13 +295,13 @@ class _MenuEditorState extends ConsumerState<_MenuEditor> {
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: const InputDecoration(
-                  labelText: '가격 (다이아)', hintText: '500'),
+                  labelText: '가격 (다이아)', hintText: '500',),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _imageUrl,
               decoration: const InputDecoration(
-                  labelText: '이미지 URL (선택)', hintText: 'https://...'),
+                  labelText: '이미지 URL (선택)', hintText: 'https://...',),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -320,11 +320,11 @@ class _MenuEditorState extends ConsumerState<_MenuEditor> {
                     ? const SizedBox(
                         width: 18, height: 18,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.black),
+                            strokeWidth: 2, color: Colors.black,),
                       )
                     : Text(widget.existing == null ? '메뉴 추가' : '저장',
                         style: GoogleFonts.notoSansKr(
-                            fontSize: 14, fontWeight: FontWeight.w800)),
+                            fontSize: 14, fontWeight: FontWeight.w800,),),
               ),
             ),
           ],

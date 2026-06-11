@@ -88,7 +88,7 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
               : (winnerId == uid ? 'me' : 'opponent'),
           'payout': winnerId == uid ? (row['payout_to_winner'] ?? 0) : 0,
           'refund': row['status'] == 'draw' ? row['stake_coin'] : 0,
-        });
+        },);
       });
     }
 
@@ -126,17 +126,17 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.savings,
-                    size: 16, color: AppColors.brandYellow),
+                    size: 16, color: AppColors.brandYellow,),
                 const SizedBox(width: 4),
                 Text('베팅 $stake 코인',
                     style: GoogleFonts.notoSansKr(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.brandRed)),
+                        color: AppColors.brandRed,),),
                 const SizedBox(width: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 6, vertical: 2),
+                      horizontal: 6, vertical: 2,),
                   decoration: BoxDecoration(
                     color: vsCpu
                         ? AppColors.textMuted.withValues(alpha: 0.2)
@@ -149,7 +149,7 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
                           fontWeight: FontWeight.w700,
                           color: vsCpu
                               ? AppColors.textMuted
-                              : AppColors.brandBlue)),
+                              : AppColors.brandBlue,),),
                 ),
               ],
             ),
@@ -161,7 +161,7 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
             Text(
               vsCpu ? 'CPU 플레이 중...' : '상대방 제출 대기 중...',
               style: GoogleFonts.notoSansKr(
-                  fontSize: 14, fontWeight: FontWeight.w700),
+                  fontSize: 14, fontWeight: FontWeight.w700,),
             ),
           ] else if (gameType == 'tap') ...[
             Expanded(
@@ -181,7 +181,7 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
               style: GoogleFonts.notoSansKr(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary),
+                  color: AppColors.textPrimary,),
             ),
             const SizedBox(height: 24),
             Row(
@@ -191,7 +191,7 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
                         label: c.$2,
                         icon: c.$3,
                         onTap: () => _onChoose(c.$1),
-                      ))
+                      ),)
                   .toList(),
             ),
           ],
@@ -241,8 +241,8 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
                 style: GoogleFonts.notoSansKr(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
-                    color: color),
-                textAlign: TextAlign.center),
+                    color: color,),
+                textAlign: TextAlign.center,),
             const SizedBox(height: 24),
             if (myChoice != null && oppChoice != null) ...[
               Row(
@@ -254,7 +254,7 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
                   const SizedBox(width: 20),
                   const Text('vs',
                       style: TextStyle(
-                          fontSize: 16, color: AppColors.textMuted)),
+                          fontSize: 16, color: AppColors.textMuted,),),
                   const SizedBox(width: 20),
                   gameType == 'rps'
                       ? _ChoiceLabel(label: '상대', choice: oppChoice)
@@ -269,14 +269,14 @@ class _BattleGameScreenState extends ConsumerState<BattleGameScreen> {
                 backgroundColor: AppColors.brandBlue,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 28, vertical: 14),
+                    horizontal: 28, vertical: 14,),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: Text('홈으로',
                   style: GoogleFonts.notoSansKr(
-                      fontSize: 14, fontWeight: FontWeight.w800)),
+                      fontSize: 14, fontWeight: FontWeight.w800,),),
             ),
             const SizedBox(height: 10),
             TextButton(
@@ -314,7 +314,7 @@ class _ChoiceButton extends StatelessWidget {
             color: AppColors.brandRed.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-                color: AppColors.brandRed.withValues(alpha: 0.4), width: 2),
+                color: AppColors.brandRed.withValues(alpha: 0.4), width: 2,),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -325,7 +325,7 @@ class _ChoiceButton extends StatelessWidget {
                   style: GoogleFonts.notoSansKr(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.brandRed)),
+                      color: AppColors.brandRed,),),
             ],
           ),
         ),
@@ -345,17 +345,17 @@ class _ScoreLabel extends StatelessWidget {
       children: [
         Text(label,
             style: GoogleFonts.notoSansKr(
-                fontSize: 11, color: AppColors.textMuted)),
+                fontSize: 11, color: AppColors.textMuted,),),
         const SizedBox(height: 4),
         Text(score,
             style: GoogleFonts.notoSansKr(
                 fontSize: 32,
                 fontWeight: FontWeight.w900,
-                color: AppColors.brandRed)),
+                color: AppColors.brandRed,),),
         const SizedBox(height: 2),
         Text('점',
             style: GoogleFonts.notoSansKr(
-                fontSize: 12, fontWeight: FontWeight.w800)),
+                fontSize: 12, fontWeight: FontWeight.w800,),),
       ],
     );
   }
@@ -383,14 +383,14 @@ class _ChoiceLabel extends StatelessWidget {
       children: [
         Text(label,
             style: GoogleFonts.notoSansKr(
-                fontSize: 11, color: AppColors.textMuted)),
+                fontSize: 11, color: AppColors.textMuted,),),
         const SizedBox(height: 4),
         Icon(_icons[choice] ?? Icons.help,
-            size: 36, color: AppColors.brandRed),
+            size: 36, color: AppColors.brandRed,),
         const SizedBox(height: 2),
         Text(_names[choice] ?? choice,
             style: GoogleFonts.notoSansKr(
-                fontSize: 12, fontWeight: FontWeight.w800)),
+                fontSize: 12, fontWeight: FontWeight.w800,),),
       ],
     );
   }

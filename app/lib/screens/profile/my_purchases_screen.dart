@@ -76,7 +76,7 @@ class _PurchaseTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
             color: usable ? AppColors.brandBlue : AppColors.borderDefault,
-            width: usable ? 1.5 : 1),
+            width: usable ? 1.5 : 1,),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,12 +94,12 @@ class _PurchaseTile extends StatelessWidget {
                           fit: BoxFit.cover,
                           errorWidget: (_, __, ___) => const ColoredBox(
                               color: AppColors.bgElevated,
-                              child: Icon(Icons.restaurant)),
+                              child: Icon(Icons.restaurant),),
                         )
                       : const ColoredBox(
                           color: AppColors.bgElevated,
                           child: Icon(Icons.restaurant,
-                              color: AppColors.textMuted)),
+                              color: AppColors.textMuted,),),
                 ),
               ),
               const SizedBox(width: 12),
@@ -109,24 +109,24 @@ class _PurchaseTile extends StatelessWidget {
                   children: [
                     Text(name,
                         style: GoogleFonts.notoSansKr(
-                            fontSize: 14, fontWeight: FontWeight.w800)),
+                            fontSize: 14, fontWeight: FontWeight.w800,),),
                     const SizedBox(height: 4),
                     Row(
                       children: [
                         const Icon(Icons.diamond,
-                            size: 12, color: AppColors.brandBlue),
+                            size: 12, color: AppColors.brandBlue,),
                         const SizedBox(width: 3),
                         Text('$cost',
                             style: GoogleFonts.notoSansKr(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.brandBlue)),
+                                color: AppColors.brandBlue,),),
                         const Spacer(),
                         if (createdAt != null)
                           Text(
                               timeago.format(DateTime.parse(createdAt), locale: 'ko'),
                               style: GoogleFonts.notoSansKr(
-                                  fontSize: 10, color: AppColors.textMuted)),
+                                  fontSize: 10, color: AppColors.textMuted,),),
                       ],
                     ),
                   ],
@@ -159,7 +159,7 @@ class _PurchaseTile extends StatelessWidget {
               child: Text(
                 '가게에 보여주세요 — 탭하면 크게 보기',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 10, color: AppColors.textMuted),
+                    fontSize: 10, color: AppColors.textMuted,),
               ),
             ),
           ],
@@ -182,7 +182,7 @@ class _PurchaseTile extends StatelessWidget {
                   style: GoogleFonts.notoSansKr(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: Colors.black)),
+                      color: Colors.black,),),
               const SizedBox(height: 12),
               QrImageView(
                 data: qrToken,
@@ -191,11 +191,11 @@ class _PurchaseTile extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const Text('이 QR을 가게 사장님께 보여주세요',
-                  style: TextStyle(fontSize: 12, color: Colors.black54)),
+                  style: TextStyle(fontSize: 12, color: Colors.black54),),
               const SizedBox(height: 16),
               TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('닫기')),
+                  child: const Text('닫기'),),
             ],
           ),
         ),
@@ -224,7 +224,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(label,
           style: GoogleFonts.notoSansKr(
-              fontSize: 10, fontWeight: FontWeight.w800, color: color)),
+              fontSize: 10, fontWeight: FontWeight.w800, color: color,),),
     );
   }
 }

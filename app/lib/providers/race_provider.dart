@@ -35,7 +35,7 @@ final raceParticipantsProvider =
       final rows = await safeClient
           .from('participations')
           .select(
-              'user_id, current_step_index, status, completed_at, profiles:user_id(nickname)')
+              'user_id, current_step_index, status, completed_at, profiles:user_id(nickname)',)
           .eq('clue_id', clueId)
           .inFilter('status', ['in_progress', 'completed']);
       final list = List<Map<String, dynamic>>.from(rows).map((r) {

@@ -57,7 +57,7 @@ class MinigamesScreen extends StatelessWidget {
           style: GoogleFonts.notoSansKr(
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary),
+              color: AppColors.textPrimary,),
         ),
       ),
       body: ListView(
@@ -75,15 +75,15 @@ class MinigamesScreen extends StatelessWidget {
                 gradient: LinearGradient(colors: [
                   AppColors.brandRed.withValues(alpha: 0.14),
                   AppColors.brandYellow.withValues(alpha: 0.08),
-                ]),
+                ],),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: AppColors.brandRed.withValues(alpha: 0.35)),
+                    color: AppColors.brandRed.withValues(alpha: 0.35),),
               ),
               child: Row(
                 children: [
                   const Icon(Icons.sports_kabaddi,
-                      color: AppColors.brandRed, size: 20),
+                      color: AppColors.brandRed, size: 20,),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(
@@ -94,18 +94,18 @@ class MinigamesScreen extends StatelessWidget {
                           style: GoogleFonts.notoSansKr(
                               fontSize: 14,
                               fontWeight: FontWeight.w900,
-                              color: AppColors.brandRed),
+                              color: AppColors.brandRed,),
                         ),
                         Text(
                           '코인을 걸고 실시간 대결 — 이기면 베팅 × 1.9',
                           style: GoogleFonts.notoSansKr(
-                              fontSize: 11, color: AppColors.textSecondary),
+                              fontSize: 11, color: AppColors.textSecondary,),
                         ),
                       ],
                     ),
                   ),
                   const Icon(Icons.chevron_right,
-                      color: AppColors.brandRed, size: 20),
+                      color: AppColors.brandRed, size: 20,),
                 ],
               ),
             ),
@@ -120,13 +120,13 @@ class MinigamesScreen extends StatelessWidget {
             child: Row(
               children: [
                 const Icon(Icons.info_outline,
-                    color: AppColors.brandPurple, size: 16),
+                    color: AppColors.brandPurple, size: 16,),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '아래는 솔로 연습 모드 — 무료로 플레이하고 코인 적립',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 11, color: AppColors.brandPurple),
+                        fontSize: 11, color: AppColors.brandPurple,),
                   ),
                 ),
               ],
@@ -177,13 +177,13 @@ class MinigamesScreen extends StatelessWidget {
                         style: GoogleFonts.notoSansKr(
                             fontSize: 15,
                             fontWeight: FontWeight.w900,
-                            color: AppColors.textPrimary),
+                            color: AppColors.textPrimary,),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         g.subtitle,
                         style: GoogleFonts.notoSansKr(
-                            fontSize: 11, color: AppColors.textMuted),
+                            fontSize: 11, color: AppColors.textMuted,),
                       ),
                     ],
                   ),

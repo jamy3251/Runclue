@@ -101,14 +101,14 @@ class _CoinGrabGameState extends ConsumerState<CoinGrabGame> {
     final box = context.findRenderObject() as RenderBox?;
     if (box == null) return;
     final size = box.size;
-    final cs = 56.0;
+    const cs = 56.0;
     setState(() {
       _coins.add(_Coin(
         Offset(_rng.nextDouble() * (size.width - cs - 16) + 8,
-            _rng.nextDouble() * (size.height - cs - 200) + 120),
+            _rng.nextDouble() * (size.height - cs - 200) + 120,),
         _rng.nextInt(10) > 7 ? 5 : 1,
         cs,
-      ));
+      ),);
     });
     // 2초 후 자동 제거
     Future.delayed(const Duration(milliseconds: 2000), () {
@@ -147,7 +147,7 @@ class _CoinGrabGameState extends ConsumerState<CoinGrabGame> {
         title: Text('동전 줍기',
             style: GoogleFonts.notoSansKr(
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary)),
+                color: AppColors.textPrimary,),),
       ),
       body: Stack(
         children: [
@@ -160,17 +160,17 @@ class _CoinGrabGameState extends ConsumerState<CoinGrabGame> {
                   children: [
                     Expanded(
                       child: _hud('점수', '$_score',
-                          AppColors.brandYellow, Icons.monetization_on),
+                          AppColors.brandYellow, Icons.monetization_on,),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: _hud('남은 시간', '${secs}s',
-                          AppColors.brandRed, Icons.timer),
+                          AppColors.brandRed, Icons.timer,),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: _hud('최고', '$_highScore',
-                          AppColors.brandPurple, Icons.emoji_events),
+                          AppColors.brandPurple, Icons.emoji_events,),
                     ),
                   ],
                 ),
@@ -181,16 +181,16 @@ class _CoinGrabGameState extends ConsumerState<CoinGrabGame> {
                       backgroundColor: AppColors.brandYellow,
                       foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 32, vertical: 14),
+                          horizontal: 32, vertical: 14,),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),),
                     ),
                     onPressed: _start,
                     icon: const Icon(Icons.play_arrow),
                     label: Text(
                       _score > 0 ? '다시 시작' : '시작',
                       style: GoogleFonts.notoSansKr(
-                          fontWeight: FontWeight.w900, fontSize: 16),
+                          fontWeight: FontWeight.w900, fontSize: 16,),
                     ),
                   ),
               ],
@@ -207,21 +207,21 @@ class _CoinGrabGameState extends ConsumerState<CoinGrabGame> {
                     height: c.size,
                     decoration: BoxDecoration(
                       gradient: c.value >= 5
-                          ? LinearGradient(colors: [
+                          ? const LinearGradient(colors: [
                               AppColors.brandRed,
                               AppColors.brandOrange,
-                            ])
-                          : LinearGradient(colors: [
+                            ],)
+                          : const LinearGradient(colors: [
                               AppColors.brandYellow,
                               AppColors.brandOrange,
-                            ]),
+                            ],),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
                           color:
                               AppColors.brandYellow.withValues(alpha: 0.4),
                           blurRadius: 8,
-                        )
+                        ),
                       ],
                     ),
                     alignment: Alignment.center,
@@ -230,11 +230,11 @@ class _CoinGrabGameState extends ConsumerState<CoinGrabGame> {
                       style: GoogleFonts.notoSansKr(
                           fontSize: 14,
                           fontWeight: FontWeight.w900,
-                          color: Colors.black),
+                          color: Colors.black,),
                     ),
                   ),
                 ),
-              )),
+              ),),
         ],
       ),
     );
@@ -256,10 +256,10 @@ class _CoinGrabGameState extends ConsumerState<CoinGrabGame> {
               style: GoogleFonts.notoSansKr(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.textPrimary)),
+                  color: AppColors.textPrimary,),),
           Text(label,
               style: GoogleFonts.notoSansKr(
-                  fontSize: 10, color: AppColors.textMuted)),
+                  fontSize: 10, color: AppColors.textMuted,),),
         ],
       ),
     );

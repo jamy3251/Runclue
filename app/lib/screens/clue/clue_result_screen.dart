@@ -40,7 +40,7 @@ class _ClueResultScreenState extends ConsumerState<ClueResultScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       HapticFeedback.heavyImpact();
       Future.delayed(const Duration(milliseconds: 100),
-          () => HapticFeedback.heavyImpact());
+          () => HapticFeedback.heavyImpact(),);
     });
   }
 
@@ -121,7 +121,7 @@ class _ClueResultScreenState extends ConsumerState<ClueResultScreen>
                                 style: GoogleFonts.notoSansKr(
                                   fontSize: 14,
                                   color: AppColors.brandYellow.withValues(
-                                      alpha: 0.5),
+                                      alpha: 0.5,),
                                   letterSpacing: 8,
                                 ),
                               ),
@@ -153,7 +153,7 @@ class _ClueResultScreenState extends ConsumerState<ClueResultScreen>
                                 style: GoogleFonts.notoSansKr(
                                   fontSize: 14,
                                   color: AppColors.brandYellow.withValues(
-                                      alpha: 0.5),
+                                      alpha: 0.5,),
                                   letterSpacing: 8,
                                 ),
                               ),
@@ -209,7 +209,7 @@ class _ClueResultScreenState extends ConsumerState<ClueResultScreen>
                               // 보상
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 10),
+                                    horizontal: 16, vertical: 10,),
                                 decoration: BoxDecoration(
                                   color: AppColors.brandGreen
                                       .withValues(alpha: 0.15),
@@ -223,7 +223,7 @@ class _ClueResultScreenState extends ConsumerState<ClueResultScreen>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(Icons.payments,
-                                        color: AppColors.brandGreen, size: 20),
+                                        color: AppColors.brandGreen, size: 20,),
                                     const SizedBox(width: 8),
                                     Text(
                                       '₩$reward 적립 완료',
@@ -465,7 +465,7 @@ class _DetailPanel extends StatelessWidget {
               label: '분배 방식',
               value: _distModeLabel(
                   (clue?['distribution_mode'] ?? participation?['_clue_distribution_mode'])
-                      ?.toString()),
+                      ?.toString(),),
             ),
             _DetailRow(label: '완료 시간', value: elapsed),
 
@@ -652,7 +652,7 @@ class _BlinkArrowState extends State<_BlinkArrow>
       builder: (_, __) => Transform.translate(
         offset: Offset(_ctrl.value * 6, 0),
         child: const Icon(Icons.arrow_forward,
-            size: 16, color: AppColors.textPrimary),
+            size: 16, color: AppColors.textPrimary,),
       ),
     );
   }

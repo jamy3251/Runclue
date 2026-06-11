@@ -22,7 +22,7 @@ class CurrencyService {
       'delta_in': delta,
       'reason_in': reason,
       if (sourceId != null) 'source_id_in': sourceId,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }

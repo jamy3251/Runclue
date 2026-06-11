@@ -39,7 +39,7 @@ class _MyProgressScreenState extends ConsumerState<MyProgressScreen>
     return GradientScaffold(
       appBar: AppBar(
         title: Text('나의 진행도',
-            style: AppTextStyles.headingMd.copyWith(color: AppColors.textPrimary)),
+            style: AppTextStyles.headingMd.copyWith(color: AppColors.textPrimary),),
         backgroundColor: AppColors.bgBase,
         elevation: 0,
       ),
@@ -135,7 +135,7 @@ class _CrewTab extends ConsumerWidget {
                     const Icon(Icons.emoji_events_outlined, size: 48, color: AppColors.textMuted),
                     const SizedBox(height: 12),
                     Text('아직 랭킹 데이터가 없어요',
-                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted)),
+                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),),
                   ],
                 ),
               )
@@ -164,7 +164,7 @@ class _CrewTab extends ConsumerWidget {
             const Icon(Icons.wifi_off, size: 48, color: AppColors.textMuted),
             const SizedBox(height: 12),
             Text('랭킹을 불러올 수 없습니다',
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted)),
+              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),),
           ],
         ),
       ),
@@ -420,7 +420,7 @@ class _MyRecordTab extends ConsumerWidget {
             padding: const EdgeInsets.all(24),
             child: Center(
               child: Text('배지를 불러올 수 없습니다',
-                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted)),
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),),
             ),
           ),
         ),

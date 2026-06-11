@@ -15,7 +15,7 @@ class PointsService {
         'user_id_in': userId,
         'delta_in': delta.clamp(-100, 100),
         'reason_in': reason,
-      });
+      },);
       if (res is num) return res.toInt();
       return null;
     } catch (_) {

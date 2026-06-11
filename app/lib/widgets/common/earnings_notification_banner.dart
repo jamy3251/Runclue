@@ -74,7 +74,7 @@ class _EarningsNotificationBannerState
         child: Row(
           children: [
             const Icon(Icons.local_fire_department,
-                size: 14, color: AppColors.brandGreen),
+                size: 14, color: AppColors.brandGreen,),
             const SizedBox(width: AppSpacing.sm),
             Text(
               '${widget.userName}님 방금 ',

@@ -59,7 +59,7 @@ class StepService {
           }
         }
         throw Exception(
-            'STEP INSERT 실패 [code=${e.code}]: ${e.message} | drop=$droppedCols');
+            'STEP INSERT 실패 [code=${e.code}]: ${e.message} | drop=$droppedCols',);
       } catch (e) {
         throw Exception('STEP INSERT 실패 (예외): $e');
       }

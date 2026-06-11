@@ -24,7 +24,7 @@ class SeasonService {
     final res = await _client.rpc('season_leaderboard', params: {
       'season_id_in': seasonId,
       'top_n': topN,
-    });
+    },);
     if (res is List) {
       return res.map((e) => Map<String, dynamic>.from(e as Map)).toList();
     }
@@ -33,7 +33,7 @@ class SeasonService {
 
   /// 내 시즌 보상 내역.
   Future<List<Map<String, dynamic>>> myRewards(String userId,
-      {int limit = 30}) async {
+      {int limit = 30,}) async {
     final rows = await _client
         .from('season_rewards')
         .select('id, season_id, rank, score, reward_diamond, awarded_at, '

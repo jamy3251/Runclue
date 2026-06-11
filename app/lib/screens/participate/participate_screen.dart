@@ -44,7 +44,7 @@ class ParticipateScreen extends ConsumerWidget {
 
           final active = participations
               .where((p) =>
-                  p['status'] == 'in_progress' || p['status'] == 'joined')
+                  p['status'] == 'in_progress' || p['status'] == 'joined',)
               .toList();
           final completed = participations
               .where((p) => p['status'] == 'completed')
@@ -86,7 +86,7 @@ class ParticipateScreen extends ConsumerWidget {
                               context.push('/clue/$clueId/play');
                             }
                           },
-                        )),
+                        ),),
                     const SizedBox(height: 32),
                   ],
 
@@ -113,12 +113,12 @@ class ParticipateScreen extends ConsumerWidget {
                               context.push('/clue/$clueId/result');
                             }
                           },
-                        )),
+                        ),),
                   ],
 
                   if (abandoned.isNotEmpty) ...[
                     const SizedBox(height: 32),
-                    Text(
+                    const Text(
                       '포기한 클루',
                       style: TextStyle(
                         fontSize: 20,
@@ -142,7 +142,7 @@ class ParticipateScreen extends ConsumerWidget {
                               context.push('/clue/$clueId');
                             }
                           },
-                        )),
+                        ),),
                   ],
                 ],
               ),
@@ -299,7 +299,7 @@ class _ParticipationCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         timeRemaining,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 13,
                           color: AppColors.textSecondary,
                         ),

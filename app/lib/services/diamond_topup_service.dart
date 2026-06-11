@@ -27,7 +27,7 @@ class DiamondTopupService {
   Future<Map<String, dynamic>> createOrder(String packageId) async {
     final res = await _client.rpc('create_diamond_order', params: {
       'package_id_in': packageId,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }

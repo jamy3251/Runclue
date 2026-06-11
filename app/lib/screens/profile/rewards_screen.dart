@@ -64,7 +64,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                 children: [
                   const Icon(Icons.card_giftcard, size: 18),
                   const SizedBox(width: 6),
-                  Text('선물함'),
+                  const Text('선물함'),
                   if (unclaimedAsync.valueOrNull?.isNotEmpty ?? false) ...[
                     const SizedBox(width: 4),
                     _Badge(count: unclaimedAsync.value!.length),
@@ -268,7 +268,7 @@ class _RewardCardState extends ConsumerState<_RewardCard> {
               if (value > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 4),
+                      horizontal: 8, vertical: 4,),
                   decoration: BoxDecoration(
                     color: accent.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(9999),
@@ -333,7 +333,7 @@ class _RewardCardState extends ConsumerState<_RewardCard> {
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.black),
+                            strokeWidth: 2, color: Colors.black,),
                       )
                     : Text(
                         isExpired ? '만료됨' : '받기',
@@ -401,7 +401,7 @@ class _CouponCodeBlock extends StatelessWidget {
       child: Row(
         children: [
           const Icon(Icons.confirmation_number_outlined,
-              size: 16, color: AppColors.brandYellow),
+              size: 16, color: AppColors.brandYellow,),
           const SizedBox(width: 8),
           Expanded(
             child: SelectableText(
@@ -456,7 +456,7 @@ class _ClaimedFooter extends StatelessWidget {
     return Row(
       children: [
         const Icon(Icons.check_circle,
-            size: 14, color: AppColors.brandGreen),
+            size: 14, color: AppColors.brandGreen,),
         const SizedBox(width: 4),
         Text(
           text,
@@ -568,10 +568,10 @@ class _ErrorState extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.cloud_off,
-              size: 48, color: AppColors.textMuted),
+              size: 48, color: AppColors.textMuted,),
           const SizedBox(height: 12),
           Text(message,
-              style: GoogleFonts.notoSansKr(color: AppColors.textSecondary)),
+              style: GoogleFonts.notoSansKr(color: AppColors.textSecondary),),
           const SizedBox(height: 12),
           OutlinedButton(onPressed: onRetry, child: const Text('다시 시도')),
         ],

@@ -81,7 +81,7 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
         'orderId': res['order_id'] as String,
         'amount': '${res['amount']}',
         'orderName': res['order_name'] as String,
-      });
+      },);
       _awaitingPayment = true;
       final launched =
           await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -112,7 +112,7 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
         ),
         title: Text('다이아 충전',
             style: GoogleFonts.notoSansKr(
-                fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+                fontWeight: FontWeight.w900, color: AppColors.textPrimary,),),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -129,25 +129,25 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
                 gradient: LinearGradient(colors: [
                   AppColors.brandBlue.withValues(alpha: 0.16),
                   AppColors.brandPurple.withValues(alpha: 0.10),
-                ]),
+                ],),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Row(
                 children: [
                   const Icon(Icons.diamond,
-                      color: AppColors.brandBlue, size: 28),
+                      color: AppColors.brandBlue, size: 28,),
                   const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('보유 다이아',
                           style: GoogleFonts.notoSansKr(
-                              fontSize: 11, color: AppColors.textMuted)),
+                              fontSize: 11, color: AppColors.textMuted,),),
                       Text('${balances?.diamond ?? 0}',
                           style: GoogleFonts.notoSansKr(
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
-                              color: AppColors.brandBlue)),
+                              color: AppColors.brandBlue,),),
                     ],
                   ),
                 ],
@@ -158,17 +158,17 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
             const SizedBox(height: 8),
             Text('패키지',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 14, fontWeight: FontWeight.w900)),
+                    fontSize: 14, fontWeight: FontWeight.w900,),),
             const SizedBox(height: 8),
             packages.when(
               loading: () => const Center(
                   child: Padding(
                 padding: EdgeInsets.all(24),
                 child: CircularProgressIndicator(color: AppColors.brandBlue),
-              )),
+              ),),
               error: (e, _) => Text('패키지 로드 실패: $e',
                   style: GoogleFonts.notoSansKr(
-                      fontSize: 12, color: AppColors.brandRed)),
+                      fontSize: 12, color: AppColors.brandRed,),),
               data: (list) => Column(
                 children: list.map(_packageCard).toList(),
               ),
@@ -176,20 +176,20 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
             const SizedBox(height: 20),
             Text('이용 안내',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 12, fontWeight: FontWeight.w800)),
+                    fontSize: 12, fontWeight: FontWeight.w800,),),
             const SizedBox(height: 4),
             Text(
               '· 다이아는 게임 내 가상 재화로 현금 환급이 불가합니다.\n'
               '· 기프티콘 교환·가게 메뉴 결제에 사용할 수 있습니다.\n'
               '· 결제는 토스페이먼츠 보안 결제창(외부 브라우저)에서 진행됩니다.',
               style: GoogleFonts.notoSansKr(
-                  fontSize: 11, color: AppColors.textMuted, height: 1.6),
+                  fontSize: 11, color: AppColors.textMuted, height: 1.6,),
             ),
             if (topups.isNotEmpty) ...[
               const SizedBox(height: 20),
               Text('충전 내역',
                   style: GoogleFonts.notoSansKr(
-                      fontSize: 14, fontWeight: FontWeight.w900)),
+                      fontSize: 14, fontWeight: FontWeight.w900,),),
               const SizedBox(height: 8),
               ...topups.map(_topupRow),
             ],
@@ -213,7 +213,7 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
       child: Row(
         children: [
           const Icon(Icons.hourglass_top,
-              color: AppColors.brandYellow, size: 18),
+              color: AppColors.brandYellow, size: 18,),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -221,7 +221,7 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
                   ? 'iOS에서는 곧 충전이 오픈됩니다'
                   : '결제 준비 중 — 가맹점 심사 완료 후 오픈됩니다',
               style: GoogleFonts.notoSansKr(
-                  fontSize: 12, color: AppColors.brandYellow),
+                  fontSize: 12, color: AppColors.brandYellow,),
             ),
           ),
         ],
@@ -247,12 +247,12 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                  color: AppColors.brandBlue.withValues(alpha: 0.25)),
+                  color: AppColors.brandBlue.withValues(alpha: 0.25),),
             ),
             child: Row(
               children: [
                 const Icon(Icons.diamond,
-                    color: AppColors.brandBlue, size: 22),
+                    color: AppColors.brandBlue, size: 22,),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -264,12 +264,12 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
                               style: GoogleFonts.notoSansKr(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w900,
-                                  color: AppColors.textPrimary)),
+                                  color: AppColors.textPrimary,),),
                           if (bonus != null) ...[
                             const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 2),
+                                  horizontal: 6, vertical: 2,),
                               decoration: BoxDecoration(
                                 color: AppColors.brandGreen
                                     .withValues(alpha: 0.15),
@@ -279,7 +279,7 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
                                   style: GoogleFonts.notoSansKr(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w800,
-                                      color: AppColors.brandGreen)),
+                                      color: AppColors.brandGreen,),),
                             ),
                           ],
                         ],
@@ -289,7 +289,7 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 8),
+                      horizontal: 14, vertical: 8,),
                   decoration: BoxDecoration(
                     color: _purchasable
                         ? AppColors.brandBlue
@@ -300,7 +300,7 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
                       style: GoogleFonts.notoSansKr(
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white)),
+                          color: Colors.white,),),
                 ),
               ],
             ),
@@ -333,11 +333,11 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
             child: Text(
                 '${t['diamond_amount']} 다이아 · ${_formatKrw(t['price_krw'] as int? ?? 0)}원',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 12, color: AppColors.textPrimary)),
+                    fontSize: 12, color: AppColors.textPrimary,),),
           ),
           Text(label,
               style: GoogleFonts.notoSansKr(
-                  fontSize: 11, fontWeight: FontWeight.w800, color: color)),
+                  fontSize: 11, fontWeight: FontWeight.w800, color: color,),),
         ],
       ),
     );

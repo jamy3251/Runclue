@@ -24,7 +24,7 @@ class PlayHubScreen extends ConsumerWidget {
         automaticallyImplyLeading: false,
         title: Text('플레이',
             style: GoogleFonts.blackHanSans(
-                fontSize: 20, color: AppColors.textPrimary)),
+                fontSize: 20, color: AppColors.textPrimary,),),
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 12),
@@ -52,8 +52,8 @@ class PlayHubScreen extends ConsumerWidget {
             const SizedBox(height: 12),
 
             // 2열 그리드: 나머지 게임 기능
-            Row(
-              children: const [
+            const Row(
+              children: [
                 Expanded(
                   child: _HubTile(
                     title: '미니게임',
@@ -76,8 +76,8 @@ class PlayHubScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 10),
-            Row(
-              children: const [
+            const Row(
+              children: [
                 Expanded(
                   child: _HubTile(
                     title: '기프티콘 상점',
@@ -100,8 +100,8 @@ class PlayHubScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 10),
-            Row(
-              children: const [
+            const Row(
+              children: [
                 Expanded(
                   child: _HubTile(
                     title: '루틴',
@@ -191,12 +191,12 @@ class _HeroCard extends StatelessWidget {
                           style: GoogleFonts.notoSansKr(
                               fontSize: 17,
                               fontWeight: FontWeight.w900,
-                              color: AppColors.textPrimary)),
+                              color: AppColors.textPrimary,),),
                       if (badge != null) ...[
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
+                              horizontal: 6, vertical: 2,),
                           decoration: BoxDecoration(
                             color: AppColors.brandYellow
                                 .withValues(alpha: 0.15),
@@ -206,7 +206,7 @@ class _HeroCard extends StatelessWidget {
                               style: GoogleFonts.notoSansKr(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w800,
-                                  color: AppColors.brandYellow)),
+                                  color: AppColors.brandYellow,),),
                         ),
                       ],
                     ],
@@ -216,7 +216,7 @@ class _HeroCard extends StatelessWidget {
                       style: GoogleFonts.notoSansKr(
                           fontSize: 12,
                           color: AppColors.textSecondary,
-                          height: 1.4)),
+                          height: 1.4,),),
                 ],
               ),
             ),
@@ -267,10 +267,10 @@ class _HubTile extends StatelessWidget {
                 style: GoogleFonts.notoSansKr(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.textPrimary)),
+                    color: AppColors.textPrimary,),),
             Text(subtitle,
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 11, color: AppColors.textMuted)),
+                    fontSize: 11, color: AppColors.textMuted,),),
           ],
         ),
       ),

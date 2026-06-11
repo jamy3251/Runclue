@@ -121,7 +121,7 @@ class _WalkRewardCardState extends ConsumerState<WalkRewardCard> {
       child: Row(
         children: [
           const Icon(Icons.directions_walk,
-              size: 32, color: AppColors.brandGreen),
+              size: 32, color: AppColors.brandGreen,),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -140,7 +140,7 @@ class _WalkRewardCardState extends ConsumerState<WalkRewardCard> {
                   _hasPermission == false
                       ? '권한 허용 후 1000걸음당 +10 코인'
                       : _lastSteps != null
-                          ? '오늘 ${_lastSteps}걸음 · 적립 $coinsAwarded/50'
+                          ? '오늘 $_lastSteps걸음 · 적립 $coinsAwarded/50'
                           : '1000걸음당 +10 · 일 최대 50',
                   style: GoogleFonts.notoSansKr(
                     fontSize: 11,
@@ -178,7 +178,7 @@ class _WalkRewardCardState extends ConsumerState<WalkRewardCard> {
         ),
         child: Text('허용',
             style:
-                GoogleFonts.notoSansKr(fontSize: 13, fontWeight: FontWeight.w800)),
+                GoogleFonts.notoSansKr(fontSize: 13, fontWeight: FontWeight.w800),),
       );
     }
     return ElevatedButton(

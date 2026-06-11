@@ -79,7 +79,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                               : null,
                           child: _avatarUrl == null
                               ? const Icon(Icons.person,
-                                  size: 48, color: Colors.grey)
+                                  size: 48, color: Colors.grey,)
                               : null,
                         ),
                         Positioned(

@@ -74,7 +74,7 @@ class StoreService {
   Future<Map<String, dynamic>> purchase(String menuId) async {
     final res = await _client.rpc('purchase_store_menu', params: {
       'menu_id_in': menuId,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }
@@ -84,7 +84,7 @@ class StoreService {
   Future<Map<String, dynamic>> redeem(String qrToken) async {
     final res = await _client.rpc('redeem_store_purchase', params: {
       'qr_token_in': qrToken,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }

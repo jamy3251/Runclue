@@ -50,7 +50,7 @@ class RoutineService {
       'routine_id_in': routineId,
       'user_lat': lat,
       'user_lng': lng,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unknown'};
   }

@@ -37,7 +37,7 @@ class StreakCalendar extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.local_fire_department,
-                      size: 16, color: AppColors.brandRed),
+                      size: 16, color: AppColors.brandRed,),
                   const SizedBox(width: 4),
                   Text(
                     '$streakCount일 연속!',

@@ -130,13 +130,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                           final n = stats?.totalParticipants ?? 0;
                           return Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
+                                horizontal: 10, vertical: 5,),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.06),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                   color:
-                                      Colors.white.withValues(alpha: 0.08)),
+                                      Colors.white.withValues(alpha: 0.08),),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -159,7 +159,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                               ],
                             ),
                           );
-                        }),
+                        },),
                       ],
                     ),
 
@@ -221,7 +221,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                                       AppColors.brandOrange,
                                       AppColors.brandPurple,
                                     ][i],
-                                    child: Icon(Icons.person, size: 14, color: Colors.black),
+                                    child: const Icon(Icons.person, size: 14, color: Colors.black),
                                   ),
                                 );
                               }),
@@ -254,7 +254,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                                                 : '이 함께하고 있어요',
                                             style: const TextStyle(
                                                 color: AppColors
-                                                    .textSecondary),
+                                                    .textSecondary,),
                                           ),
                                         ]
                                       : [
@@ -263,12 +263,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                                                 '지금 합류하면 첫 시즌의 개척자가 됩니다',
                                             style: TextStyle(
                                                 color: AppColors
-                                                    .textSecondary),
+                                                    .textSecondary,),
                                           ),
                                         ],
                                 ),
                               );
-                            }),
+                            },),
                           ),
                         ],
                       ),
@@ -291,7 +291,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                           hasSession ? '/home' : '/auth/login',
                         ),
                       );
-                    }),
+                    },),
 
                     const SizedBox(height: 16),
 

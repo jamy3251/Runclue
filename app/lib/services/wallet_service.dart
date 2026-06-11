@@ -12,7 +12,7 @@ class WalletService {
 
   /// 충전 요약 — gross/fee/net 합계.
   Future<({int gross, int fee, int net, int topupCount})> topupSummary(
-      String ownerId) async {
+      String ownerId,) async {
     final rows = await _client
         .from('wallet_topups')
         .select('gross_amount, fee_amount, net_amount, status')
@@ -29,7 +29,7 @@ class WalletService {
 
   /// 사장 충전 기록 (최신순).
   Future<List<Map<String, dynamic>>> myTopups(String ownerId,
-      {int limit = 50}) async {
+      {int limit = 50,}) async {
     final rows = await _client
         .from('wallet_topups')
         .select('id, clue_id, gross_amount, fee_amount, net_amount, '
@@ -44,7 +44,7 @@ class WalletService {
 
   /// 내 클루별 남은 풀 (active 위주).
   Future<List<Map<String, dynamic>>> myCluePools(String ownerId,
-      {int limit = 30}) async {
+      {int limit = 30,}) async {
     final rows = await _client
         .from('clues')
         .select('id, title, status, reward_pool_net, reward_pool_committed, '
@@ -57,7 +57,7 @@ class WalletService {
 
   /// 가게 매출 — diamond_ledger source='store_revenue' (사장이 받은 다이아).
   Future<List<Map<String, dynamic>>> storeRevenue(String ownerId,
-      {int limit = 50}) async {
+      {int limit = 50,}) async {
     final rows = await _client
         .from('diamond_ledger')
         .select('id, delta, source, source_id, balance_after, created_at')

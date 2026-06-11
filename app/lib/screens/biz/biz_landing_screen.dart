@@ -28,21 +28,21 @@ class BizLandingScreen extends ConsumerWidget {
           children: [
             Text('RUNCLUE',
                 style: GoogleFonts.blackHanSans(
-                    fontSize: 18, color: AppColors.textPrimary)),
+                    fontSize: 18, color: AppColors.textPrimary,),),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: AppColors.brandOrange.withValues(alpha: 0.15),
                 border: Border.all(
-                    color: AppColors.brandOrange.withValues(alpha: 0.3)),
+                    color: AppColors.brandOrange.withValues(alpha: 0.3),),
                 borderRadius: BorderRadius.circular(9999),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.store,
-                      size: 12, color: AppColors.brandOrange),
+                      size: 12, color: AppColors.brandOrange,),
                   const SizedBox(width: 4),
                   Text(
                     '사장님 모드',
@@ -97,13 +97,13 @@ class BizLandingScreen extends ConsumerWidget {
               children: const [
                 TextSpan(
                     text: '광고비 ',
-                    style: TextStyle(color: AppColors.textPrimary)),
+                    style: TextStyle(color: AppColors.textPrimary),),
                 TextSpan(
                     text: '0원으로\n',
-                    style: TextStyle(color: AppColors.brandYellow)),
+                    style: TextStyle(color: AppColors.brandYellow),),
                 TextSpan(
                     text: '방학에도 손님이\n직접 찾아오게',
-                    style: TextStyle(color: AppColors.textPrimary)),
+                    style: TextStyle(color: AppColors.textPrimary),),
               ],
             ),
           ),
@@ -214,7 +214,7 @@ class BizLandingScreen extends ConsumerWidget {
 
   // ─────────────── 작동 방식 ───────────────
   Widget _buildHowItWorks() {
-    final steps = const [
+    const steps = [
       (1, '퀘스트 등록', '메뉴 할인·기프티콘 보상으로 매장 방문 미션 등록 (5분)',
           Icons.edit_note, AppColors.brandYellow),
       (2, '탐험가 방문', 'AR 퀘스트를 풀러 캠퍼스타운 학생들이 매장 방문',
@@ -344,7 +344,7 @@ class BizLandingScreen extends ConsumerWidget {
               children: List.generate(
                 5,
                 (_) => const Icon(Icons.star,
-                    color: AppColors.brandYellow, size: 16),
+                    color: AppColors.brandYellow, size: 16,),
               ),
             ),
             const SizedBox(height: 12),
@@ -566,7 +566,7 @@ class _PartnerSignupSheetState extends State<_PartnerSignupSheet> {
             const Icon(Icons.check_circle, color: AppColors.brandGreen),
             const SizedBox(width: 8),
             Text('신청 완료!',
-                style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900)),
+                style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900),),
           ],
         ),
         content: Text(
@@ -612,7 +612,7 @@ class _PartnerSignupSheetState extends State<_PartnerSignupSheet> {
               ),
               Text('베타 매장 신청',
                   style: GoogleFonts.blackHanSans(
-                      fontSize: 24, color: AppColors.textPrimary)),
+                      fontSize: 24, color: AppColors.textPrimary,),),
               const SizedBox(height: 4),
               Text(
                 '필수 항목만 입력하시면 됩니다',
@@ -666,7 +666,7 @@ class _PartnerSignupSheetState extends State<_PartnerSignupSheet> {
                     onTap: () => setState(() => _category = cat),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                          horizontal: 12, vertical: 8,),
                       decoration: BoxDecoration(
                         color: selected
                             ? AppColors.brandOrange.withValues(alpha: 0.15)

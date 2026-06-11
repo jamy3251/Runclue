@@ -52,7 +52,7 @@ class DailyQuestsCard extends ConsumerWidget {
               Row(
                 children: [
                   const Icon(Icons.local_fire_department,
-                      color: AppColors.brandYellow, size: 20),
+                      color: AppColors.brandYellow, size: 20,),
                   const SizedBox(width: 6),
                   Text(
                     '오늘의 미션',
@@ -65,7 +65,7 @@ class DailyQuestsCard extends ConsumerWidget {
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
+                        horizontal: 8, vertical: 4,),
                     decoration: BoxDecoration(
                       color: AppColors.brandYellow.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
@@ -123,7 +123,7 @@ class DailyQuestsCard extends ConsumerWidget {
   }
 
   Future<void> _onClaim(
-      BuildContext context, WidgetRef ref, String key) async {
+      BuildContext context, WidgetRef ref, String key,) async {
     HapticFeedback.mediumImpact();
     final res = await ref.read(questServiceProvider).claim(key);
     if (!context.mounted) return;

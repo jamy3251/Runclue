@@ -118,7 +118,7 @@ class SurveyBanner extends StatelessWidget {
                 if (onDismiss != null)
                   IconButton(
                     onPressed: onDismiss,
-                    icon: Icon(Icons.close, size: 18, color: AppColors.textMuted),
+                    icon: const Icon(Icons.close, size: 18, color: AppColors.textMuted),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                   ),
@@ -134,7 +134,7 @@ class SurveyBanner extends StatelessWidget {
             child: Row(
               children: [
                 // 참여자 수
-                Icon(Icons.people_outline, size: 14, color: AppColors.textMuted),
+                const Icon(Icons.people_outline, size: 14, color: AppColors.textMuted),
                 const SizedBox(width: 4),
                 Text('342명 참여',
                   style: GoogleFonts.notoSansKr(
@@ -198,7 +198,7 @@ class ContestBanner extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -224,7 +224,7 @@ class ContestBanner extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.emoji_events, size: 14, color: AppColors.brandBlue),
+                    const Icon(Icons.emoji_events, size: 14, color: AppColors.brandBlue),
                     const SizedBox(width: 4),
                     Text('공모전',
                       style: GoogleFonts.notoSansKr(
@@ -247,7 +247,7 @@ class ContestBanner extends StatelessWidget {
                   children: [
                     Container(
                       width: 6, height: 6,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColors.brandRed,
                         shape: BoxShape.circle,
                       ),

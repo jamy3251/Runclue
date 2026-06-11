@@ -163,7 +163,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Row(
                 children: [
                   const Icon(Icons.location_on,
-                      color: AppColors.brandYellow, size: 18),
+                      color: AppColors.brandYellow, size: 18,),
                   const SizedBox(width: 6),
                   Text(
                     '내 주변 추천',
@@ -294,7 +294,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               const Icon(Icons.arrow_forward_ios,
-                  size: 16, color: AppColors.textSecondary),
+                  size: 16, color: AppColors.textSecondary,),
             ],
           ),
         ),
@@ -331,7 +331,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               IconButton(
                 icon: const Icon(Icons.notifications_outlined,
-                    color: AppColors.textPrimary),
+                    color: AppColors.textPrimary,),
                 onPressed: () => context.push('/notifications'),
               ),
               Positioned(
@@ -524,7 +524,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: Column(
         children: [
           const Icon(Icons.local_fire_department,
-              size: 36, color: AppColors.textMuted),
+              size: 36, color: AppColors.textMuted,),
           const SizedBox(height: 12),
           Text(
             '오늘 첫 번째 미션을 만들어보세요',
@@ -691,7 +691,7 @@ class _RoleTabChip extends StatelessWidget {
             children: [
               Icon(icon,
                   size: 16,
-                  color: isActive ? color : AppColors.textMuted),
+                  color: isActive ? color : AppColors.textMuted,),
               const SizedBox(width: 6),
               Text(
                 label,
@@ -830,7 +830,7 @@ class _LiveHeroCard extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
+                        horizontal: 8, vertical: 4,),
                     decoration: BoxDecoration(
                       color: AppColors.brandRed,
                       borderRadius: BorderRadius.circular(6),
@@ -862,7 +862,7 @@ class _LiveHeroCard extends StatelessWidget {
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
+                        horizontal: 8, vertical: 4,),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(9999),
@@ -871,7 +871,7 @@ class _LiveHeroCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(Icons.people,
-                            size: 12, color: Colors.white),
+                            size: 12, color: Colors.white,),
                         const SizedBox(width: 4),
                         Text(
                           '$participants명',
@@ -918,7 +918,7 @@ class _LiveHeroCard extends StatelessWidget {
                         const Spacer(),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 8),
+                              horizontal: 14, vertical: 8,),
                           decoration: BoxDecoration(
                             color: AppColors.brandYellow,
                             borderRadius: BorderRadius.circular(9999),
@@ -936,7 +936,7 @@ class _LiveHeroCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               const Icon(Icons.arrow_forward,
-                                  size: 14, color: Colors.black),
+                                  size: 14, color: Colors.black,),
                             ],
                           ),
                         ),

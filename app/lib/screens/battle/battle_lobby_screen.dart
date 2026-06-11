@@ -147,7 +147,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
             gradient: LinearGradient(colors: [
               AppColors.brandRed.withValues(alpha: 0.16),
               AppColors.brandYellow.withValues(alpha: 0.10),
-            ]),
+            ],),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Column(
@@ -156,13 +156,13 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
               Row(
                 children: [
                   const Icon(Icons.sports_kabaddi,
-                      color: AppColors.brandRed, size: 22),
+                      color: AppColors.brandRed, size: 22,),
                   const SizedBox(width: 6),
                   Text('미니게임 베팅 대전',
                       style: GoogleFonts.notoSansKr(
                           fontSize: 16,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.brandRed)),
+                          color: AppColors.brandRed,),),
                 ],
               ),
               const SizedBox(height: 8),
@@ -171,7 +171,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
                 '5분 안 매칭되면 CPU와 자동 대전.\n'
                 '이기면 베팅 × 1.9 코인 획득 (수수료 5%).',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 12, color: AppColors.textSecondary),
+                    fontSize: 12, color: AppColors.textSecondary,),
               ),
             ],
           ),
@@ -179,7 +179,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
         const SizedBox(height: 20),
         Text('게임 선택',
             style: GoogleFonts.notoSansKr(
-                fontSize: 13, fontWeight: FontWeight.w800)),
+                fontSize: 13, fontWeight: FontWeight.w800,),),
         const SizedBox(height: 8),
         Row(
           children: _games.map((g) {
@@ -195,7 +195,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 12),
+                        horizontal: 8, vertical: 12,),
                     decoration: BoxDecoration(
                       color: selected
                           ? AppColors.brandRed.withValues(alpha: 0.14)
@@ -214,7 +214,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
                             size: 24,
                             color: selected
                                 ? AppColors.brandRed
-                                : AppColors.textMuted),
+                                : AppColors.textMuted,),
                         const SizedBox(height: 6),
                         Text(g.$2,
                             style: GoogleFonts.notoSansKr(
@@ -222,10 +222,10 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
                                 fontWeight: FontWeight.w900,
                                 color: selected
                                     ? AppColors.brandRed
-                                    : AppColors.textPrimary)),
+                                    : AppColors.textPrimary,),),
                         Text(g.$3,
                             style: GoogleFonts.notoSansKr(
-                                fontSize: 9, color: AppColors.textMuted)),
+                                fontSize: 9, color: AppColors.textMuted,),),
                       ],
                     ),
                   ),
@@ -237,7 +237,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
         const SizedBox(height: 20),
         Text('베팅액 (10 ~ 2000 코인)',
             style: GoogleFonts.notoSansKr(
-                fontSize: 13, fontWeight: FontWeight.w800)),
+                fontSize: 13, fontWeight: FontWeight.w800,),),
         const SizedBox(height: 8),
         TextField(
           controller: _stake,
@@ -255,7 +255,7 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
               .map((v) => ActionChip(
                     label: Text('$v'),
                     onPressed: () => _stake.text = v.toString(),
-                  ))
+                  ),)
               .toList(),
         ),
         const SizedBox(height: 20),
@@ -277,10 +277,10 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white))
+                        strokeWidth: 2, color: Colors.white,),)
                 : Text('큐 진입',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 16, fontWeight: FontWeight.w900)),
+                        fontSize: 16, fontWeight: FontWeight.w900,),),
           ),
         ),
       ],
@@ -298,14 +298,14 @@ class _BattleLobbyScreenState extends ConsumerState<BattleLobbyScreen> {
           Text(
             vsCpu ? 'CPU와 매칭 중...' : '상대방 매칭 대기 중...',
             style: GoogleFonts.notoSansKr(
-                fontSize: 16, fontWeight: FontWeight.w800),
+                fontSize: 16, fontWeight: FontWeight.w800,),
           ),
           const SizedBox(height: 8),
           Text(
             '5분 안에 다른 사용자가 안 오면\nCPU와 자동 매칭됩니다',
             textAlign: TextAlign.center,
             style: GoogleFonts.notoSansKr(
-                fontSize: 12, color: AppColors.textMuted),
+                fontSize: 12, color: AppColors.textMuted,),
           ),
           const SizedBox(height: 24),
           TextButton.icon(

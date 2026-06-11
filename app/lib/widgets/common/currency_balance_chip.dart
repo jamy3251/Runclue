@@ -64,7 +64,7 @@ class _Chip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: compact ? 8 : 10, vertical: 4),
+          horizontal: compact ? 8 : 10, vertical: 4,),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),

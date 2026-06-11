@@ -121,7 +121,7 @@ class _TapBattleGameState extends ConsumerState<TapBattleGame> {
         title: Text('서로 때리기',
             style: GoogleFonts.notoSansKr(
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary)),
+                color: AppColors.textPrimary,),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -163,7 +163,7 @@ class _TapBattleGameState extends ConsumerState<TapBattleGame> {
                                 ? AppColors.brandRed
                                 : AppColors.brandYellow)
                             .withValues(alpha: 0.5),
-                        width: 2),
+                        width: 2,),
                   ),
                   alignment: Alignment.center,
                   child: Column(
@@ -184,7 +184,7 @@ class _TapBattleGameState extends ConsumerState<TapBattleGame> {
                             fontWeight: FontWeight.w900,
                             color: _running
                                 ? AppColors.brandRed
-                                : AppColors.brandYellow),
+                                : AppColors.brandYellow,),
                       ),
                     ],
                   ),
@@ -209,13 +209,13 @@ class _TapBattleGameState extends ConsumerState<TapBattleGame> {
         children: [
           Text(label,
               style: GoogleFonts.notoSansKr(
-                  fontSize: 11, color: AppColors.textMuted)),
+                  fontSize: 11, color: AppColors.textMuted,),),
           const SizedBox(height: 4),
           Text('$v',
               style: GoogleFonts.notoSansKr(
                   fontSize: 28,
                   fontWeight: FontWeight.w900,
-                  color: color)),
+                  color: color,),),
         ],
       ),
     );
@@ -236,13 +236,13 @@ class _TapBattleGameState extends ConsumerState<TapBattleGame> {
               style: GoogleFonts.notoSansKr(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.textPrimary)),
+                  color: AppColors.textPrimary,),),
           const SizedBox(height: 4),
           Text('${secs}s',
               style: GoogleFonts.notoSansKr(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.brandYellow)),
+                  color: AppColors.brandYellow,),),
         ],
       ),
     );
@@ -268,7 +268,7 @@ class _TapBattleGameState extends ConsumerState<TapBattleGame> {
       ),
       child: Text(label,
           style: TextStyle(
-              color: color, fontSize: 16, fontWeight: FontWeight.w900)),
+              color: color, fontSize: 16, fontWeight: FontWeight.w900,),),
     );
   }
 }

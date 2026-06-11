@@ -52,19 +52,19 @@ Future<void> main() async {
 
     // Release 빌드 + config 누락이면 미스빌드 화면 노출
     if (!hasValidConfig && kReleaseMode) {
-      runApp(_MisbuildApp(
+      runApp(const _MisbuildApp(
         reason: 'SUPABASE_URL / SUPABASE_ANON_KEY 누락',
         hint:
             '빌드 시 --dart-define-from-file=.env 옵션이 누락된 APK입니다.\n'
             'scripts/build_apk.ps1 로 다시 빌드해주세요.',
-      ));
+      ),);
       return;
     }
     if (initError != null && kReleaseMode) {
       runApp(_MisbuildApp(
         reason: 'Supabase 초기화 실패',
         hint: initError,
-      ));
+      ),);
       return;
     }
 
@@ -100,21 +100,21 @@ class _MisbuildApp extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(Icons.error_outline,
-                    color: Color(0xFFEF4444), size: 56),
+                    color: Color(0xFFEF4444), size: 56,),
                 const SizedBox(height: 20),
                 const Text('빌드 설정 오류',
                     style: TextStyle(
                       fontSize: 24,
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
-                    )),
+                    ),),
                 const SizedBox(height: 12),
                 Text(reason,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Color(0xFFEF4444),
                       fontWeight: FontWeight.w700,
-                    )),
+                    ),),
                 const SizedBox(height: 20),
                 Container(
                   padding: const EdgeInsets.all(14),

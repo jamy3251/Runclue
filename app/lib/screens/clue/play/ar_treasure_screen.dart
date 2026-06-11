@@ -92,9 +92,9 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
       if (!mounted) return;
       setState(() {
         _distanceM = Geolocator.distanceBetween(
-            pos.latitude, pos.longitude, widget.targetLat, widget.targetLng);
+            pos.latitude, pos.longitude, widget.targetLat, widget.targetLng,);
         _bearing = Geolocator.bearingBetween(
-            pos.latitude, pos.longitude, widget.targetLat, widget.targetLng);
+            pos.latitude, pos.longitude, widget.targetLat, widget.targetLng,);
       });
     });
     _compassSub = FlutterCompass.events?.listen((event) {
@@ -141,7 +141,7 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
               child: Text(
                 _cameraError ?? '카메라 준비 중...',
                 style: GoogleFonts.notoSansKr(
-                    color: AppColors.textMuted, fontSize: 13),
+                    color: AppColors.textMuted, fontSize: 13,),
               ),
             ),
 
@@ -176,7 +176,7 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
                         child: Text(widget.title,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.blackHanSans(
-                                fontSize: 16, color: Colors.white)),
+                                fontSize: 16, color: Colors.white,),),
                       ),
                       const SizedBox(width: 48),
                     ],
@@ -193,7 +193,7 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
                         color: (_arrived
                                 ? AppColors.brandGreen
                                 : AppColors.brandYellow)
-                            .withValues(alpha: 0.6)),
+                            .withValues(alpha: 0.6),),
                   ),
                   child: Text(
                     _distanceM == null
@@ -206,7 +206,7 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
                         fontWeight: FontWeight.w900,
                         color: _arrived
                             ? AppColors.brandGreen
-                            : AppColors.brandYellow),
+                            : AppColors.brandYellow,),
                   ),
                 ),
               ],
@@ -234,7 +234,7 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
                                     .withValues(alpha: 0.55),
                                 AppColors.brandYellow
                                     .withValues(alpha: 0.08),
-                              ]),
+                              ],),
                               boxShadow: [
                                 BoxShadow(
                                   color: AppColors.brandYellow
@@ -245,7 +245,7 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
                             ),
                             alignment: Alignment.center,
                             child: const Text('💎',
-                                style: TextStyle(fontSize: 64)),
+                                style: TextStyle(fontSize: 64),),
                           ),
                         );
                       },
@@ -255,7 +255,7 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
                     ? Text('나침반 보정 중...\n폰을 8자로 흔들어 주세요',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.notoSansKr(
-                            color: Colors.white70, fontSize: 13))
+                            color: Colors.white70, fontSize: 13,),)
                     : Transform.rotate(
                         angle: relative,
                         child: Column(
@@ -267,8 +267,8 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
                                     .withValues(alpha: 0.95),
                                 shadows: const [
                                   Shadow(
-                                      color: Colors.black54, blurRadius: 12),
-                                ]),
+                                      color: Colors.black54, blurRadius: 12,),
+                                ],),
                           ],
                         ),
                       ),
@@ -283,7 +283,7 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
               child: Center(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 10),
+                      horizontal: 16, vertical: 10,),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12),
@@ -291,7 +291,7 @@ class _ArTreasureScreenState extends State<ArTreasureScreen>
                   child: Text(
                     '화살표 방향으로 이동하세요 — ${widget.radiusM.round()}m 안에서 보물이 나타납니다',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 12, color: Colors.white),
+                        fontSize: 12, color: Colors.white,),
                   ),
                 ),
               ),

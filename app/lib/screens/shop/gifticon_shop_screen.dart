@@ -120,13 +120,13 @@ class _GifticonTileState extends ConsumerState<_GifticonTile> {
                     errorWidget: (_, __, ___) => Container(
                       color: AppColors.bgElevated,
                       child: const Icon(Icons.card_giftcard,
-                          size: 36, color: AppColors.textMuted),
+                          size: 36, color: AppColors.textMuted,),
                     ),
                   )
                 : Container(
                     color: AppColors.bgElevated,
                     child: const Icon(Icons.card_giftcard,
-                        size: 36, color: AppColors.textMuted),
+                        size: 36, color: AppColors.textMuted,),
                   ),
           ),
           Padding(
@@ -166,7 +166,7 @@ class _GifticonTileState extends ConsumerState<_GifticonTile> {
                 Row(
                   children: [
                     const Icon(Icons.diamond,
-                        size: 12, color: AppColors.brandBlue),
+                        size: 12, color: AppColors.brandBlue,),
                     const SizedBox(width: 3),
                     Text(
                       '$cost',
@@ -263,10 +263,10 @@ class _GifticonTileState extends ConsumerState<_GifticonTile> {
             Row(
               children: [
                 const Icon(Icons.diamond,
-                    size: 14, color: AppColors.brandBlue),
+                    size: 14, color: AppColors.brandBlue,),
                 const SizedBox(width: 4),
                 Text('$cost 다이아 차감',
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                    style: const TextStyle(fontWeight: FontWeight.w700),),
               ],
             ),
             const SizedBox(height: 8),

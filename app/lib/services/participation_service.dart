@@ -45,7 +45,7 @@ class ParticipationService {
       // current_participants +1 (실패해도 무시 — 카운터는 부수효과)
       try {
         await _client.rpc('increment_clue_participants',
-            params: {'clue_id_param': clueId});
+            params: {'clue_id_param': clueId},);
       } catch (_) {
         // RPC 없으면 직접 UPDATE
         try {
@@ -237,7 +237,7 @@ class ParticipationService {
         if (e.toString().contains('42501') ||
             e.toString().contains('row-level security')) {
           debugPrint(
-              '   → RLS INSERT 정책 누락 가능성. supabase/migrations/002 적용 필요.');
+              '   → RLS INSERT 정책 누락 가능성. supabase/migrations/002 적용 필요.',);
         }
       }
     }
@@ -324,7 +324,7 @@ class ParticipationService {
           clueId: clueId,
           rewardLabel: rewardLabel,
           earnedPoints: earnedPoints,
-        ));
+        ),);
         return;
       } on PostgrestException catch (e) {
         if (e.code == 'PGRST204') {
@@ -346,7 +346,7 @@ class ParticipationService {
         // 42501: RLS 정책 거부 — 자동 복구 불가, 운영자가 정책 추가해야 함
         if (e.code == '42501') {
           throw Exception(
-              'reward INSERT 거부 (RLS 정책 누락) — supabase/migrations/002 적용 필요');
+              'reward INSERT 거부 (RLS 정책 누락) — supabase/migrations/002 적용 필요',);
         }
         throw Exception('reward INSERT 실패 [${e.code}]: ${e.message} | drop=$dropped');
       }
@@ -445,7 +445,7 @@ class ParticipationService {
           return {'id': participationId, ...payload};
         }
         throw Exception(
-            'participation 업데이트 실패 [code=${e.code}]: ${e.message} | drop=$dropped');
+            'participation 업데이트 실패 [code=${e.code}]: ${e.message} | drop=$dropped',);
       } catch (e) {
         throw Exception('participation 업데이트 실패: $e');
       }
@@ -460,7 +460,7 @@ class ParticipationService {
   Future<Map<String, dynamic>> joinCoop(String clueId) async {
     final res = await _client.rpc('join_coop_clue', params: {
       'clue_id_in': clueId,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }

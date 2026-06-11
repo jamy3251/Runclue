@@ -45,7 +45,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.bgElevated,
         title: const Text('클루를 삭제할까요?',
-            style: TextStyle(color: AppColors.textPrimary)),
+            style: TextStyle(color: AppColors.textPrimary),),
         content: const Text(
           '삭제하면 참여 중인 사람들도 더 이상 진행할 수 없어요. 되돌릴 수 없습니다.',
           style: TextStyle(color: AppColors.textSecondary),
@@ -58,7 +58,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('삭제',
-                style: TextStyle(color: AppColors.brandRed)),
+                style: TextStyle(color: AppColors.brandRed),),
           ),
         ],
       ),
@@ -167,7 +167,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
           final myId = ref.watch(currentUserIdProvider);
           final isCreator = myId != null && myId == clue['creator_id'];
           return PopupMenuButton<String>(
-            icon: _CircleIconButton(
+            icon: const _CircleIconButton(
               icon: Icons.more_vert,
               onTap: null,
             ),
@@ -193,7 +193,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                   child: Row(
                     children: [
                       Icon(Icons.delete_outline,
-                          color: AppColors.brandRed, size: 18),
+                          color: AppColors.brandRed, size: 18,),
                       SizedBox(width: 8),
                       Text('클루 삭제', style: TextStyle(color: AppColors.brandRed)),
                     ],
@@ -201,7 +201,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                 ),
             ],
           );
-        }),
+        },),
         const SizedBox(width: 4),
       ],
       flexibleSpace: FlexibleSpaceBar(
@@ -216,7 +216,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                   color: AppColors.bgSurface,
                   child: const Center(
                     child: Icon(Icons.image,
-                        size: 64, color: AppColors.textMuted),
+                        size: 64, color: AppColors.textMuted,),
                   ),
                 ),
               )
@@ -293,7 +293,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                             const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 2),
+                                  horizontal: 6, vertical: 2,),
                               decoration: BoxDecoration(
                                 color: AppColors.brandYellow.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(4),
@@ -317,7 +317,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                             ),
                           ],
                         );
-                      }),
+                      },),
                     ],
                   ),
                 ],
@@ -331,7 +331,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
 
   // ─────────────────────── 미션 구성 탭 ───────────────────────
   Widget _buildCompositionTab(
-      Map<String, dynamic> clue, List<Map<String, dynamic>> steps) {
+      Map<String, dynamic> clue, List<Map<String, dynamic>> steps,) {
     final reward = clue['reward_value']?.toString() ?? '';
     final participants = clue['participant_count'] ?? 0;
     final maxParticipants = clue['max_participants'];
@@ -393,7 +393,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
               ),
               const Spacer(),
               Text(
-                '현재 ${participants}명 참여',
+                '현재 $participants명 참여',
                 style: GoogleFonts.notoSansKr(
                   fontSize: 12,
                   color: AppColors.textMuted,
@@ -597,7 +597,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.map_outlined,
-                  size: 48, color: AppColors.textMuted),
+                  size: 48, color: AppColors.textMuted,),
               const SizedBox(height: 12),
               Text(
                 '체크포인트 위치',
@@ -630,7 +630,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
             child: Row(
               children: [
                 const Icon(Icons.location_on,
-                    color: AppColors.brandYellow, size: 20),
+                    color: AppColors.brandYellow, size: 20,),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -665,7 +665,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
             Row(
               children: [
                 const Icon(Icons.near_me,
-                    color: AppColors.brandYellow, size: 18),
+                    color: AppColors.brandYellow, size: 18,),
                 const SizedBox(width: 6),
                 Text(
                   '이 동네 다른 클루',
@@ -712,13 +712,13 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                                   errorBuilder: (_, __, ___) => Container(
                                     color: AppColors.bgElevated,
                                     child: const Icon(Icons.image_not_supported,
-                                        color: AppColors.textMuted, size: 20),
+                                        color: AppColors.textMuted, size: 20,),
                                   ),
                                 )
                               : Container(
                                   color: AppColors.bgElevated,
                                   child: const Icon(Icons.explore,
-                                      color: AppColors.textMuted, size: 20),
+                                      color: AppColors.textMuted, size: 20,),
                                 ),
                         ),
                       ),
@@ -741,7 +741,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                             Row(
                               children: [
                                 const Icon(Icons.location_on,
-                                    size: 11, color: AppColors.textMuted),
+                                    size: 11, color: AppColors.textMuted,),
                                 const SizedBox(width: 2),
                                 Text(
                                   '${dist}m · ${c['location_name'] ?? '위치'}',
@@ -786,7 +786,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.rate_review_outlined,
-                size: 56, color: AppColors.textMuted),
+                size: 56, color: AppColors.textMuted,),
             const SizedBox(height: 12),
             Text(
               '아직 리뷰가 없어요',
@@ -896,12 +896,12 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
             if (isCoop && (lobbyOpen || (coopStarted && inLobby))) ...[
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 8),
+                    horizontal: 12, vertical: 8,),
                 decoration: BoxDecoration(
                   color: AppColors.brandBlue.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                      color: AppColors.brandBlue.withValues(alpha: 0.3)),
+                      color: AppColors.brandBlue.withValues(alpha: 0.3),),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -937,7 +937,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                         backgroundColor:
                             AppColors.brandBlue.withValues(alpha: 0.15),
                         valueColor: const AlwaysStoppedAnimation(
-                            AppColors.brandBlue),
+                            AppColors.brandBlue,),
                         minHeight: 6,
                       ),
                     ),
@@ -949,7 +949,7 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
             if (inProgress) ...[
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 4),
+                    horizontal: 10, vertical: 4,),
                 decoration: BoxDecoration(
                   color: AppColors.brandGreen.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -999,10 +999,10 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
                                     ? () => _onJoinCoop(clue)
                                     : (coopStarted && inLobby)
                                         ? () => context.push(
-                                            '/clue/${widget.clueId}/play')
+                                            '/clue/${widget.clueId}/play',)
                                         : (inProgress || completed)
                                             ? () => context.push(
-                                                '/clue/${widget.clueId}/play')
+                                                '/clue/${widget.clueId}/play',)
                                             : () => _onJoin(clue),
                     child: Center(
                       child: Row(
@@ -1135,11 +1135,11 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Row(
+            title: const Row(
               children: [
-                const Icon(Icons.error_outline, color: AppColors.brandRed),
-                const SizedBox(width: 8),
-                const Text('참여 실패'),
+                Icon(Icons.error_outline, color: AppColors.brandRed),
+                SizedBox(width: 8),
+                Text('참여 실패'),
               ],
             ),
             content: Column(

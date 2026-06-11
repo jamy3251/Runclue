@@ -38,7 +38,7 @@ class _OthelloGameState extends ConsumerState<OthelloGame> {
 
   void _reset() {
     _board = List.generate(N, (_) => List.filled(N, 0));
-    final m = N ~/ 2;
+    const m = N ~/ 2;
     _board[m - 1][m - 1] = W;
     _board[m][m] = W;
     _board[m - 1][m] = B;
@@ -192,7 +192,7 @@ class _OthelloGameState extends ConsumerState<OthelloGame> {
         title: Text('오셀로 6×6',
             style: GoogleFonts.notoSansKr(
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary)),
+                color: AppColors.textPrimary,),),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -208,12 +208,12 @@ class _OthelloGameState extends ConsumerState<OthelloGame> {
               children: [
                 Expanded(
                   child: _scoreCard('나 (●)', cnt['B'] ?? 0,
-                      AppColors.textPrimary, _turn == B && _winner == null),
+                      AppColors.textPrimary, _turn == B && _winner == null,),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _scoreCard('CPU (○)', cnt['W'] ?? 0, Colors.white,
-                      _turn == W && _winner == null),
+                      _turn == W && _winner == null,),
                 ),
               ],
             ),
@@ -273,7 +273,7 @@ class _OthelloGameState extends ConsumerState<OthelloGame> {
                                       BoxShadow(
                                           color: Colors.black26,
                                           blurRadius: 2,
-                                          offset: Offset(0, 1))
+                                          offset: Offset(0, 1),),
                                     ],
                                   ),
                                 ),
@@ -292,7 +292,7 @@ class _OthelloGameState extends ConsumerState<OthelloGame> {
                       ? '내 차례 — 노란 점에 두세요'
                       : 'CPU 생각 중...',
               style: GoogleFonts.notoSansKr(
-                  fontSize: 12, color: AppColors.textMuted),
+                  fontSize: 12, color: AppColors.textMuted,),
             ),
           ],
         ),
@@ -328,13 +328,13 @@ class _OthelloGameState extends ConsumerState<OthelloGame> {
           Expanded(
             child: Text(label,
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 12, color: AppColors.textPrimary)),
+                    fontSize: 12, color: AppColors.textPrimary,),),
           ),
           Text('$v',
               style: GoogleFonts.notoSansKr(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.textPrimary)),
+                  color: AppColors.textPrimary,),),
         ],
       ),
     );
@@ -360,7 +360,7 @@ class _OthelloGameState extends ConsumerState<OthelloGame> {
       ),
       child: Text(label,
           style: TextStyle(
-              color: color, fontSize: 16, fontWeight: FontWeight.w900)),
+              color: color, fontSize: 16, fontWeight: FontWeight.w900,),),
     );
   }
 }

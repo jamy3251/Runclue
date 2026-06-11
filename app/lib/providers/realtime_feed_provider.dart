@@ -56,7 +56,7 @@ final realtimeFeedProvider =
         controller.add(FeedEvent(
           type: FeedEventType.evidenceSubmitted,
           data: Map<String, dynamic>.from(payload.newRecord),
-        ));
+        ),);
       },
     );
 
@@ -68,7 +68,7 @@ final realtimeFeedProvider =
         controller.add(FeedEvent(
           type: FeedEventType.evidenceSubmitted,
           data: Map<String, dynamic>.from(payload.newRecord),
-        ));
+        ),);
       },
     );
 
@@ -80,7 +80,7 @@ final realtimeFeedProvider =
         controller.add(FeedEvent(
           type: FeedEventType.participationUpdated,
           data: Map<String, dynamic>.from(payload.newRecord),
-        ));
+        ),);
       },
     );
 

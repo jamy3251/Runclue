@@ -31,23 +31,23 @@ class StepTypeIcon extends StatelessWidget {
   _StepTypeConfig _getConfig(String type) {
     switch (type.toUpperCase()) {
       case 'CHECKPOINT':
-        return _StepTypeConfig(Icons.location_on, Colors.blue);
+        return const _StepTypeConfig(Icons.location_on, Colors.blue);
       case 'SNAPSHOT':
-        return _StepTypeConfig(Icons.camera_alt, Colors.green);
+        return const _StepTypeConfig(Icons.camera_alt, Colors.green);
       case 'QUEST':
-        return _StepTypeConfig(Icons.quiz, Colors.purple);
+        return const _StepTypeConfig(Icons.quiz, Colors.purple);
       case 'OX_QUIZ':
-        return _StepTypeConfig(Icons.check_circle, Colors.orange);
+        return const _StepTypeConfig(Icons.check_circle, Colors.orange);
       case 'LIST':
-        return _StepTypeConfig(Icons.checklist, Colors.teal);
+        return const _StepTypeConfig(Icons.checklist, Colors.teal);
       case 'BOARD':
-        return _StepTypeConfig(Icons.dashboard, Colors.grey);
+        return const _StepTypeConfig(Icons.dashboard, Colors.grey);
       case 'PANORAMA':
-        return _StepTypeConfig(Icons.panorama, Colors.grey);
+        return const _StepTypeConfig(Icons.panorama, Colors.grey);
       case 'FACIAL':
-        return _StepTypeConfig(Icons.face, Colors.grey);
+        return const _StepTypeConfig(Icons.face, Colors.grey);
       default:
-        return _StepTypeConfig(Icons.help_outline, Colors.grey);
+        return const _StepTypeConfig(Icons.help_outline, Colors.grey);
     }
   }
 }

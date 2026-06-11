@@ -93,19 +93,19 @@ class _NicknameSetupScreenState extends ConsumerState<NicknameSetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Spacer(flex: 2),
-              Text('🏃', style: const TextStyle(fontSize: 44)),
+              const Text('🏃', style: TextStyle(fontSize: 44)),
               const SizedBox(height: 16),
               Text('탐험가 이름을\n정해주세요',
                   style: GoogleFonts.blackHanSans(
                       fontSize: 34,
                       color: AppColors.textPrimary,
-                      height: 1.25)),
+                      height: 1.25,),),
               const SizedBox(height: 10),
               Text('랭킹·배틀·시즌 보드에 이 이름으로 표시됩니다.\n언제든 프로필에서 바꿀 수 있어요.',
                   style: GoogleFonts.notoSansKr(
                       fontSize: 13,
                       color: AppColors.textMuted,
-                      height: 1.5)),
+                      height: 1.5,),),
               const SizedBox(height: 28),
               TextField(
                 controller: _controller,
@@ -114,17 +114,17 @@ class _NicknameSetupScreenState extends ConsumerState<NicknameSetupScreen> {
                 style: GoogleFonts.notoSansKr(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary),
+                    color: AppColors.textPrimary,),
                 decoration: InputDecoration(
                   hintText: '예: 날쌘탐험가42',
                   counterText: '',
                   errorText: _error,
                   prefixIcon: const Icon(Icons.badge_outlined,
-                      color: AppColors.brandYellow),
+                      color: AppColors.brandYellow,),
                   suffixIcon: IconButton(
                     tooltip: '랜덤 추천',
                     icon: const Icon(Icons.casino_outlined,
-                        color: AppColors.textMuted),
+                        color: AppColors.textMuted,),
                     onPressed: _suggest,
                   ),
                 ),
@@ -140,7 +140,7 @@ class _NicknameSetupScreenState extends ConsumerState<NicknameSetupScreen> {
                     backgroundColor: AppColors.brandYellow,
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
+                        borderRadius: BorderRadius.circular(14),),
                     elevation: 0,
                   ),
                   child: _busy
@@ -148,10 +148,10 @@ class _NicknameSetupScreenState extends ConsumerState<NicknameSetupScreen> {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.black))
+                              strokeWidth: 2, color: Colors.black,),)
                       : Text('탐험 시작하기',
                           style: GoogleFonts.notoSansKr(
-                              fontSize: 16, fontWeight: FontWeight.w900)),
+                              fontSize: 16, fontWeight: FontWeight.w900,),),
                 ),
               ),
               const SizedBox(height: 8),
@@ -160,7 +160,7 @@ class _NicknameSetupScreenState extends ConsumerState<NicknameSetupScreen> {
                   onPressed: _busy ? null : () => context.go('/home'),
                   child: Text('나중에 정할게요',
                       style: GoogleFonts.notoSansKr(
-                          fontSize: 12, color: AppColors.textDisabled)),
+                          fontSize: 12, color: AppColors.textDisabled,),),
                 ),
               ),
               const Spacer(flex: 3),

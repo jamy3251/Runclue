@@ -50,19 +50,19 @@ class _QrRedeemScreenState extends ConsumerState<QrRedeemScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.check_circle,
-                    color: AppColors.brandGreen, size: 56),
+                    color: AppColors.brandGreen, size: 56,),
                 const SizedBox(height: 12),
                 Text(
                   res['menu_name']?.toString() ?? '',
                   style: GoogleFonts.notoSansKr(
-                      fontSize: 16, fontWeight: FontWeight.w800),
+                      fontSize: 16, fontWeight: FontWeight.w800,),
                 ),
                 const SizedBox(height: 4),
                 Text('${res['diamond_cost']} 다이아 받음',
                     style: GoogleFonts.notoSansKr(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.brandBlue)),
+                        color: AppColors.brandBlue,),),
               ],
             ),
             actions: [
@@ -82,7 +82,7 @@ class _QrRedeemScreenState extends ConsumerState<QrRedeemScreen> {
           SnackBar(
               content: Text(msg),
               backgroundColor: AppColors.brandRed,
-              duration: const Duration(seconds: 2)),
+              duration: const Duration(seconds: 2),),
         );
         // 일정 시간 후 같은 토큰 재인식 허용
         Future.delayed(const Duration(seconds: 2), () {
@@ -149,7 +149,7 @@ class _QrRedeemScreenState extends ConsumerState<QrRedeemScreen> {
             bottom: 24,
             child: Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
+                  horizontal: 16, vertical: 12,),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(12),
@@ -162,7 +162,7 @@ class _QrRedeemScreenState extends ConsumerState<QrRedeemScreen> {
                 style: GoogleFonts.notoSansKr(
                     fontSize: 13,
                     color: Colors.white,
-                    fontWeight: FontWeight.w700),
+                    fontWeight: FontWeight.w700,),
               ),
             ),
           ),

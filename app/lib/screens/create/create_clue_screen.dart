@@ -160,7 +160,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
               context.pop();
             },
             child: const Text('나가기',
-                style: TextStyle(color: AppColors.brandRed)),
+                style: TextStyle(color: AppColors.brandRed),),
           ),
         ],
       ),
@@ -186,7 +186,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
             const Icon(Icons.error_outline, color: AppColors.brandRed),
             const SizedBox(width: 8),
             Text(title,
-                style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900)),
+                style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900),),
           ],
         ),
         content: Column(
@@ -455,10 +455,10 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                 isReallySaved
                     ? Icons.check_circle
                     : Icons.warning_amber_rounded,
-                color: accent),
+                color: accent,),
             const SizedBox(width: 8),
             Text(isReallySaved ? '클루 등록 완료' : '저장 확인 실패',
-                style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900)),
+                style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900),),
           ],
         ),
         content: Column(
@@ -606,7 +606,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           subtitle: '탐험가에게 보일 첫 인상이에요',
         ),
         const SizedBox(height: 20),
-        _DarkLabel('썸네일 (선택)'),
+        const _DarkLabel('썸네일 (선택)'),
         const SizedBox(height: 8),
         GestureDetector(
           onTap: _pickThumbnail,
@@ -629,7 +629,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(Icons.add_photo_alternate_outlined,
-                          color: AppColors.textMuted, size: 32),
+                          color: AppColors.textMuted, size: 32,),
                       const SizedBox(height: 8),
                       Text(
                         '대표 이미지 추가',
@@ -644,7 +644,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        _DarkLabel('클루 제목 *'),
+        const _DarkLabel('클루 제목 *'),
         const SizedBox(height: 8),
         _DarkInput(
           controller: _titleController,
@@ -653,7 +653,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           onChanged: (_) => setState(() {}),
         ),
         const SizedBox(height: 16),
-        _DarkLabel('카테고리'),
+        const _DarkLabel('카테고리'),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -664,7 +664,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
               onTap: () => setState(() => _category = opt.$1),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 8),
+                    horizontal: 12, vertical: 8,),
                 decoration: BoxDecoration(
                   color: selected
                       ? AppColors.brandYellow
@@ -683,7 +683,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                         size: 14,
                         color: selected
                             ? Colors.black
-                            : AppColors.textMuted),
+                            : AppColors.textMuted,),
                     const SizedBox(width: 6),
                     Text(
                       opt.$1,
@@ -700,7 +700,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           }).toList(),
         ),
         const SizedBox(height: 16),
-        _DarkLabel('소개 (10자 이상) *'),
+        const _DarkLabel('소개 (10자 이상) *'),
         const SizedBox(height: 8),
         _DarkInput(
           controller: _descController,
@@ -723,7 +723,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           subtitle: '탐험가가 방문할 장소를 알려주세요',
         ),
         const SizedBox(height: 20),
-        _DarkLabel('매장명 *'),
+        const _DarkLabel('매장명 *'),
         const SizedBox(height: 8),
         _DarkInput(
           controller: _storeNameController,
@@ -731,7 +731,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           onChanged: (_) => setState(() {}),
         ),
         const SizedBox(height: 16),
-        _DarkLabel('주소 *'),
+        const _DarkLabel('주소 *'),
         const SizedBox(height: 8),
         _DarkInput(
           controller: _addressController,
@@ -739,7 +739,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           onChanged: (_) => setState(() {}),
         ),
         const SizedBox(height: 16),
-        _DarkLabel('지도에서 위치 선택 *'),
+        const _DarkLabel('지도에서 위치 선택 *'),
         const SizedBox(height: 8),
         // 미니맵 미리보기 — 지도 SDK 활성화됐으면 정상 표시, 안 되면 카드 폴백
         GestureDetector(
@@ -761,7 +761,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           child: Row(
             children: [
               const Icon(Icons.location_on,
-                  color: AppColors.brandYellow, size: 16),
+                  color: AppColors.brandYellow, size: 16,),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -784,7 +784,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        _DarkLabel('인증 반경 (m)'),
+        const _DarkLabel('인증 반경 (m)'),
         const SizedBox(height: 8),
         _DarkInput(
           controller: _radiusController,
@@ -843,7 +843,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
             child: Column(
               children: [
                 const Icon(Icons.add_circle_outline,
-                    color: AppColors.textMuted, size: 36),
+                    color: AppColors.textMuted, size: 36,),
                 const SizedBox(height: 8),
                 Text(
                   '아래 버튼으로 첫 단계를 추가하세요',
@@ -872,7 +872,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                     width: 28,
                     height: 28,
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.brandYellow,
                       shape: BoxShape.circle,
                     ),
@@ -911,7 +911,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline,
-                        color: AppColors.textMuted, size: 20),
+                        color: AppColors.textMuted, size: 20,),
                     onPressed: () => setState(() => _steps.removeAt(i)),
                   ),
                 ],
@@ -965,12 +965,12 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
 
   // ─────────────── Step 4: 보상 + 분배 ───────────────
   Widget _buildStepReward() {
-    final rewardOptions = const [
+    const rewardOptions = [
       ('menu_discount', '메뉴 할인', Icons.local_offer),
       ('gifticon', '기프티콘', Icons.card_giftcard),
       ('cash', '캐시 (Wave3)', Icons.payments),
     ];
-    final distOptions = const [
+    const distOptions = [
       ('first_come', '선착순', Icons.flash_on,
           '먼저 완료한 N명에게 지급'),
       ('rank', '등수별', Icons.emoji_events,
@@ -989,7 +989,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         ),
         const SizedBox(height: 20),
 
-        _DarkLabel('보상 종류'),
+        const _DarkLabel('보상 종류'),
         const SizedBox(height: 8),
         Row(
           children: rewardOptions.map((opt) {
@@ -1024,7 +1024,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                                 : selected
                                     ? AppColors.brandYellow
                                     : AppColors.textMuted,
-                            size: 22),
+                            size: 22,),
                         const SizedBox(height: 6),
                         Text(
                           opt.$2,
@@ -1048,7 +1048,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         ),
 
         const SizedBox(height: 20),
-        _DarkLabel('보상 내용 *'),
+        const _DarkLabel('보상 내용 *'),
         const SizedBox(height: 8),
         _DarkInput(
           controller: _rewardLabelController,
@@ -1056,7 +1056,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           onChanged: (_) => setState(() {}),
         ),
         const SizedBox(height: 12),
-        _DarkLabel('보상 가치 (원)'),
+        const _DarkLabel('보상 가치 (원)'),
         const SizedBox(height: 8),
         _DarkInput(
           controller: _rewardValueController,
@@ -1067,7 +1067,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         const SizedBox(height: 28),
 
         // ── 게임 모드 (#15 + #23) — solo / coop / versus 3선택 ──
-        _DarkLabel('게임 모드 *'),
+        const _DarkLabel('게임 모드 *'),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -1107,7 +1107,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         ),
         if (_gameMode == 'coop' || _gameMode == 'versus') ...[
           const SizedBox(height: 12),
-          _DarkLabel('필요 인원 (2~10명)'),
+          const _DarkLabel('필요 인원 (2~10명)'),
           const SizedBox(height: 8),
           _DarkInput(
             controller: _minParticipantsController,
@@ -1120,13 +1120,13 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                 ? '※ 그룹 모드는 풀을 N등분 — 모두 동일한 보상을 받습니다.'
                 : '※ 대결 모드는 첫 완료자가 풀을 독식 — 나머지는 보상 없음.',
             style: GoogleFonts.notoSansKr(
-                fontSize: 11, color: AppColors.textMuted),
+                fontSize: 11, color: AppColors.textMuted,),
           ),
         ],
 
         const SizedBox(height: 28),
 
-        _DarkLabel('분배 방식 *'),
+        const _DarkLabel('분배 방식 *'),
         const SizedBox(height: 8),
         if (_gameMode == 'coop' || _gameMode == 'versus') ...[
           Container(
@@ -1141,7 +1141,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                   color: (_gameMode == 'coop'
                           ? AppColors.brandBlue
                           : AppColors.brandRed)
-                      .withValues(alpha: 0.3)),
+                      .withValues(alpha: 0.3),),
             ),
             child: Row(
               children: [
@@ -1149,7 +1149,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                     size: 16,
                     color: _gameMode == 'coop'
                         ? AppColors.brandBlue
-                        : AppColors.brandRed),
+                        : AppColors.brandRed,),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -1160,7 +1160,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                         fontSize: 12,
                         color: _gameMode == 'coop'
                             ? AppColors.brandBlue
-                            : AppColors.brandRed),
+                            : AppColors.brandRed,),
                   ),
                 ),
               ],
@@ -1192,7 +1192,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                     Icon(opt.$3,
                         color: selected
                             ? AppColors.brandBlue
-                            : AppColors.textMuted),
+                            : AppColors.textMuted,),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -1221,7 +1221,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                     ),
                     if (selected)
                       const Icon(Icons.check_circle,
-                          color: AppColors.brandBlue, size: 20),
+                          color: AppColors.brandBlue, size: 20,),
                   ],
                 ),
               ),
@@ -1232,7 +1232,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         const SizedBox(height: 12),
 
         if (_distributionMode != 'all') ...[
-          _DarkLabel('수령 인원 *'),
+          const _DarkLabel('수령 인원 *'),
           const SizedBox(height: 8),
           _DarkInput(
             controller: _winnerCountController,
@@ -1279,12 +1279,12 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                               fontWeight: FontWeight.w900,
                               color: _isEvent
                                   ? AppColors.brandRed
-                                  : AppColors.textPrimary)),
+                                  : AppColors.textPrimary,),),
                       const SizedBox(height: 2),
                       Text(
                         '술집·축제·세미나처럼 짧고 강한 한정 미션. 24h 후 자동 만료.',
                         style: GoogleFonts.notoSansKr(
-                            fontSize: 11, color: AppColors.textMuted),
+                            fontSize: 11, color: AppColors.textMuted,),
                       ),
                     ],
                   ),
@@ -1301,12 +1301,12 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         const SizedBox(height: 20),
 
         // 유효 기간 — 시간제한 미션 (선택)
-        _DarkLabel('유효 기간 (선택)'),
+        const _DarkLabel('유효 기간 (선택)'),
         const SizedBox(height: 4),
         Text(
           '시작/종료 시각 — 비워두면 즉시 시작 + 무기한',
           style: GoogleFonts.notoSansKr(
-              fontSize: 11, color: AppColors.textMuted),
+              fontSize: 11, color: AppColors.textMuted,),
         ),
         const SizedBox(height: 8),
         Row(
@@ -1346,7 +1346,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           child: Row(
             children: [
               const Icon(Icons.info_outline,
-                  color: AppColors.brandGreen, size: 18),
+                  color: AppColors.brandGreen, size: 18,),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -1453,7 +1453,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
               Row(
                 children: [
                   const Icon(Icons.payments,
-                      color: AppColors.brandYellow, size: 16),
+                      color: AppColors.brandYellow, size: 16,),
                   const SizedBox(width: 4),
                   Text(
                     _rewardLabelController.text.isEmpty
@@ -1518,7 +1518,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           child: Row(
             children: [
               const Icon(Icons.info_outline,
-                  color: AppColors.brandOrange, size: 18),
+                  color: AppColors.brandOrange, size: 18,),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -1625,7 +1625,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation(
-                                      Colors.black),
+                                      Colors.black,),
                                 ),
                               )
                             : Text(
@@ -1735,7 +1735,7 @@ class _AddStepSheetState extends State<_AddStepSheet> {
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
                   color: AppColors.textPrimary,
-                )),
+                ),),
             const SizedBox(height: 16),
 
             const _DarkLabel('단계 유형'),
@@ -1749,7 +1749,7 @@ class _AddStepSheetState extends State<_AddStepSheet> {
                   onTap: () => setState(() => _selectedType = t.$1),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                        horizontal: 12, vertical: 8,),
                     decoration: BoxDecoration(
                       color: selected
                           ? t.$5.withValues(alpha: 0.15)
@@ -1765,14 +1765,14 @@ class _AddStepSheetState extends State<_AddStepSheet> {
                       children: [
                         Icon(t.$4,
                             size: 14,
-                            color: selected ? t.$5 : AppColors.textMuted),
+                            color: selected ? t.$5 : AppColors.textMuted,),
                         const SizedBox(width: 6),
                         Text(t.$2,
                             style: GoogleFonts.notoSansKr(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: selected ? t.$5 : AppColors.textMuted,
-                            )),
+                            ),),
                       ],
                     ),
                   ),
@@ -1856,7 +1856,7 @@ class _AddStepSheetState extends State<_AddStepSheet> {
               const SizedBox(height: 16),
               _DarkLabel(_selectedType == 'PHOTO_SIM'
                   ? '정답 사진 업로드 *'
-                  : '정답 모션 사진 업로드 *'),
+                  : '정답 모션 사진 업로드 *',),
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: _pickReferenceImage,
@@ -1909,7 +1909,7 @@ class _AddStepSheetState extends State<_AddStepSheet> {
                             padding: const EdgeInsets.all(8),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
+                                  horizontal: 8, vertical: 4,),
                               decoration: BoxDecoration(
                                 color: Colors.black.withValues(alpha: 0.6),
                                 borderRadius: BorderRadius.circular(8),
@@ -1934,7 +1934,7 @@ class _AddStepSheetState extends State<_AddStepSheet> {
                   color: AppColors.brandBlue.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                      color: AppColors.brandBlue.withValues(alpha: 0.2)),
+                      color: AppColors.brandBlue.withValues(alpha: 0.2),),
                 ),
                 child: Text(
                   _selectedType == 'PHOTO_SIM'
@@ -2098,13 +2098,13 @@ class _StepHeader extends StatelessWidget {
             style: GoogleFonts.blackHanSans(
               fontSize: 24,
               color: AppColors.textPrimary,
-            )),
+            ),),
         const SizedBox(height: 6),
         Text(subtitle,
             style: GoogleFonts.notoSansKr(
               fontSize: 13,
               color: AppColors.textMuted,
-            )),
+            ),),
       ],
     );
   }
@@ -2151,10 +2151,10 @@ class _GameModeTile extends StatelessWidget {
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: selected ? color : AppColors.textPrimary,
-                )),
+                ),),
             Text(desc,
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 9, color: AppColors.textMuted)),
+                    fontSize: 9, color: AppColors.textMuted,),),
           ],
         ),
       ),
@@ -2348,12 +2348,12 @@ class _MapPreviewState extends State<_MapPreview> {
                       ],
                     ),
                     child: const Icon(Icons.location_on,
-                        size: 28, color: Colors.black),
+                        size: 28, color: Colors.black,),
                   ),
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                        horizontal: 12, vertical: 6,),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(9999),
@@ -2392,7 +2392,7 @@ class _MapPreviewState extends State<_MapPreview> {
             bottom: 12,
             child: Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 12, vertical: 8),
+                  horizontal: 12, vertical: 8,),
               decoration: BoxDecoration(
                 color: AppColors.brandYellow,
                 borderRadius: BorderRadius.circular(9999),
@@ -2514,7 +2514,7 @@ class _DatePickerTile extends StatelessWidget {
                 size: 14,
                 color: hasValue
                     ? AppColors.brandYellow
-                    : AppColors.textMuted),
+                    : AppColors.textMuted,),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -2522,7 +2522,7 @@ class _DatePickerTile extends StatelessWidget {
                 children: [
                   Text(label,
                       style: GoogleFonts.notoSansKr(
-                          fontSize: 10, color: AppColors.textMuted)),
+                          fontSize: 10, color: AppColors.textMuted,),),
                   const SizedBox(height: 2),
                   Text(text,
                       style: GoogleFonts.notoSansKr(
@@ -2530,7 +2530,7 @@ class _DatePickerTile extends StatelessWidget {
                           color: hasValue
                               ? AppColors.textPrimary
                               : AppColors.textMuted,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,),),
                 ],
               ),
             ),
@@ -2538,7 +2538,7 @@ class _DatePickerTile extends StatelessWidget {
               GestureDetector(
                 onTap: onClear,
                 child: const Icon(Icons.close,
-                    size: 16, color: AppColors.textMuted),
+                    size: 16, color: AppColors.textMuted,),
               ),
           ],
         ),

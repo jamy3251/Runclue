@@ -64,7 +64,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                    content: Text('인증 이메일을 발송했습니다. 이메일을 확인해주세요.')),
+                    content: Text('인증 이메일을 발송했습니다. 이메일을 확인해주세요.'),),
               );
             }
           }
@@ -136,7 +136,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     alignment: Alignment.centerLeft,
                     child: IconButton(
                       icon: const Icon(Icons.arrow_back,
-                          color: AppColors.textPrimary),
+                          color: AppColors.textPrimary,),
                       onPressed: () =>
                           context.canPop() ? context.pop() : context.go('/auth'),
                     ),
@@ -212,7 +212,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               size: 20,
                             ),
                             onPressed: () => setState(
-                                () => _obscurePassword = !_obscurePassword),
+                                () => _obscurePassword = !_obscurePassword,),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -280,7 +280,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // 구분선
                   Row(
                     children: [
-                      Expanded(child: Divider(color: AppColors.borderDefault)),
+                      const Expanded(child: Divider(color: AppColors.borderDefault)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Text(
@@ -291,7 +291,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ),
                       ),
-                      Expanded(child: Divider(color: AppColors.borderDefault)),
+                      const Expanded(child: Divider(color: AppColors.borderDefault)),
                     ],
                   ),
 

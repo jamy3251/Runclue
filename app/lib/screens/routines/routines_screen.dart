@@ -33,7 +33,7 @@ class RoutinesScreen extends ConsumerWidget {
           style: GoogleFonts.notoSansKr(
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary),
+              color: AppColors.textPrimary,),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -45,9 +45,9 @@ class RoutinesScreen extends ConsumerWidget {
       ),
       body: routinesAsync.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.brandYellow)),
+            child: CircularProgressIndicator(color: AppColors.brandYellow),),
         error: (e, _) => Center(
-            child: Text('오류: $e', style: TextStyle(color: AppColors.error))),
+            child: Text('오류: $e', style: const TextStyle(color: AppColors.error)),),
         data: (routines) {
           if (routines.isEmpty) return _emptyState();
           return RefreshIndicator(
@@ -60,7 +60,7 @@ class RoutinesScreen extends ConsumerWidget {
               itemBuilder: (_, i) =>
                   _RoutineCard(routine: routines[i], onChanged: () {
                 ref.invalidate(myRoutinesProvider);
-              }),
+              },),
             ),
           );
         },
@@ -74,7 +74,7 @@ class RoutinesScreen extends ConsumerWidget {
       children: [
         const SizedBox(height: 80),
         const Icon(Icons.repeat,
-            size: 64, color: AppColors.textMuted),
+            size: 64, color: AppColors.textMuted,),
         const SizedBox(height: 16),
         Text(
           '루틴을 등록해보세요',
@@ -82,14 +82,14 @@ class RoutinesScreen extends ConsumerWidget {
           style: GoogleFonts.notoSansKr(
               fontSize: 16,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary),
+              color: AppColors.textPrimary,),
         ),
         const SizedBox(height: 8),
         Text(
           '매일 가는 곳(학교/회사/단골 카페)을 등록하면\n방문할 때마다 streak가 쌓이고 보상으로 이어져요.',
           textAlign: TextAlign.center,
           style: GoogleFonts.notoSansKr(
-              fontSize: 13, color: AppColors.textSecondary, height: 1.5),
+              fontSize: 13, color: AppColors.textSecondary, height: 1.5,),
         ),
       ],
     );
@@ -105,7 +105,7 @@ class RoutinesScreen extends ConsumerWidget {
       ),
       builder: (_) => _CreateRoutineSheet(onCreated: () {
         ref.invalidate(myRoutinesProvider);
-      }),
+      },),
     );
   }
 }
@@ -144,7 +144,7 @@ class _RoutineCardState extends ConsumerState<_RoutineCard> {
         border: Border.all(
             color: didToday
                 ? AppColors.brandGreen.withValues(alpha: 0.4)
-                : AppColors.borderDefault),
+                : AppColors.borderDefault,),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,12 +157,12 @@ class _RoutineCardState extends ConsumerState<_RoutineCard> {
                   style: GoogleFonts.notoSansKr(
                       fontSize: 16,
                       fontWeight: FontWeight.w900,
-                      color: AppColors.textPrimary),
+                      color: AppColors.textPrimary,),
                 ),
               ),
               IconButton(
                 icon: const Icon(Icons.delete_outline,
-                    color: AppColors.textMuted, size: 20),
+                    color: AppColors.textMuted, size: 20,),
                 onPressed: () async {
                   final ok = await _confirmDelete(context);
                   if (ok != true) return;
@@ -184,7 +184,7 @@ class _RoutineCardState extends ConsumerState<_RoutineCard> {
               Text(
                 '반경 ${r['radius_m']}m',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 11, color: AppColors.textMuted),
+                    fontSize: 11, color: AppColors.textMuted,),
               ),
             ],
           ),
@@ -199,20 +199,20 @@ class _RoutineCardState extends ConsumerState<_RoutineCard> {
                     didToday ? AppColors.brandGreen : AppColors.brandYellow,
                 foregroundColor: Colors.black,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),),
               ),
               icon: _busy
                   ? const SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.black))
+                          strokeWidth: 2, color: Colors.black,),)
                   : Icon(didToday ? Icons.check : Icons.location_on,
-                      size: 18),
+                      size: 18,),
               label: Text(
                 didToday ? '오늘 인증 완료' : '지금 체크인',
                 style: GoogleFonts.notoSansKr(
-                    fontWeight: FontWeight.w900, fontSize: 14),
+                    fontWeight: FontWeight.w900, fontSize: 14,),
               ),
             ),
           ),
@@ -253,7 +253,7 @@ class _RoutineCardState extends ConsumerState<_RoutineCard> {
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('🔥 streak ${streak}일! +${reward}p'),
+            content: Text('🔥 streak $streak일! +${reward}p'),
             backgroundColor: AppColors.brandGreen,
           ),
         );
@@ -288,7 +288,7 @@ class _RoutineCardState extends ConsumerState<_RoutineCard> {
       ),
       child: Text(label,
           style: GoogleFonts.notoSansKr(
-              fontSize: 11, color: color, fontWeight: FontWeight.w900)),
+              fontSize: 11, color: color, fontWeight: FontWeight.w900,),),
     );
   }
 
@@ -298,17 +298,17 @@ class _RoutineCardState extends ConsumerState<_RoutineCard> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.bgElevated,
         title: const Text('루틴 삭제',
-            style: TextStyle(color: AppColors.textPrimary)),
+            style: TextStyle(color: AppColors.textPrimary),),
         content: const Text('streak 기록도 함께 사라집니다.',
-            style: TextStyle(color: AppColors.textSecondary)),
+            style: TextStyle(color: AppColors.textSecondary),),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('취소')),
+              child: const Text('취소'),),
           TextButton(
               onPressed: () => Navigator.pop(ctx, true),
               child: const Text('삭제',
-                  style: TextStyle(color: AppColors.brandRed))),
+                  style: TextStyle(color: AppColors.brandRed),),),
         ],
       ),
     );
@@ -351,7 +351,7 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
               height: 4,
               decoration: BoxDecoration(
                   color: AppColors.borderDefault,
-                  borderRadius: BorderRadius.circular(2)),
+                  borderRadius: BorderRadius.circular(2),),
             ),
           ),
           const SizedBox(height: 16),
@@ -359,11 +359,11 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
               style: GoogleFonts.notoSansKr(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.textPrimary)),
+                  color: AppColors.textPrimary,),),
           const SizedBox(height: 4),
           Text('매일 가는 곳을 등록하세요. 1일 1회 체크인이 가능해요.',
               style: GoogleFonts.notoSansKr(
-                  fontSize: 12, color: AppColors.textMuted)),
+                  fontSize: 12, color: AppColors.textMuted,),),
           const SizedBox(height: 20),
           _label('이름'),
           TextField(
@@ -371,12 +371,12 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
             style: const TextStyle(color: AppColors.textPrimary),
             decoration: InputDecoration(
               hintText: '예: 학교 등교, 단골 카페',
-              hintStyle: TextStyle(color: AppColors.textMuted),
+              hintStyle: const TextStyle(color: AppColors.textMuted),
               filled: true,
               fillColor: AppColors.bgSurface,
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none),
+                  borderSide: BorderSide.none,),
             ),
           ),
           const SizedBox(height: 16),
@@ -400,7 +400,7 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
                 border: Border.all(
                     color: _lat != null
                         ? AppColors.brandYellow.withValues(alpha: 0.4)
-                        : AppColors.borderDefault),
+                        : AppColors.borderDefault,),
               ),
               child: Row(
                 children: [
@@ -408,7 +408,7 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
                       color: _lat != null
                           ? AppColors.brandYellow
                           : AppColors.textMuted,
-                      size: 18),
+                      size: 18,),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -418,7 +418,7 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
                       style: TextStyle(
                           color: _lat != null
                               ? AppColors.textPrimary
-                              : AppColors.textMuted),
+                              : AppColors.textMuted,),
                     ),
                   ),
                 ],
@@ -447,7 +447,7 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
                     style: GoogleFonts.notoSansKr(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.brandYellow)),
+                        color: AppColors.brandYellow,),),
               ),
             ],
           ),
@@ -460,7 +460,7 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
                 backgroundColor: AppColors.brandYellow,
                 foregroundColor: Colors.black,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),),
               ),
               onPressed: _canSubmit() && !_busy ? _submit : null,
               child: _busy
@@ -468,10 +468,10 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.black))
+                          strokeWidth: 2, color: Colors.black,),)
                   : Text('등록',
                       style: GoogleFonts.notoSansKr(
-                          fontSize: 16, fontWeight: FontWeight.w900)),
+                          fontSize: 16, fontWeight: FontWeight.w900,),),
             ),
           ),
         ],
@@ -518,6 +518,6 @@ class _CreateRoutineSheetState extends ConsumerState<_CreateRoutineSheet> {
             style: GoogleFonts.notoSansKr(
                 fontSize: 12,
                 color: AppColors.textSecondary,
-                fontWeight: FontWeight.w700)),
+                fontWeight: FontWeight.w700,),),
       );
 }

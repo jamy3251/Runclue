@@ -1,5 +1,6 @@
 /// Clue 데이터에서 크리에이터 정보를 안전하게 읽는 헬퍼.
 /// 여러 쿼리 경로(embed / RPC / fallback)에서 다른 키로 들어와도 단일 진입점으로 통일.
+library;
 
 /// 크리에이터 닉네임 우선순위:
 /// 1. clue['creator']['nickname'] (PostgREST embed: profiles!creator_id)

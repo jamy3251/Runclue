@@ -122,7 +122,7 @@ class _AdRewardCardState extends ConsumerState<AdRewardCard> {
       child: Row(
         children: [
           const Icon(Icons.smart_display,
-              size: 32, color: AppColors.brandBlue),
+              size: 32, color: AppColors.brandBlue,),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -210,7 +210,7 @@ class _CompactRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.smart_display,
-                size: 16, color: AppColors.brandBlue),
+                size: 16, color: AppColors.brandBlue,),
             const SizedBox(width: 6),
             Text(
               disabled

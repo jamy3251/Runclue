@@ -84,7 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 padding: const EdgeInsets.all(16),
                 child: TextButton(
                   onPressed: _complete,
-                  child: Text(
+                  child: const Text(
                     '건너뛰기',
                     style: TextStyle(color: AppColors.textSecondary),
                   ),
@@ -200,7 +200,7 @@ class _OnboardingPage extends StatelessWidget {
           Text(
             description,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: AppColors.textSecondary,
               height: 1.5,

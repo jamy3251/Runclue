@@ -21,7 +21,7 @@ class RecommendationService {
         'user_id_in': userId,
         'radius_km': radiusKm,
         'max_results': limit,
-      });
+      },);
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       // RPC 실패 시 빈 리스트 — 추천은 부수효과라 사용자 흐름 안 막음
@@ -40,7 +40,7 @@ class RecommendationService {
         'origin_clue_id': clueId,
         'radius_km': radiusKm,
         'max_results': limit,
-      });
+      },);
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       return [];

@@ -87,7 +87,7 @@ class ProfileScreen extends ConsumerWidget {
                         const SizedBox(height: 4),
                         Text(
                           profile['bio'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             color: AppColors.textSecondary,
                           ),
@@ -298,10 +298,10 @@ class ProfileScreen extends ConsumerWidget {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: ListTile(
-                                leading: CircleAvatar(
+                                leading: const CircleAvatar(
                                   backgroundColor: AppColors.bgSurface,
-                                  child: const Icon(Icons.group_add,
-                                      color: Colors.grey),
+                                  child: Icon(Icons.group_add,
+                                      color: Colors.grey,),
                                 ),
                                 title: const Text('클랜에 가입해보세요'),
                                 subtitle: const Text('함께하면 더 재밌어요!'),
@@ -325,16 +325,16 @@ class ProfileScreen extends ConsumerWidget {
                                     : null,
                                 child: clan?['avatar_url'] == null
                                     ? const Icon(Icons.groups,
-                                        color: Colors.blue)
+                                        color: Colors.blue,)
                                     : null,
                               ),
                               title: Text(
                                 clan?['name'] ?? '클랜',
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w600),
+                                    fontWeight: FontWeight.w600,),
                               ),
                               subtitle: Text(
-                                  '멤버 ${clan?['member_count'] ?? 0}명'),
+                                  '멤버 ${clan?['member_count'] ?? 0}명',),
                               trailing: const Icon(Icons.chevron_right),
                               onTap: () => context.push('/community'),
                             ),
@@ -432,7 +432,7 @@ class ProfileScreen extends ConsumerWidget {
                         : const SizedBox.shrink(),
                     orElse: () => const SizedBox.shrink(),
                   );
-                }),
+                },),
                 const Divider(indent: 24, endIndent: 24),
                 _SettingsTile(
                   icon: Icons.logout,
@@ -517,7 +517,7 @@ class _StatItem extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
             color: AppColors.textSecondary,
           ),
@@ -575,13 +575,13 @@ class _RewardEntryCard extends StatelessWidget {
                   if (badgeCount > 0)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                          horizontal: 6, vertical: 2,),
                       decoration: const BoxDecoration(
                         color: AppColors.brandRed,
                         shape: BoxShape.circle,
                       ),
                       constraints: const BoxConstraints(
-                          minWidth: 22, minHeight: 22),
+                          minWidth: 22, minHeight: 22,),
                       alignment: Alignment.center,
                       child: Text(
                         badgeCount > 99 ? '99+' : '$badgeCount',
@@ -647,7 +647,7 @@ class _SettingsTile extends StatelessWidget {
           color: isDestructive ? Colors.red : null,
         ),
       ),
-      trailing: Icon(
+      trailing: const Icon(
         Icons.chevron_right,
         color: AppColors.textMuted,
       ),

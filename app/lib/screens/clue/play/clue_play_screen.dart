@@ -52,7 +52,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
   double? _similarityScore;
   bool _isComputingSimilarity = false;
   List<Map<String, dynamic>> _checklistState = [];
-  Map<String, bool> _stepCompleted = {};
+  final Map<String, bool> _stepCompleted = {};
 
   // Timer
   Timer? _timer;
@@ -115,9 +115,9 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
     if (targetLat == null || targetLng == null) return;
 
     final dist = _locationService.calculateDistance(
-        pos.latitude, pos.longitude, targetLat, targetLng);
+        pos.latitude, pos.longitude, targetLat, targetLng,);
     final bearing = _locationService.bearingBetween(
-        pos.latitude, pos.longitude, targetLat, targetLng);
+        pos.latitude, pos.longitude, targetLat, targetLng,);
 
     final wasArrived = _checkpointArrived;
     final nowArrived = dist <= radius;
@@ -188,7 +188,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
           [];
       steps.sort((a, b) =>
           (a['order_index'] as int? ?? 0)
-              .compareTo(b['order_index'] as int? ?? 0));
+              .compareTo(b['order_index'] as int? ?? 0),);
 
       setState(() {
         _steps = steps;
@@ -231,7 +231,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
             .map((item) => {
                   'text': item is Map ? item['text'] ?? item.toString() : item.toString(),
                   'checked': false,
-                })
+                },)
             .toList();
       }
     }
@@ -328,7 +328,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                       ),
                       if (_stepCompleted[stepData['id']] == true)
                         const Icon(Icons.check_circle,
-                            color: Colors.green, size: 28),
+                            color: Colors.green, size: 28,),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -373,7 +373,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                         child: Row(
                           children: [
                             const Icon(Icons.lightbulb,
-                                color: AppColors.brandYellow, size: 18),
+                                color: AppColors.brandYellow, size: 18,),
                             const SizedBox(width: 8),
                             Text(
                               _showHint ? '힌트 숨기기' : '힌트 보기',
@@ -426,14 +426,14 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                               height: 24,
                               width: 24,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
+                                  strokeWidth: 2, color: Colors.white,),
                             )
                           : Text(
                               _currentStep == totalSteps - 1
                                   ? '완료하기'
                                   : '제출하기',
                               style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
+                                  fontSize: 16, fontWeight: FontWeight.w600,),
                             ),
                     ),
                   ),
@@ -459,7 +459,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                   Row(
                     children: [
                       const Icon(Icons.timer,
-                          color: AppColors.brandYellow, size: 18),
+                          color: AppColors.brandYellow, size: 18,),
                       const SizedBox(width: 4),
                       Text(
                         _formatDuration(_elapsed),
@@ -482,7 +482,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                             });
                           },
                           icon: const Icon(Icons.arrow_back_ios,
-                              size: 16),
+                              size: 16,),
                           label: const Text('이전'),
                         ),
                       if (_currentStep < totalSteps - 1)
@@ -495,7 +495,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                           },
                           icon: const Text('다음'),
                           label: const Icon(Icons.arrow_forward_ios,
-                              size: 16),
+                              size: 16,),
                         ),
                     ],
                   ),
@@ -574,12 +574,12 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
               icon: const Icon(Icons.view_in_ar, size: 20),
               label: Text('AR 카메라로 보물찾기',
                   style: GoogleFonts.notoSansKr(
-                      fontSize: 14, fontWeight: FontWeight.w800)),
+                      fontSize: 14, fontWeight: FontWeight.w800,),),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.brandYellow,
                 side: const BorderSide(color: AppColors.brandYellow),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),),
               ),
             ),
           ),
@@ -656,7 +656,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                '아직 도착하지 않았습니다. ${distance.toInt()}m 남았습니다.'),
+                '아직 도착하지 않았습니다. ${distance.toInt()}m 남았습니다.',),
           ),
         );
       }
@@ -696,7 +696,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                       Icon(Icons.image, size: 48, color: Colors.grey),
                       SizedBox(height: 8),
                       Text('촬영된 사진이 여기에 표시됩니다',
-                          style: TextStyle(color: Colors.grey)),
+                          style: TextStyle(color: Colors.grey),),
                     ],
                   ),
                 ),
@@ -822,7 +822,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
               ),
               child: const Text('O',
                   style: TextStyle(
-                      fontSize: 64, fontWeight: FontWeight.bold)),
+                      fontSize: 64, fontWeight: FontWeight.bold,),),
             ),
           ),
         ),
@@ -844,7 +844,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
               ),
               child: const Text('X',
                   style: TextStyle(
-                      fontSize: 64, fontWeight: FontWeight.bold)),
+                      fontSize: 64, fontWeight: FontWeight.bold,),),
             ),
           ),
         ),
@@ -965,12 +965,12 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                     width: double.infinity,
                     errorBuilder: (_, __, ___) => const Center(
                       child: Text('정답 이미지를 불러올 수 없습니다',
-                          style: TextStyle(color: AppColors.textMuted)),
+                          style: TextStyle(color: AppColors.textMuted),),
                     ),
                   ),
                 )
               : const Text('정답 이미지가 등록되지 않았습니다',
-                  style: TextStyle(color: AppColors.textMuted)),
+                  style: TextStyle(color: AppColors.textMuted),),
         ),
 
         const SizedBox(height: 16),
@@ -1006,16 +1006,16 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                     width: double.infinity,
                   ),
                 )
-              : Column(
+              : const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.photo_camera_outlined,
-                        size: 36, color: AppColors.textMuted),
+                        size: 36, color: AppColors.textMuted,),
                     SizedBox(height: 8),
                     Text(
                       '아래 카메라 버튼으로 사진을 찍어주세요',
                       style: TextStyle(
-                          color: AppColors.textMuted, fontSize: 12),
+                          color: AppColors.textMuted, fontSize: 12,),
                     ),
                   ],
                 ),
@@ -1036,7 +1036,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
             ),
             child: Column(
               children: [
-                Text(
+                const Text(
                   '유사도 점수',
                   style: TextStyle(
                     fontSize: 12,
@@ -1085,12 +1085,12 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.black),
+                        strokeWidth: 2, color: Colors.black,),
                   )
                 : const Icon(Icons.camera_alt),
             label: Text(_isComputingSimilarity
                 ? '유사도 계산 중...'
-                : (_capturedImage != null ? '다시 촬영' : '카메라로 촬영')),
+                : (_capturedImage != null ? '다시 촬영' : '카메라로 촬영'),),
           ),
         ),
       ],
@@ -1335,7 +1335,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
       } else {
         HapticFeedback.heavyImpact();
         await participationService.updateProgress(
-            participationId, nextIndex);
+            participationId, nextIndex,);
         setState(() {
           _currentStep = nextIndex;
           _resetStepState();
@@ -1445,12 +1445,12 @@ class _GpsLiveCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 4),
+                    horizontal: 10, vertical: 4,),
                 decoration: BoxDecoration(
                   color: _statusColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(9999),
                   border: Border.all(
-                      color: _statusColor.withValues(alpha: 0.4)),
+                      color: _statusColor.withValues(alpha: 0.4),),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1476,7 +1476,7 @@ class _GpsLiveCard extends StatelessWidget {
               if (accuracy != null)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 4),
+                      horizontal: 8, vertical: 4,),
                   decoration: BoxDecoration(
                     color: AppColors.bgElevated,
                     borderRadius: BorderRadius.circular(6),
@@ -1485,7 +1485,7 @@ class _GpsLiveCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.gps_fixed,
-                          size: 11, color: AppColors.textMuted),
+                          size: 11, color: AppColors.textMuted,),
                       const SizedBox(width: 4),
                       Text(
                         '$_accuracyText · $_accuracyGrade',
@@ -1640,14 +1640,14 @@ class _ProgressToTarget extends StatelessWidget {
             FractionallySizedBox(
               widthFactor: progress.toDouble(),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
                       AppColors.brandOrange,
                       AppColors.brandYellow,
                       AppColors.brandGreen,
                     ],
-                    stops: const [0.0, 0.5, 1.0],
+                    stops: [0.0, 0.5, 1.0],
                   ),
                 ),
               ),

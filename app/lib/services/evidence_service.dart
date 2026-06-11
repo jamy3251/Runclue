@@ -39,7 +39,7 @@ class EvidenceService {
           }
         }
         throw Exception(
-            'evidence INSERT 실패 [code=${e.code}]: ${e.message} | drop=$dropped');
+            'evidence INSERT 실패 [code=${e.code}]: ${e.message} | drop=$dropped',);
       } catch (e) {
         throw Exception('evidence INSERT 실패: $e');
       }

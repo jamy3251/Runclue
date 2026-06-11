@@ -84,7 +84,7 @@ class HealthService {
     final steps = await todaySteps();
     final res = await _client.rpc('claim_walk_reward', params: {
       'steps_total_in': steps,
-    });
+    },);
     if (res is Map) {
       final m = Map<String, dynamic>.from(res);
       m['client_steps'] = steps;

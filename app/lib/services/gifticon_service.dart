@@ -23,7 +23,7 @@ class GifticonService {
   Future<Map<String, dynamic>> redeem(String gifticonId) async {
     final res = await _client.rpc('redeem_gifticon', params: {
       'gifticon_id_in': gifticonId,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }

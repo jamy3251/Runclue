@@ -45,7 +45,7 @@ class ClueService {
         'lat': lat,
         'lng': lng,
         'radius_km': radiusKm,
-      });
+      },);
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       throw Exception('Failed to fetch nearby clues: $e');
@@ -139,7 +139,7 @@ class ClueService {
               .maybeSingle();
           if (verify == null) {
             throw Exception(
-                'INSERT는 응답했으나 DB에 row가 없음 (RLS 또는 트리거 문제 의심)');
+                'INSERT는 응답했으나 DB에 row가 없음 (RLS 또는 트리거 문제 의심)',);
           }
         } catch (e) {
           throw Exception('사후 검증 실패: $e (drop=$droppedCols)');
@@ -172,13 +172,13 @@ class ClueService {
         }
         // 그 외는 자세한 에러 정보로 던짐
         throw Exception(
-            'INSERT 실패 [code=${e.code}]: ${e.message} | drop=$droppedCols | 남은 컬럼=${payload.keys.toList()}');
+            'INSERT 실패 [code=${e.code}]: ${e.message} | drop=$droppedCols | 남은 컬럼=${payload.keys.toList()}',);
       } catch (e) {
         throw Exception('INSERT 실패 (예외): $e | drop=$droppedCols');
       }
     }
     throw Exception(
-        '너무 많은 알 수 없는 컬럼: 제거된 컬럼=$droppedCols, 남은 컬럼=${payload.keys.toList()}');
+        '너무 많은 알 수 없는 컬럼: 제거된 컬럼=$droppedCols, 남은 컬럼=${payload.keys.toList()}',);
   }
 
   /// PostgrestException 메시지에서 누락 컬럼명 추출.

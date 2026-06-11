@@ -18,7 +18,7 @@ class BattleService {
       'stake_coin_in': stakeCoin,
       'game_type_in': gameType,
       if (clueId != null) 'clue_id_in': clueId,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }
@@ -32,7 +32,7 @@ class BattleService {
     final res = await _client.rpc('battle_finish', params: {
       'match_id_in': matchId,
       'my_choice_in': choice,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }
@@ -40,7 +40,7 @@ class BattleService {
   Future<Map<String, dynamic>> cancel(String matchId) async {
     final res = await _client.rpc('battle_cancel', params: {
       'match_id_in': matchId,
-    });
+    },);
     if (res is Map) return Map<String, dynamic>.from(res);
     return {'ok': false, 'reason': 'unexpected_response'};
   }
@@ -60,7 +60,7 @@ class BattleService {
 
   /// 본인 최근 battle 히스토리.
   Future<List<Map<String, dynamic>>> myHistory(String userId,
-      {int limit = 30}) async {
+      {int limit = 30,}) async {
     final rows = await _client
         .from('battle_matches')
         .select('id, game_type, stake_coin, challenger_id, opponent_id, '

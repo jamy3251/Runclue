@@ -39,8 +39,8 @@ class WhyRunClueScreen extends StatelessWidget {
             const SizedBox(height: AppSpacing.xxl),
 
             // 3 differentiators
-            Row(
-              children: const [
+            const Row(
+              children: [
                 _DiffMetric(value: '₩2.3M', label: '월 최대 수익'),
                 _DiffMetric(value: '60×', label: '경쟁사 대비'),
                 _DiffMetric(value: '₩0', label: '광고비'),
@@ -94,7 +94,7 @@ class _DiffMetric extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(label,
-              style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+              style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),),
         ],
       ),
     );
@@ -138,7 +138,7 @@ class _FlywheelDiagramState extends State<_FlywheelDiagram>
           child: Stack(
             children: [
               // Top: Explorer
-              Positioned(
+              const Positioned(
                 top: 10,
                 left: 0,
                 right: 0,
@@ -149,7 +149,7 @@ class _FlywheelDiagramState extends State<_FlywheelDiagram>
                 ),
               ),
               // Bottom-left: Creator
-              Positioned(
+              const Positioned(
                 bottom: 10,
                 left: 10,
                 child: _RoleNode(
@@ -159,7 +159,7 @@ class _FlywheelDiagramState extends State<_FlywheelDiagram>
                 ),
               ),
               // Bottom-right: Business
-              Positioned(
+              const Positioned(
                 bottom: 10,
                 right: 10,
                 child: _RoleNode(
@@ -314,12 +314,12 @@ class _ComparisonTable extends StatelessWidget {
               children: [
                 const Expanded(
                     flex: 3,
-                    child: SizedBox()),
+                    child: SizedBox(),),
                 Expanded(
                   flex: 2,
                   child: Text('캐쉬워크',
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+                      style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),),
                 ),
                 Expanded(
                   flex: 2,
@@ -328,7 +328,7 @@ class _ComparisonTable extends StatelessWidget {
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.brandYellow,
                         fontWeight: FontWeight.w700,
-                      )),
+                      ),),
                 ),
               ],
             ),
@@ -350,7 +350,7 @@ class _ComparisonTable extends StatelessWidget {
                     flex: 3,
                     child: Text(row[0],
                         style: AppTextStyles.bodySmall
-                            .copyWith(color: AppColors.textPrimary)),
+                            .copyWith(color: AppColors.textPrimary),),
                   ),
                   Expanded(
                     flex: 2,

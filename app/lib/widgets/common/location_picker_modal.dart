@@ -299,11 +299,11 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.location_on,
                     size: 48,
                     color: AppColors.brandYellow,
-                    shadows: const [
+                    shadows: [
                       Shadow(
                         blurRadius: 8,
                         color: Colors.black54,
@@ -410,11 +410,11 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
           right: 0,
           bottom: 0,
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.bgElevated,
               borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20)),
-              boxShadow: const [AppShadows.modal],
+                  BorderRadius.vertical(top: Radius.circular(20)),
+              boxShadow: [AppShadows.modal],
             ),
             padding: EdgeInsets.only(
               left: 20,

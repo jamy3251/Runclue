@@ -87,7 +87,7 @@ class UserLevelChip extends StatelessWidget {
     final lv = computeLevel(points);
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: dense ? 6 : 8, vertical: dense ? 2 : 3),
+          horizontal: dense ? 6 : 8, vertical: dense ? 2 : 3,),
       decoration: BoxDecoration(
         color: lv.color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(dense ? 4 : 6),
@@ -163,12 +163,12 @@ class UserLevelCard extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w900,
-                                color: lv.color)),
+                                color: lv.color,),),
                         if (lv.multiplierLabel.isNotEmpty) ...[
                           const SizedBox(width: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                                horizontal: 6, vertical: 2,),
                             decoration: BoxDecoration(
                               color: lv.color.withValues(alpha: 0.18),
                               borderRadius: BorderRadius.circular(6),
@@ -187,20 +187,20 @@ class UserLevelCard extends StatelessWidget {
                     ),
                     Text('$points P 누적',
                         style: const TextStyle(
-                            fontSize: 12, color: AppColors.textSecondary)),
+                            fontSize: 12, color: AppColors.textSecondary,),),
                   ],
                 ),
               ),
               if (!lv.isMax)
                 Text('${lv.nextTier - points} P 남음',
                     style: const TextStyle(
-                        fontSize: 11, color: AppColors.textMuted))
+                        fontSize: 11, color: AppColors.textMuted,),)
               else
                 const Text('만렙 🎉',
                     style: TextStyle(
                         fontSize: 11,
                         color: AppColors.brandYellow,
-                        fontWeight: FontWeight.w700)),
+                        fontWeight: FontWeight.w700,),),
             ],
           ),
           const SizedBox(height: 12),

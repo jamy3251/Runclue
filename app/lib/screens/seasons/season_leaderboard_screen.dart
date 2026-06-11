@@ -48,12 +48,12 @@ class SeasonLeaderboardScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             const _RewardLegend(),
             const SizedBox(height: 16),
-            _SectionLabel('리더보드 Top 100'),
+            const _SectionLabel('리더보드 Top 100'),
             const SizedBox(height: 6),
             boardAsync.when(
               loading: () =>
                   const Center(child: Padding(padding: EdgeInsets.all(40),
-                      child: CircularProgressIndicator())),
+                      child: CircularProgressIndicator(),),),
               error: (e, _) => Text('불러올 수 없습니다: $e'),
               data: (items) {
                 if (items.isEmpty) {
@@ -72,7 +72,7 @@ class SeasonLeaderboardScreen extends ConsumerWidget {
               },
             ),
             const SizedBox(height: 16),
-            _SectionLabel('내 시즌 보상 내역'),
+            const _SectionLabel('내 시즌 보상 내역'),
             const SizedBox(height: 6),
             myRewardsAsync.when(
               loading: () => const SizedBox.shrink(),
@@ -82,7 +82,7 @@ class SeasonLeaderboardScreen extends ConsumerWidget {
                   return Text(
                     '아직 받은 시즌 보상이 없어요.',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 12, color: AppColors.textMuted),
+                        fontSize: 12, color: AppColors.textMuted,),
                   );
                 }
                 return Column(
@@ -134,7 +134,7 @@ class _SeasonHeader extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: AppColors.brandYellow.withValues(alpha: 0.35)),
+            color: AppColors.brandYellow.withValues(alpha: 0.35),),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,14 +142,14 @@ class _SeasonHeader extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.emoji_events,
-                  size: 22, color: AppColors.brandYellow),
+                  size: 22, color: AppColors.brandYellow,),
               const SizedBox(width: 6),
               Text(
                 'Season $slug',
                 style: GoogleFonts.notoSansKr(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.brandYellow),
+                    color: AppColors.brandYellow,),
               ),
             ],
           ),
@@ -157,13 +157,13 @@ class _SeasonHeader extends StatelessWidget {
           Text(
             '점수 = 완료 클루 × 100 + 적립 코인 합',
             style: GoogleFonts.notoSansKr(
-                fontSize: 12, color: AppColors.textPrimary),
+                fontSize: 12, color: AppColors.textPrimary,),
           ),
           const SizedBox(height: 2),
           Text(
             '$ends 종료 → Top 10에 다이아 자동 지급',
             style: GoogleFonts.notoSansKr(
-                fontSize: 11, color: AppColors.textMuted),
+                fontSize: 11, color: AppColors.textMuted,),
           ),
           if (startAt != null && endAt != null) ...[
             const SizedBox(height: 8),
@@ -210,20 +210,20 @@ class _RewardLegend extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.workspace_premium,
-                  size: 14, color: AppColors.brandBlue),
+                  size: 14, color: AppColors.brandBlue,),
               const SizedBox(width: 4),
               Text('다이아 보상 (Top 10)',
                   style: GoogleFonts.notoSansKr(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary)),
+                      color: AppColors.textPrimary,),),
             ],
           ),
           const SizedBox(height: 6),
-          Wrap(
+          const Wrap(
             spacing: 8,
             runSpacing: 4,
-            children: const [
+            children: [
               _RewardChip(rank: 1, diamond: 500),
               _RewardChip(rank: 2, diamond: 300),
               _RewardChip(rank: 3, diamond: 200),
@@ -261,7 +261,7 @@ class _RewardChip extends StatelessWidget {
           style: GoogleFonts.notoSansKr(
               fontSize: 10,
               fontWeight: FontWeight.w700,
-              color: AppColors.brandBlue)),
+              color: AppColors.brandBlue,),),
     );
   }
 }
@@ -276,7 +276,7 @@ class _SectionLabel extends StatelessWidget {
         style: GoogleFonts.notoSansKr(
             fontSize: 13,
             fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary));
+            color: AppColors.textPrimary,),);
   }
 }
 
@@ -354,20 +354,20 @@ class _LeaderRow extends StatelessWidget {
                               fontWeight: FontWeight.w800,
                               color: isMe
                                   ? AppColors.brandYellow
-                                  : AppColors.textPrimary)),
+                                  : AppColors.textPrimary,),),
                     ),
                     if (isMe) ...[
                       const SizedBox(width: 4),
                       Text('(나)',
                           style: GoogleFonts.notoSansKr(
                               fontSize: 10,
-                              color: AppColors.brandYellow)),
+                              color: AppColors.brandYellow,),),
                     ],
                   ],
                 ),
-                Text('${completed}개 클루 · ${coin} 코인',
+                Text('$completed개 클루 · $coin 코인',
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 10, color: AppColors.textMuted)),
+                        fontSize: 10, color: AppColors.textMuted,),),
               ],
             ),
           ),
@@ -378,18 +378,18 @@ class _LeaderRow extends StatelessWidget {
                   style: GoogleFonts.notoSansKr(
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary)),
+                      color: AppColors.textPrimary,),),
               if (isTop10 && diamond != null)
                 Row(
                   children: [
                     const Icon(Icons.diamond,
-                        size: 10, color: AppColors.brandBlue),
+                        size: 10, color: AppColors.brandBlue,),
                     const SizedBox(width: 2),
                     Text('+$diamond',
                         style: GoogleFonts.notoSansKr(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.brandBlue)),
+                            color: AppColors.brandBlue,),),
                   ],
                 ),
             ],
@@ -433,17 +433,17 @@ class _RewardRow extends StatelessWidget {
               style: GoogleFonts.notoSansKr(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textMuted)),
+                  color: AppColors.textMuted,),),
           const SizedBox(width: 10),
           Text('$rank등',
               style: GoogleFonts.notoSansKr(
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.brandYellow)),
+                  color: AppColors.brandYellow,),),
           const SizedBox(width: 10),
           Text('점수 $score',
               style: GoogleFonts.notoSansKr(
-                  fontSize: 11, color: AppColors.textMuted)),
+                  fontSize: 11, color: AppColors.textMuted,),),
           const Spacer(),
           const Icon(Icons.diamond, size: 14, color: AppColors.brandBlue),
           const SizedBox(width: 3),
@@ -451,7 +451,7 @@ class _RewardRow extends StatelessWidget {
               style: GoogleFonts.notoSansKr(
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.brandBlue)),
+                  color: AppColors.brandBlue,),),
         ],
       ),
     );

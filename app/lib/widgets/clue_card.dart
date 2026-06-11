@@ -100,7 +100,7 @@ class ClueCard extends StatelessWidget {
             Row(
               children: [
                 if (distanceText != null) ...[
-                  Icon(Icons.location_on, size: 10, color: AppColors.textMuted),
+                  const Icon(Icons.location_on, size: 10, color: AppColors.textMuted),
                   const SizedBox(width: 2),
                   Text(
                     distanceText!,
@@ -146,7 +146,7 @@ class ClueCard extends StatelessWidget {
                               height: 24,
                               child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: AppColors.textMuted),
+                                  color: AppColors.textMuted,),
                             ),
                           ),
                         ),
@@ -154,7 +154,7 @@ class ClueCard extends StatelessWidget {
                     color: AppColors.bgElevated,
                     alignment: Alignment.center,
                     child: const Icon(Icons.broken_image_outlined,
-                        color: AppColors.textMuted, size: 32),
+                        color: AppColors.textMuted, size: 32,),
                   ),
                 ),
               ),
@@ -276,7 +276,7 @@ class ClueCard extends StatelessWidget {
                   ),
                   if (timeRemaining != null) ...[
                     const SizedBox(width: AppSpacing.sm),
-                    Icon(Icons.access_time, size: 12, color: AppColors.textMuted),
+                    const Icon(Icons.access_time, size: 12, color: AppColors.textMuted),
                     const SizedBox(width: 2),
                     Text(
                       timeRemaining!,

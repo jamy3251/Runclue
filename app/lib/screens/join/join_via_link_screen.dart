@@ -93,12 +93,12 @@ class _JoinViaLinkScreenState extends ConsumerState<JoinViaLinkScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 64, color: AppColors.textMuted),
+                const Icon(Icons.error_outline, size: 64, color: AppColors.textMuted),
                 const SizedBox(height: 16),
                 Text(
                   _error!,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                  style: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -139,7 +139,7 @@ class _JoinViaLinkScreenState extends ConsumerState<JoinViaLinkScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 '미션에 초대되었습니다!',
                 style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
               ),
@@ -226,7 +226,7 @@ class _JoinViaLinkScreenState extends ConsumerState<JoinViaLinkScreen> {
                               description,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                                 color: AppColors.textSecondary,
                                 height: 1.5,
@@ -237,13 +237,13 @@ class _JoinViaLinkScreenState extends ConsumerState<JoinViaLinkScreen> {
                           // 참여자 수
                           Row(
                             children: [
-                              Icon(Icons.people, size: 18, color: AppColors.textSecondary),
+                              const Icon(Icons.people, size: 18, color: AppColors.textSecondary),
                               const SizedBox(width: 6),
                               Text(
                                 maxParticipants != null
                                     ? '$currentParticipants / $maxParticipants명 참여 중'
                                     : '$currentParticipants명 참여 중',
-                                style: TextStyle(color: AppColors.textSecondary),
+                                style: const TextStyle(color: AppColors.textSecondary),
                               ),
                             ],
                           ),
@@ -287,7 +287,7 @@ class _JoinViaLinkScreenState extends ConsumerState<JoinViaLinkScreen> {
               // 홈으로 이동
               TextButton(
                 onPressed: () => context.go('/explore'),
-                child: Text(
+                child: const Text(
                   '나중에 할게요',
                   style: TextStyle(color: AppColors.textSecondary),
                 ),

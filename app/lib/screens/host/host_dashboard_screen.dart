@@ -90,7 +90,7 @@ class _LiveFeedTab extends ConsumerWidget {
             children: [
               _FeedEventCard(event: event),
               const SizedBox(height: 16),
-              Center(
+              const Center(
                 child: Text(
                   '실시간 이벤트가 여기에 표시됩니다',
                   style: TextStyle(color: AppColors.textSecondary),
@@ -152,7 +152,7 @@ class _FeedEventCard extends StatelessWidget {
         subtitle: Text('상태: $status'),
         trailing: Text(
           timeago.format(event.timestamp, locale: 'ko'),
-          style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
         ),
       ),
     );
@@ -281,7 +281,7 @@ class _EvidenceReviewCard extends StatelessWidget {
                 if (submittedAt != null)
                   Text(
                     timeago.format(DateTime.parse(submittedAt), locale: 'ko'),
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
                   ),
               ],
             ),

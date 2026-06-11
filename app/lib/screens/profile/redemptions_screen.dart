@@ -75,7 +75,7 @@ class _RedemptionTile extends StatelessWidget {
                   style: GoogleFonts.notoSansKr(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textMuted)),
+                      color: AppColors.textMuted,),),
               const Spacer(),
               _StatusBadge(status: status),
             ],
@@ -85,24 +85,24 @@ class _RedemptionTile extends StatelessWidget {
               style: GoogleFonts.notoSansKr(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary)),
+                  color: AppColors.textPrimary,),),
           const SizedBox(height: 6),
           Row(
             children: [
               const Icon(Icons.diamond,
-                  size: 12, color: AppColors.brandBlue),
+                  size: 12, color: AppColors.brandBlue,),
               const SizedBox(width: 3),
               Text('$cost',
                   style: GoogleFonts.notoSansKr(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.brandBlue)),
+                      color: AppColors.brandBlue,),),
               const Spacer(),
               if (createdAt != null)
                 Text(
                   timeago.format(DateTime.parse(createdAt), locale: 'ko'),
                   style: GoogleFonts.notoSansKr(
-                      fontSize: 10, color: AppColors.textMuted),
+                      fontSize: 10, color: AppColors.textMuted,),
                 ),
             ],
           ),
@@ -110,12 +110,12 @@ class _RedemptionTile extends StatelessWidget {
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 8),
+                  horizontal: 10, vertical: 8,),
               decoration: BoxDecoration(
                 color: AppColors.brandGreen.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                    color: AppColors.brandGreen.withValues(alpha: 0.35)),
+                    color: AppColors.brandGreen.withValues(alpha: 0.35),),
               ),
               child: Row(
                 children: [
@@ -149,13 +149,13 @@ class _RedemptionTile extends StatelessWidget {
             const SizedBox(height: 8),
             Text('운영팀 발급 대기 중 — 보통 24시간 이내 완료',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 11, color: AppColors.textMuted)),
+                    fontSize: 11, color: AppColors.textMuted,),),
           ],
           if (status == 'failed') ...[
             const SizedBox(height: 8),
             Text('발급 실패 — 다이아가 자동 환불됩니다. 운영팀이 처리합니다.',
                 style: GoogleFonts.notoSansKr(
-                    fontSize: 11, color: AppColors.brandRed)),
+                    fontSize: 11, color: AppColors.brandRed,),),
           ],
         ],
       ),
@@ -186,7 +186,7 @@ class _StatusBadge extends StatelessWidget {
           style: GoogleFonts.notoSansKr(
               fontSize: 10,
               fontWeight: FontWeight.w800,
-              color: color)),
+              color: color,),),
     );
   }
 }

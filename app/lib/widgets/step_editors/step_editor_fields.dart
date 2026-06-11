@@ -238,7 +238,7 @@ class _OxQuizFieldsState extends State<OxQuizFields> {
                 min: 10,
                 max: 120,
                 divisions: 11,
-                label: '${_timeLimit}초',
+                label: '$_timeLimit초',
                 onChanged: (value) {
                   setState(() {
                     _timeLimit = value.round();
@@ -247,7 +247,7 @@ class _OxQuizFieldsState extends State<OxQuizFields> {
                 },
               ),
             ),
-            Text('${_timeLimit}초'),
+            Text('$_timeLimit초'),
           ],
         ),
       ],
@@ -331,7 +331,7 @@ class _ListFieldsState extends State<ListFields> {
             child: ListTile(
               dense: true,
               leading: Icon(Icons.check_box_outline_blank,
-                  size: 20, color: Colors.grey[400]),
+                  size: 20, color: Colors.grey[400],),
               title: Text(item['text'] as String),
               trailing: IconButton(
                 icon: const Icon(Icons.close, size: 18),

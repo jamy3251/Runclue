@@ -231,7 +231,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       // "근처" 탭이 아니고 거리 필터도 안 켰으면 숨김
       return const SizedBox.shrink();
     }
-    final options = const [
+    const options = [
       (null, '전체'),
       (1.0, '1km'),
       (3.0, '3km'),
@@ -265,7 +265,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 6),
+                            horizontal: 10, vertical: 6,),
                         decoration: BoxDecoration(
                           color: selected
                               ? AppColors.brandYellow.withValues(alpha: 0.15)
@@ -350,7 +350,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             child: Row(
               children: [
                 const Icon(Icons.search,
-                    color: AppColors.textMuted, size: 18),
+                    color: AppColors.textMuted, size: 18,),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
@@ -379,11 +379,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       _onSearchChanged('');
                     },
                     child: const Icon(Icons.close,
-                        color: AppColors.textMuted, size: 18),
+                        color: AppColors.textMuted, size: 18,),
                   )
                 else
                   const Icon(Icons.tune,
-                      color: AppColors.textMuted, size: 18),
+                      color: AppColors.textMuted, size: 18,),
               ],
             ),
           ),
@@ -394,7 +394,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   // ─────────────────────── 정렬 탭 ───────────────────────
   Widget _buildSortTabs() {
-    final tabs = const [
+    const tabs = [
       ('인기순', _SortMode.popular),
       ('거리순', _SortMode.distance),
       ('상금순', _SortMode.reward),
@@ -499,11 +499,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       result = result.where((c) => (c['category'] ?? '').toString().contains('퀴즈'));
     } else if (_selectedCategory == 4) {
       result = result.where(
-          (c) => (c['category'] ?? '').toString().contains('카페'));
+          (c) => (c['category'] ?? '').toString().contains('카페'),);
     } else if (_selectedCategory == 5) {
       // 근처 탭은 lat/lng가 있는 클루만
       result = result.where((c) =>
-          (c['lat'] as num?) != null && (c['lng'] as num?) != null);
+          (c['lat'] as num?) != null && (c['lng'] as num?) != null,);
     }
 
     // 거리 필터 — 사용자 위치 + 클루 lat/lng 둘 다 있어야 적용
@@ -515,7 +515,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
         final lng = (c['lng'] as num?)?.toDouble();
         if (lat == null || lng == null) return false;
         final m = Geolocator.distanceBetween(
-            pos.latitude, pos.longitude, lat, lng);
+            pos.latitude, pos.longitude, lat, lng,);
         return m <= maxKm * 1000;
       });
     }
@@ -524,7 +524,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     switch (_sortMode) {
       case _SortMode.popular:
         list.sort((a, b) => ((b['current_participants'] ?? 0) as int)
-            .compareTo((a['current_participants'] ?? 0) as int));
+            .compareTo((a['current_participants'] ?? 0) as int),);
         break;
       case _SortMode.distance:
         if (_userPosition != null) {
@@ -534,7 +534,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             final lng = (c['lng'] as num?)?.toDouble();
             if (lat == null || lng == null) return 9e9;
             return Geolocator.distanceBetween(
-                pos.latitude, pos.longitude, lat, lng);
+                pos.latitude, pos.longitude, lat, lng,);
           }
           list.sort((a, b) => distOf(a).compareTo(distOf(b)));
         } else {
@@ -554,7 +554,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           return num.tryParse(v.toString()) ?? 0;
         }
         list.sort((a, b) => parseReward(b['reward_value'])
-            .compareTo(parseReward(a['reward_value'])));
+            .compareTo(parseReward(a['reward_value'])),);
         break;
       case _SortMode.deadline:
         list.sort((a, b) {

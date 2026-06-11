@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -30,7 +29,7 @@ class WatermarkService {
       latitude: latitude,
       longitude: longitude,
       clueTitle: clueTitle,
-    ));
+    ),);
   }
 
   /// Isolate에서 실행되는 워터마크 처리 함수
@@ -96,7 +95,7 @@ class WatermarkService {
       final builder = ui.ParagraphBuilder(ui.ParagraphStyle(
         textAlign: TextAlign.right,
         fontSize: fontSize,
-      ))
+      ),)
         ..pushStyle(ui.TextStyle(color: const Color(0xCCFFFFFF)))
         ..addText(lines[i]);
 

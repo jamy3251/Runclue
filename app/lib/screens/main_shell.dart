@@ -46,7 +46,7 @@ class MainShell extends StatelessWidget {
                 ],
                 stops: const [0.0, 0.7, 1.0],
               ),
-              border: Border(
+              border: const Border(
                 top: BorderSide(color: AppColors.borderSubtle),
               ),
             ),
@@ -137,7 +137,7 @@ class _NavItem extends StatelessWidget {
                       Shadow(
                         color: AppColors.brandYellow.withValues(alpha: 0.6),
                         blurRadius: 8,
-                      )
+                      ),
                     ]
                   : null,
             ),

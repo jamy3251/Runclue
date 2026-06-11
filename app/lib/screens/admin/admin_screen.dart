@@ -33,7 +33,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
     return isAdminAsync.when(
       loading: () => const Scaffold(
         body: Center(
-            child: CircularProgressIndicator(color: AppColors.brandYellow)),
+            child: CircularProgressIndicator(color: AppColors.brandYellow),),
       ),
       error: (e, _) => _denied('권한 확인 실패: $e'),
       data: (isAdmin) {
@@ -47,7 +47,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
               style: GoogleFonts.notoSansKr(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.textPrimary),
+                  color: AppColors.textPrimary,),
             ),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -92,11 +92,11 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.lock,
-                  size: 56, color: AppColors.textMuted),
+                  size: 56, color: AppColors.textMuted,),
               const SizedBox(height: 12),
               Text(msg,
                   style: GoogleFonts.notoSansKr(
-                      color: AppColors.textSecondary, fontSize: 14)),
+                      color: AppColors.textSecondary, fontSize: 14,),),
             ],
           ),
         ),
@@ -113,9 +113,9 @@ class _StatsTab extends ConsumerWidget {
       color: AppColors.brandYellow,
       child: statsAsync.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.brandYellow)),
+            child: CircularProgressIndicator(color: AppColors.brandYellow),),
         error: (e, _) => Center(
-            child: Text('오류: $e', style: TextStyle(color: AppColors.error))),
+            child: Text('오류: $e', style: const TextStyle(color: AppColors.error)),),
         data: (s) => ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -125,17 +125,17 @@ class _StatsTab extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             _statCard('전체 클루', '${s['totalClues'] ?? 0}', Icons.explore,
-                AppColors.brandBlue),
+                AppColors.brandBlue,),
             _statCard('활성 클루', '${s['activeClues'] ?? 0}',
-                Icons.flash_on, AppColors.brandGreen),
+                Icons.flash_on, AppColors.brandGreen,),
             _statCard('전체 사용자', '${s['totalUsers'] ?? 0}',
-                Icons.person, AppColors.brandPurple),
+                Icons.person, AppColors.brandPurple,),
             _statCard('전체 참여', '${s['totalParticipations'] ?? 0}',
-                Icons.groups, AppColors.brandOrange),
+                Icons.groups, AppColors.brandOrange,),
             _statCard('발급된 보상', '${s['totalRewards'] ?? 0}',
-                Icons.card_giftcard, AppColors.brandYellow),
+                Icons.card_giftcard, AppColors.brandYellow,),
             _statCard('미수령 보상', '${s['unclaimedRewards'] ?? 0}',
-                Icons.inventory, AppColors.brandRed),
+                Icons.inventory, AppColors.brandRed,),
           ],
         ),
       ),
@@ -169,13 +169,13 @@ class _StatsTab extends ConsumerWidget {
               children: [
                 Text(label,
                     style: GoogleFonts.notoSansKr(
-                        fontSize: 12, color: AppColors.textMuted)),
+                        fontSize: 12, color: AppColors.textMuted,),),
                 const SizedBox(height: 4),
                 Text(value,
                     style: GoogleFonts.notoSansKr(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary)),
+                        color: AppColors.textPrimary,),),
               ],
             ),
           ),
@@ -195,14 +195,14 @@ class _CluesTab extends ConsumerWidget {
       color: AppColors.brandYellow,
       child: cluesAsync.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.brandYellow)),
+            child: CircularProgressIndicator(color: AppColors.brandYellow),),
         error: (e, _) => Center(
-            child: Text('오류: $e', style: TextStyle(color: AppColors.error))),
+            child: Text('오류: $e', style: const TextStyle(color: AppColors.error)),),
         data: (clues) {
           if (clues.isEmpty) {
             return const Center(
                 child: Text('클루 없음',
-                    style: TextStyle(color: AppColors.textMuted)));
+                    style: TextStyle(color: AppColors.textMuted),),);
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),
@@ -248,7 +248,7 @@ class _ClueAdminTile extends ConsumerWidget {
                   style: GoogleFonts.notoSansKr(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary),
+                      color: AppColors.textPrimary,),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -260,7 +260,7 @@ class _ClueAdminTile extends ConsumerWidget {
           Text(
             '@$creatorName · ${created != null ? DateFormat("MM/dd HH:mm").format(created) : ""}',
             style: GoogleFonts.notoSansKr(
-                fontSize: 11, color: AppColors.textMuted),
+                fontSize: 11, color: AppColors.textMuted,),
           ),
           const SizedBox(height: 8),
           Row(
@@ -287,7 +287,7 @@ class _ClueAdminTile extends ConsumerWidget {
                     .read(adminServiceProvider)
                     .hardDeleteClue(clue['id']);
                 onChanged();
-              }, outlined: true),
+              }, outlined: true,),
             ],
           ),
         ],
@@ -311,12 +311,12 @@ class _ClueAdminTile extends ConsumerWidget {
       ),
       child: Text(s,
           style: GoogleFonts.notoSansKr(
-              fontSize: 10, color: color, fontWeight: FontWeight.w700)),
+              fontSize: 10, color: color, fontWeight: FontWeight.w700,),),
     );
   }
 
   Widget _actionBtn(String label, Color color, VoidCallback onTap,
-      {bool outlined = false}) {
+      {bool outlined = false,}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -328,7 +328,7 @@ class _ClueAdminTile extends ConsumerWidget {
         ),
         child: Text(label,
             style: GoogleFonts.notoSansKr(
-                fontSize: 11, color: color, fontWeight: FontWeight.w700)),
+                fontSize: 11, color: color, fontWeight: FontWeight.w700,),),
       ),
     );
   }
@@ -339,16 +339,16 @@ class _ClueAdminTile extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.bgElevated,
         title: const Text('확인',
-            style: TextStyle(color: AppColors.textPrimary)),
+            style: TextStyle(color: AppColors.textPrimary),),
         content: Text(msg, style: const TextStyle(color: AppColors.textSecondary)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('취소')),
+              child: const Text('취소'),),
           TextButton(
               onPressed: () => Navigator.pop(ctx, true),
               child: const Text('확인',
-                  style: TextStyle(color: AppColors.brandRed))),
+                  style: TextStyle(color: AppColors.brandRed),),),
         ],
       ),
     );
@@ -365,14 +365,14 @@ class _RewardsTab extends ConsumerWidget {
       color: AppColors.brandYellow,
       child: rewardsAsync.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.brandYellow)),
+            child: CircularProgressIndicator(color: AppColors.brandYellow),),
         error: (e, _) => Center(
-            child: Text('오류: $e', style: TextStyle(color: AppColors.error))),
+            child: Text('오류: $e', style: const TextStyle(color: AppColors.error)),),
         data: (rewards) {
           if (rewards.isEmpty) {
             return const Center(
                 child: Text('보상 없음',
-                    style: TextStyle(color: AppColors.textMuted)));
+                    style: TextStyle(color: AppColors.textMuted),),);
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),
@@ -393,7 +393,7 @@ class _RewardsTab extends ConsumerWidget {
                   border: Border.all(
                       color: claimed
                           ? AppColors.borderDefault
-                          : AppColors.brandYellow.withValues(alpha: 0.3)),
+                          : AppColors.brandYellow.withValues(alpha: 0.3),),
                 ),
                 child: Row(
                   children: [
@@ -405,7 +405,7 @@ class _RewardsTab extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.card_giftcard,
-                          color: AppColors.brandYellow, size: 18),
+                          color: AppColors.brandYellow, size: 18,),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -417,12 +417,12 @@ class _RewardsTab extends ConsumerWidget {
                             style: GoogleFonts.notoSansKr(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary),
+                                color: AppColors.textPrimary,),
                           ),
                           Text(
                             '@${user?['nickname'] ?? "?"} · ${clue?['title'] ?? "?"}',
                             style: GoogleFonts.notoSansKr(
-                                fontSize: 11, color: AppColors.textMuted),
+                                fontSize: 11, color: AppColors.textMuted,),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -430,14 +430,14 @@ class _RewardsTab extends ConsumerWidget {
                             Text(
                               DateFormat("yyyy/MM/dd HH:mm").format(created),
                               style: GoogleFonts.notoSansKr(
-                                  fontSize: 10, color: AppColors.textMuted),
+                                  fontSize: 10, color: AppColors.textMuted,),
                             ),
                         ],
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                          horizontal: 8, vertical: 4,),
                       decoration: BoxDecoration(
                         color: claimed
                             ? AppColors.brandGreen.withValues(alpha: 0.15)
@@ -451,7 +451,7 @@ class _RewardsTab extends ConsumerWidget {
                             fontWeight: FontWeight.w700,
                             color: claimed
                                 ? AppColors.brandGreen
-                                : AppColors.brandOrange),
+                                : AppColors.brandOrange,),
                       ),
                     ),
                   ],
