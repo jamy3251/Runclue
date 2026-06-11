@@ -26,6 +26,11 @@ class GifticonShopScreen extends ConsumerWidget {
         title: const Text('기프티콘 상점'),
         actions: [
           IconButton(
+            tooltip: '다이아 충전',
+            icon: const Icon(Icons.add_card),
+            onPressed: () => context.push('/shop/diamonds'),
+          ),
+          IconButton(
             tooltip: '내 교환 내역',
             icon: const Icon(Icons.receipt_long),
             onPressed: () => context.push('/profile/redemptions'),

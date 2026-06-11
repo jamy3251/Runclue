@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<!-- ==========================================================================
+  RunClue 다이아 충전 결제 페이지 (토스페이먼츠 v2)
+  앱이 외부 브라우저로 엶: pay.html?clientKey=..&orderId=dia_..&amount=..&orderName=..
+  성공 → pay-success.html?paymentKey=..&orderId=..&amount=..
+  배포: runclue.app 정적 호스팅 (landing/와 함께)
+=========================================================================== -->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RunClue 다이아 충전</title>
+  <script src="https://js.tosspayments.com/v2/standard"></script>
+  <style>
+    body { margin:0; font-family:'Noto Sans KR',sans-serif; background:#0B1120; color:#E2E8F0;
+           display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .card { background:#1E293B; border-radius:16px; padding:32px 28px; max-width:360px; width:90%;
+            text-align:center; }
+    .diamond { font-size:40px; }
+    h1 { font-size:18px; margin:12px 0 4px; }
+    .amount { color:#38BDF8; font-size:24px; font-weight:900; margin:8px 0 20px; }
+    button { width:100%; padding:14px; border:none; border-radius:12px; background:#38BDF8;
+             color:#0B1120; font-size:16px; font-weight:900; cursor:pointer; }
+    .err { color:#EF4444; font-size:13px; margin-top:12px; }
+    .note { color:#64748B; font-size:11px; margin-top:16px; line-height:1.6; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="diamond">💎</div>
+    <h1 id="orderName">다이아 충전</h1>
+    <div class="amount" id="amount"></div>
+    <button id="payBtn">토스로 결제하기</button>
+    <div class="err" id="err"></div>
+    <div class="note">
+      다이아는 게임 내 가상 재화로 현금 환급이 불가합니다.<br/>
+      결제 완료 후 RunClue 앱으로 돌아가면 잔액이 반영됩니다.
+    </div>
+  </div>
+  <script>
+    const q = new URLSearchParams(location.search);
+    const clientKey = q.get('clientKey');
+    const orderId = q.get('orderId');
+    const amount = parseInt(q.get('amount') || '0', 10);
+    const orderName = q.get('orderName') || 'RunClue 다이아';
+
+    document.getElementById('orderName').textContent = orderName;
+    document.getElementById('amount').textContent = amount.toLocaleString('ko-KR') + '원';
+
+    const err = (m) => { document.getElementById('err').textContent = m; };
+    if (!clientKey || !orderId || !orderId.startsWith('dia_') || !amount) {
+      err('잘못된 결제 요청입니다. 앱에서 다시 시도해 주세요.');
+      document.getElementById('payBtn').disabled = true;
+    }
+
+    document.getElementById('payBtn').addEventListener('click', async () => {
+      try {
+        const toss = TossPayments(clientKey);
+        // 비회원 customerKey: orderId 재사용 (사용자 식별은 서버 주문 레코드로)
+        const payment = toss.payment({ customerKey: TossPayments.ANONYMOUS });
+        await payment.requestPayment({
+          method: 'CARD',
+          amount: { currency: 'KRW', value: amount },
+          orderId: orderId,
+          orderName: orderName,
+          successUrl: location.origin + '/pay-success.html',
+          failUrl: location.origin + '/pay-fail.html',
+        });
+      } catch (e) {
+        err(e.message || '결제를 시작할 수 없습니다.');
+      }
+    });
+  </script>
+</body>
+</html>

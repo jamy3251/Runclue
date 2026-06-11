@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<!-- 결제 실패/취소 콜백 — 토스가 code/message 쿼리로 redirect. -->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RunClue 결제 실패</title>
+  <style>
+    body { margin:0; font-family:'Noto Sans KR',sans-serif; background:#0B1120; color:#E2E8F0;
+           display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .card { background:#1E293B; border-radius:16px; padding:32px 28px; max-width:360px; width:90%;
+            text-align:center; }
+    h1 { font-size:18px; color:#EF4444; }
+    p { color:#94A3B8; font-size:13px; line-height:1.6; }
+    a.btn { display:block; margin-top:20px; padding:14px; border-radius:12px; background:#38BDF8;
+            color:#0B1120; font-weight:900; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="font-size:44px">❌</div>
+    <h1>결제가 완료되지 않았습니다</h1>
+    <p id="msg">결제가 취소되었거나 실패했습니다. 금액은 청구되지 않습니다.</p>
+    <a class="btn" href="#" onclick="location.href='runclue://pay/fail'; return false;">RunClue 앱으로 돌아가기</a>
+  </div>
+  <script>
+    const m = new URLSearchParams(location.search).get('message');
+    if (m) document.getElementById('msg').textContent = m + ' — 금액은 청구되지 않습니다.';
+  </script>
+</body>
+</html>

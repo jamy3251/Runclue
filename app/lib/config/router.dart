@@ -32,6 +32,7 @@ import '../screens/admin/admin_screen.dart';
 import '../screens/routines/routines_screen.dart';
 import '../screens/minigames/minigames_screen.dart';
 import '../screens/shop/gifticon_shop_screen.dart';
+import '../screens/shop/diamond_shop_screen.dart';
 import '../screens/profile/redemptions_screen.dart';
 import '../screens/profile/my_purchases_screen.dart';
 import '../screens/store/menu_manage_screen.dart';
@@ -363,6 +364,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'gifticonShop',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const GifticonShopScreen(),
+      ),
+
+      // 다이아 충전 — 토스 결제 (032)
+      GoRoute(
+        path: '/shop/diamonds',
+        name: 'diamondShop',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const DiamondShopScreen(),
       ),
 
       // 내 교환 내역

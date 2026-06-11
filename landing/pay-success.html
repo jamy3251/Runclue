@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<!-- ==========================================================================
+  결제 성공 콜백 — 토스가 paymentKey/orderId/amount 쿼리로 redirect.
+  toss-diamond-confirm Edge Function 호출로 승인 검증 + 다이아 적립.
+  배포 시 SUPABASE_FUNCTIONS_URL을 실제 프로젝트 URL로 교체할 것.
+=========================================================================== -->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RunClue 충전 완료</title>
+  <style>
+    body { margin:0; font-family:'Noto Sans KR',sans-serif; background:#0B1120; color:#E2E8F0;
+           display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .card { background:#1E293B; border-radius:16px; padding:32px 28px; max-width:360px; width:90%;
+            text-align:center; }
+    .icon { font-size:44px; }
+    h1 { font-size:18px; margin:12px 0 8px; }
+    p { color:#94A3B8; font-size:13px; line-height:1.6; }
+    .ok { color:#10B981; }  .fail { color:#EF4444; }
+    a.btn { display:block; margin-top:20px; padding:14px; border-radius:12px; background:#38BDF8;
+            color:#0B1120; font-weight:900; text-decoration:none; }
+    .spinner { margin:16px auto; width:28px; height:28px; border:3px solid #334155;
+               border-top-color:#38BDF8; border-radius:50%; animation:spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon" id="icon">⏳</div>
+    <h1 id="title">충전 확인 중...</h1>
+    <div class="spinner" id="spinner"></div>
+    <p id="msg">결제 승인을 확인하고 있습니다. 잠시만 기다려 주세요.</p>
+    <a class="btn" id="backBtn" style="display:none" href="#"
+       onclick="location.href='runclue://pay/success'; return false;">RunClue 앱으로 돌아가기</a>
+  </div>
+  <script>
+    // 배포 시 교체: https://<project-ref>.functions.supabase.co
+    const SUPABASE_FUNCTIONS_URL = 'REPLACE_WITH_SUPABASE_FUNCTIONS_URL';
+
+    const q = new URLSearchParams(location.search);
+    const paymentKey = q.get('paymentKey');
+    const orderId = q.get('orderId');
+    const amount = parseInt(q.get('amount') || '0', 10);
+
+    const done = (ok, title, msg) => {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('icon').textContent = ok ? '✅' : '❌';
+      document.getElementById('title').textContent = title;
+      document.getElementById('title').className = ok ? 'ok' : 'fail';
+      document.getElementById('msg').textContent = msg;
+      document.getElementById('backBtn').style.display = 'block';
+    };
+
+    (async () => {
+      if (!paymentKey || !orderId || !amount) {
+        done(false, '잘못된 접근', '결제 정보가 없습니다. 앱에서 다시 시도해 주세요.');
+        return;
+      }
+      if (SUPABASE_FUNCTIONS_URL.startsWith('REPLACE')) {
+        done(false, '서버 설정 필요', '운영자: SUPABASE_FUNCTIONS_URL을 설정해 주세요.');
+        return;
+      }
+      try {
+        const res = await fetch(SUPABASE_FUNCTIONS_URL + '/toss-diamond-confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paymentKey, orderId, amount }),
+        });
+        const j = await res.json();
+        if (j.ok) {
+          const dia = (j.result && j.result.diamond_amount) || j.diamond_amount || '';
+          done(true, '충전 완료!', '다이아 ' + dia + '개가 적립되었습니다. 앱으로 돌아가면 잔액이 반영됩니다.');
+        } else {
+          done(false, '충전 실패', '사유: ' + (j.reason || '알 수 없음') + ' — 결제가 승인되지 않았다면 금액은 청구되지 않습니다.');
+        }
+      } catch (e) {
+        done(false, '네트워크 오류', '확인에 실패했습니다. 앱의 충전 내역에서 상태를 확인해 주세요.');
+      }
+    })();
+  </script>
+</body>
+</html>
