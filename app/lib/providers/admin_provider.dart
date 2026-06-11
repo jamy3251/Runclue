@@ -29,3 +29,17 @@ final adminAllRewardsProvider =
   final svc = ref.read(adminServiceProvider);
   return svc.listAllRewards();
 });
+
+/// 어드민 — 기프티콘 카탈로그 (비활성 포함).
+final adminGifticonsProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final svc = ref.read(adminServiceProvider);
+  return svc.listGifticons();
+});
+
+/// 어드민 — 발급 대기 교환 요청 큐.
+final adminPendingRedemptionsProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final svc = ref.read(adminServiceProvider);
+  return svc.pendingRedemptions();
+});

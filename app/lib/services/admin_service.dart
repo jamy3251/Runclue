@@ -53,6 +53,77 @@ class AdminService {
     }
   }
 
+  // ── 기프티콘 운영 (수동 SQL 대체 — OWNER_TODO §7) ──
+
+  /// 전체 기프티콘 카탈로그 (비활성 포함 — admin RLS).
+  Future<List<Map<String, dynamic>>> listGifticons() async {
+    try {
+      final res = await _client
+          .from('gifticons')
+          .select('*')
+          .order('display_order');
+      return List<Map<String, dynamic>>.from(res);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// 기프티콘 등록.
+  Future<void> createGifticon({
+    required String partnerBrand,
+    required String name,
+    required int valueKrw,
+    required int diamondCost,
+    required int stock,
+    String? imageUrl,
+  }) async {
+    await _client.from('gifticons').insert({
+      'partner_brand': partnerBrand,
+      'name': name,
+      'value_krw': valueKrw,
+      'diamond_cost': diamondCost,
+      'stock': stock,
+      if (imageUrl != null && imageUrl.isNotEmpty) 'image_url': imageUrl,
+      'display_order': 100,
+      'active': true,
+    });
+  }
+
+  /// 기프티콘 수정 (재고/활성 토글 등).
+  Future<void> updateGifticon(String id, Map<String, dynamic> fields) async {
+    await _client.from('gifticons').update(fields).eq('id', id);
+  }
+
+  /// 발급 대기 중인 교환 요청 (pending) — 운영자 발급 큐.
+  Future<List<Map<String, dynamic>>> pendingRedemptions(
+      {int limit = 50,}) async {
+    try {
+      final res = await _client
+          .from('redemptions')
+          .select('*, user:profiles!user_id(nickname), '
+              'gifticon:gifticons!gifticon_id(name, partner_brand)')
+          .eq('status', 'pending')
+          .order('created_at')
+          .limit(limit);
+      return List<Map<String, dynamic>>.from(res);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// 쿠폰코드 입력 → 발급 완료 처리.
+  Future<void> issueRedemption(String redemptionId, String couponCode) async {
+    await _client.from('redemptions').update({
+      'coupon_code': couponCode,
+      'status': 'issued',
+      'issued_at': DateTime.now().toUtc().toIso8601String(),
+      'expires_at': DateTime.now()
+          .toUtc()
+          .add(const Duration(days: 90))
+          .toIso8601String(),
+    }).eq('id', redemptionId);
+  }
+
   /// 플랫폼 통계 — 핵심 KPI 한 번에.
   Future<Map<String, int>> getStats() async {
     int countSafe(dynamic v) =>

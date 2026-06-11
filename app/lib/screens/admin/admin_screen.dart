@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/admin_provider.dart';
 import '../../utils/platform_grade.dart';
+import 'gifticon_admin_tab.dart';
 
 /// 관리자 페이지 — 통계 + 클루 관리 + 보상 관리.
 /// is_admin() 검증 후 진입. 일반 사용자는 redirect.
@@ -19,7 +20,7 @@ class AdminScreen extends ConsumerStatefulWidget {
 
 class _AdminScreenState extends ConsumerState<AdminScreen>
     with SingleTickerProviderStateMixin {
-  late final TabController _tab = TabController(length: 3, vsync: this);
+  late final TabController _tab = TabController(length: 4, vsync: this);
 
   @override
   void dispose() {
@@ -58,10 +59,12 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
               indicatorColor: AppColors.brandYellow,
               labelColor: AppColors.brandYellow,
               unselectedLabelColor: AppColors.textMuted,
+              isScrollable: true,
               tabs: const [
                 Tab(text: '대시보드', icon: Icon(Icons.dashboard, size: 18)),
                 Tab(text: '클루', icon: Icon(Icons.explore, size: 18)),
                 Tab(text: '보상', icon: Icon(Icons.card_giftcard, size: 18)),
+                Tab(text: '기프티콘', icon: Icon(Icons.redeem, size: 18)),
               ],
             ),
           ),
@@ -71,6 +74,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen>
               _StatsTab(),
               _CluesTab(),
               _RewardsTab(),
+              GifticonAdminTab(),
             ],
           ),
         );
