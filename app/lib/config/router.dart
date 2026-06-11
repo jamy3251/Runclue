@@ -24,6 +24,7 @@ import '../screens/join/join_via_link_screen.dart';
 import '../screens/mission/mission_map_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/onboarding/nickname_setup_screen.dart';
+import '../screens/play/play_hub_screen.dart';
 import '../screens/progress/my_progress_screen.dart';
 import '../screens/biz/biz_landing_screen.dart';
 import '../screens/landing/why_runclue_screen.dart';
@@ -144,6 +145,17 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/explore',
                 name: 'explore',
                 builder: (context, state) => const ExploreScreen(),
+              ),
+            ],
+          ),
+
+          // 플레이 (Play Hub) — 배틀/미니게임/시즌/상점 단일 진입점
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/play',
+                name: 'play',
+                builder: (context, state) => const PlayHubScreen(),
               ),
             ],
           ),

@@ -6,8 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../config/theme.dart';
 
-/// 바텀 네비게이션 쉘 — 명세 v2.0 §3.1
-/// 4탭 한글 라벨: 홈 / 탐색 / 랭킹 / 내 정보
+/// 바텀 네비게이션 쉘 — IA 재정비 (2026-06-11)
+/// 5탭 한글 라벨: 홈 / 탐색 / 플레이 / 랭킹 / 내 정보
+/// '플레이' = 배틀·미니게임·시즌·상점 게임 허브 (흩어진 진입점 통합)
 /// 활성: #FACC15 + glow / 비활성: #555
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -70,18 +71,25 @@ class MainShell extends StatelessWidget {
                       onTap: () => switchTab(1, currentIndex),
                     ),
                     _NavItem(
+                      icon: Icons.sports_esports_outlined,
+                      activeIcon: Icons.sports_esports,
+                      label: '플레이',
+                      isActive: currentIndex == 2,
+                      onTap: () => switchTab(2, currentIndex),
+                    ),
+                    _NavItem(
                       icon: Icons.emoji_events_outlined,
                       activeIcon: Icons.emoji_events,
                       label: '랭킹',
-                      isActive: currentIndex == 2,
-                      onTap: () => switchTab(2, currentIndex),
+                      isActive: currentIndex == 3,
+                      onTap: () => switchTab(3, currentIndex),
                     ),
                     _NavItem(
                       icon: Icons.star_outline,
                       activeIcon: Icons.star,
                       label: '내 정보',
-                      isActive: currentIndex == 3,
-                      onTap: () => switchTab(3, currentIndex),
+                      isActive: currentIndex == 4,
+                      onTap: () => switchTab(4, currentIndex),
                     ),
                   ],
                 ),
