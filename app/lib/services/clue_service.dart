@@ -327,4 +327,26 @@ class ClueService {
       throw Exception('Failed to toggle like: $e');
     }
   }
+
+  // ── 유저 코인 상금 풀 (037) ──
+
+  /// 생성자가 자기 코인을 상금 풀로 결제 (10~5,000).
+  Future<Map<String, dynamic>> fundCoinPrize(
+      String clueId, int amount,) async {
+    final res = await _client.rpc('fund_clue_pool_coin', params: {
+      'clue_id_in': clueId,
+      'amount_in': amount,
+    });
+    if (res is Map) return Map<String, dynamic>.from(res);
+    return {'ok': false, 'reason': 'unexpected_response'};
+  }
+
+  /// 1등 완료자 코인 상금 수령 (서버 검증·멱등 — 실패해도 무해).
+  Future<Map<String, dynamic>> claimCoinPrize(String clueId) async {
+    final res = await _client.rpc('claim_coin_pool', params: {
+      'clue_id_in': clueId,
+    });
+    if (res is Map) return Map<String, dynamic>.from(res);
+    return {'ok': false, 'reason': 'unexpected_response'};
+  }
 }

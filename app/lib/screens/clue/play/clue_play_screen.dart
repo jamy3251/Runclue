@@ -1322,6 +1322,20 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
         HapticFeedback.heavyImpact();
         await participationService
             .completeParticipation(participationId);
+        // 코인 상금 풀(037) — 1등이면 서버가 지급 (멱등, 실패 무해)
+        try {
+          final prize = await ref
+              .read(clueServiceProvider)
+              .claimCoinPrize(widget.clueId);
+          if (prize['ok'] == true && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('🏆 1등 상금 +${prize['prize']} 코인!'),
+                backgroundColor: AppColors.brandGreen,
+              ),
+            );
+          }
+        } catch (_) {/* 풀 없음/1등 아님 — 무시 */}
         // Result 화면이 최신 랭킹·보상 데이터 읽도록 캐시 무효화
         // — 새 보상이 선물함에 도착했을 수 있으므로 reward provider도 함께 무효화
         ref.invalidate(myParticipationsProvider);

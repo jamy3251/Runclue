@@ -377,7 +377,11 @@ class _ClueDetailScreenState extends ConsumerState<ClueDetailScreen>
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 12),
+
+        // 코인 상금 풀 (037) — 풀 표시 + 생성자 펀딩 버튼
+        _CoinPrizeCard(clue: clue),
+        const SizedBox(height: 12),
 
         // 진행도 바
         if (maxParticipants != null) ...[
@@ -1422,5 +1426,127 @@ class _CircleIconButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// 코인 상금 풀 카드 (037) — 풀 표시 + 생성자 '상금 걸기'.
+class _CoinPrizeCard extends ConsumerWidget {
+  const _CoinPrizeCard({required this.clue});
+  final Map<String, dynamic> clue;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pool = (clue['reward_pool_coin'] as num?)?.toInt() ?? 0;
+    final myId = ref.watch(currentUserIdProvider);
+    final isCreator = clue['creator_id'] == myId;
+    if (pool <= 0 && !isCreator) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [
+          AppColors.brandYellow.withValues(alpha: 0.14),
+          AppColors.brandOrange.withValues(alpha: 0.06),
+        ],),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+            color: AppColors.brandYellow.withValues(alpha: 0.4),),
+      ),
+      child: Row(
+        children: [
+          const Text('🏆', style: TextStyle(fontSize: 22)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  pool > 0 ? '1등 상금 $pool 코인' : '코인 상금 걸기',
+                  style: GoogleFonts.notoSansKr(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.brandYellow,),
+                ),
+                Text(
+                  pool > 0
+                      ? '가장 먼저 완주한 사람이 전액 가져갑니다'
+                      : '내 코인을 걸어 도전자를 모아보세요 (10~5,000)',
+                  style: GoogleFonts.notoSansKr(
+                      fontSize: 11, color: AppColors.textSecondary,),
+                ),
+              ],
+            ),
+          ),
+          if (isCreator)
+            TextButton(
+              onPressed: () => _fundDialog(context, ref),
+              style: TextButton.styleFrom(
+                  foregroundColor: AppColors.brandYellow,),
+              child: Text(pool > 0 ? '추가' : '걸기',
+                  style: GoogleFonts.notoSansKr(
+                      fontWeight: FontWeight.w900,),),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _fundDialog(BuildContext context, WidgetRef ref) async {
+    final amount = TextEditingController(text: '100');
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.bgElevated,
+        title: Text('코인 상금 걸기',
+            style: GoogleFonts.notoSansKr(fontWeight: FontWeight.w900),),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: amount,
+              keyboardType: TextInputType.number,
+              autofocus: true,
+              decoration: const InputDecoration(
+                  labelText: '금액 (10~5,000 코인)', isDense: true,),
+            ),
+            const SizedBox(height: 8),
+            Text('걸은 코인은 환불되지 않으며, 1등 완주자가 전액 받습니다.',
+                style: GoogleFonts.notoSansKr(
+                    fontSize: 11, color: AppColors.textMuted,),),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('취소'),),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.brandYellow,
+                foregroundColor: Colors.black,),
+            child: const Text('걸기'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    final v = int.tryParse(amount.text.trim()) ?? 0;
+    final res =
+        await ref.read(clueServiceProvider).fundCoinPrize(clue['id'] as String, v);
+    if (!context.mounted) return;
+    if (res['ok'] == true) {
+      ref.invalidate(clueDetailProvider(clue['id'] as String));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('상금 풀 ${res['pool_coin']} 코인!')),
+      );
+    } else {
+      final msg = switch (res['reason']) {
+        'insufficient_coin' => '코인이 부족합니다',
+        'amount_out_of_range' => '10~5,000 코인 사이로 입력해 주세요',
+        _ => '실패: ${res['reason']}',
+      };
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(msg)));
+    }
   }
 }
