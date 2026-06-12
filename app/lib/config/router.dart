@@ -25,6 +25,7 @@ import '../screens/mission/mission_map_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/onboarding/nickname_setup_screen.dart';
 import '../screens/play/play_hub_screen.dart';
+import '../screens/clans/clan_war_screen.dart';
 import '../screens/progress/my_progress_screen.dart';
 import '../screens/biz/biz_landing_screen.dart';
 import '../screens/landing/why_runclue_screen.dart';
@@ -390,6 +391,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'diamondShop',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const DiamondShopScreen(),
+      ),
+
+      // 클랜 대항전 (041)
+      GoRoute(
+        path: '/clans',
+        name: 'clanWar',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ClanWarScreen(),
       ),
 
       // 내 교환 내역

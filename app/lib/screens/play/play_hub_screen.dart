@@ -114,11 +114,11 @@ class PlayHubScreen extends ConsumerWidget {
                 SizedBox(width: 10),
                 Expanded(
                   child: _HubTile(
-                    title: '걸음수·출석',
-                    subtitle: '일일 무료 코인',
-                    icon: Icons.directions_walk,
-                    color: AppColors.brandBlue,
-                    route: '/home',
+                    title: '클랜 대항전',
+                    subtitle: '학교·동아리 주간 랭킹',
+                    icon: Icons.shield,
+                    color: AppColors.brandRed,
+                    route: '/clans',
                   ),
                 ),
               ],
