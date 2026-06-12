@@ -823,6 +823,28 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
   }
 
   // ─────────────── Step 3: 단계(스텝) ───────────────
+  /// 단체 이벤트 패키지 템플릿 적용 (K8) — 스텝 프리필 + 모드/제목 세팅.
+  void _applyTemplate(_ClueTemplate t) {
+    HapticFeedback.mediumImpact();
+    setState(() {
+      _steps
+        ..clear()
+        ..addAll(t.buildSteps());
+      _gameMode = t.gameMode;
+      if (_titleController.text.trim().isEmpty) {
+        _titleController.text = t.suggestedTitle;
+      }
+      if (_descController.text.trim().isEmpty) {
+        _descController.text = t.suggestedDesc;
+      }
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('패키지 적용 완료 — 각 단계를 우리 모임에 맞게 수정하세요'),
+      ),
+    );
+  }
+
   Widget _buildStepSteps() {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
@@ -832,6 +854,75 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           subtitle: '탐험가가 풀어야 할 단계를 추가하세요 (1개 이상)',
         ),
         const SizedBox(height: 20),
+
+        // ── 패키지로 시작 (K8 — MT/OT/단골 템플릿) ──
+        if (_steps.isEmpty) ...[
+          Text('📦 패키지로 시작하기',
+              style: GoogleFonts.notoSansKr(
+                  fontSize: 14, fontWeight: FontWeight.w900,),),
+          Text('상황에 맞는 단계 구성을 한 번에 채우고, 내용만 수정하세요',
+              style: GoogleFonts.notoSansKr(
+                  fontSize: 11, color: AppColors.textMuted,),),
+          const SizedBox(height: 8),
+          ..._clueTemplates.map((t) => Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: Material(
+                  color: AppColors.bgSurface,
+                  borderRadius: BorderRadius.circular(12),
+                  child: InkWell(
+                    onTap: () => _applyTemplate(t),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: t.color.withValues(alpha: 0.35),),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(t.emoji,
+                              style: const TextStyle(fontSize: 26)),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(t.name,
+                                    style: GoogleFonts.notoSansKr(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w900,
+                                        color: t.color,),),
+                                Text(t.tagline,
+                                    style: GoogleFonts.notoSansKr(
+                                        fontSize: 11,
+                                        color: AppColors.textSecondary,),),
+                              ],
+                            ),
+                          ),
+                          Icon(Icons.add_circle_outline,
+                              color: t.color, size: 20,),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Expanded(child: Divider(color: AppColors.borderDefault)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text('또는 직접 구성',
+                    style: GoogleFonts.notoSansKr(
+                        fontSize: 11, color: AppColors.textMuted,),),
+              ),
+              const Expanded(child: Divider(color: AppColors.borderDefault)),
+            ],
+          ),
+          const SizedBox(height: 12),
+        ],
 
         // 추가된 단계 목록
         if (_steps.isEmpty)
@@ -2097,6 +2188,134 @@ class _StepDraft {
     this.referenceImage,
   });
 }
+
+// ─────────────────────────────────────────────────────────────
+// 단체 이벤트 패키지 템플릿 (K8) — MT/OT/단골 원터치 구성
+// ─────────────────────────────────────────────────────────────
+
+class _ClueTemplate {
+  final String emoji;
+  final String name;
+  final String tagline;
+  final String suggestedTitle;
+  final String suggestedDesc;
+  final String gameMode; // solo / coop / versus
+  final Color color;
+  final List<_StepDraft> Function() buildSteps;
+
+  const _ClueTemplate({
+    required this.emoji,
+    required this.name,
+    required this.tagline,
+    required this.suggestedTitle,
+    required this.suggestedDesc,
+    required this.gameMode,
+    required this.color,
+    required this.buildSteps,
+  });
+}
+
+final _clueTemplates = <_ClueTemplate>[
+  _ClueTemplate(
+    emoji: '🏕️',
+    name: 'MT 보물찾기 패키지',
+    tagline: '조별 경쟁 5단계 — 집결·암호·보물·미션·피날레 (1등 조 독식)',
+    suggestedTitle: '우리 과 MT 보물찾기',
+    suggestedDesc: '조별로 경쟁하는 MT 보물찾기! 가장 먼저 전 단계를 완료한 조가 상금을 독식합니다. '
+        '각 조의 대표 1명이 참가해 주세요.',
+    gameMode: 'versus',
+    color: AppColors.brandGreen,
+    buildSteps: () => [
+      _StepDraft(
+        type: 'GROUP_PHOTO',
+        title: '조원 집결 인증',
+        instruction: '우리 조 전원이 나오는 단체사진을 찍어주세요! (얼굴이 다 보이게)',
+      ),
+      _StepDraft(
+        type: 'QUEST',
+        title: '보물 암호 풀기',
+        instruction: '총무가 숨겨둔 쪽지를 찾아 적힌 암호를 입력하세요.',
+        question: '쪽지에 적힌 암호는?',
+        answer: '보물', // 총무가 수정
+        hint: '바비큐장 근처를 잘 찾아보세요',
+      ),
+      _StepDraft(
+        type: 'SNAPSHOT',
+        title: '보물 발견 인증',
+        instruction: '찾은 보물(쪽지/물건)과 함께 셀카를 찍어주세요!',
+      ),
+      _StepDraft(
+        type: 'PARTY_MISSION',
+        title: '조별 미션',
+        instruction: '조 구호를 다 같이 외치는 순간을 사진으로! (총무가 미션 내용을 자유롭게 바꿔도 좋아요)',
+      ),
+      _StepDraft(
+        type: 'GROUP_PHOTO',
+        title: '피날레 점프샷',
+        instruction: '전원 점프샷으로 마무리! 가장 먼저 제출한 조가 우승합니다.',
+      ),
+    ],
+  ),
+  _ClueTemplate(
+    emoji: '🎉',
+    name: '개강 파티 · 동아리 OT 패키지',
+    tagline: '아이스브레이킹 4단계 — 처음 만난 사이를 게임으로',
+    suggestedTitle: '우리 동아리 OT 미션',
+    suggestedDesc: '처음 만난 멤버들과 어색함을 깨는 미션! 다 같이 완료하면 모두에게 보상이 갑니다.',
+    gameMode: 'coop',
+    color: AppColors.brandPurple,
+    buildSteps: () => [
+      _StepDraft(
+        type: 'PARTY_MISSION',
+        title: '아이스브레이킹',
+        instruction: '오늘 처음 만난 사람 3명과 함께 셀카를 찍어주세요!',
+      ),
+      _StepDraft(
+        type: 'QUEST',
+        title: '우리 모임 퀴즈',
+        instruction: '모임에 대한 퀴즈! 정답을 입력하세요.',
+        question: '우리 동아리 회장의 이름은?',
+        answer: '정답', // 호스트가 수정
+      ),
+      _StepDraft(
+        type: 'SNAPSHOT',
+        title: '아지트 인증',
+        instruction: '우리 모임의 아지트(동방/단골집)에서 인증샷!',
+      ),
+      _StepDraft(
+        type: 'GROUP_PHOTO',
+        title: '단체 응원샷',
+        instruction: '전원이 모여 파이팅 포즈로 단체사진!',
+      ),
+    ],
+  ),
+  _ClueTemplate(
+    emoji: '🏪',
+    name: '가게 단골 만들기 패키지',
+    tagline: '사장님용 3단계 — 방문·구매·인증 (전환율 측정 포함)',
+    suggestedTitle: '우리 가게 첫 방문 미션',
+    suggestedDesc: '가게에 방문해서 미션을 완료하면 보상을 드려요! 영수증 인증까지 하면 완료.',
+    gameMode: 'solo',
+    color: AppColors.brandBlue,
+    buildSteps: () => [
+      _StepDraft(
+        type: 'CHECKPOINT',
+        title: '가게 도착',
+        instruction: '가게에 도착하면 GPS로 자동 인증됩니다.',
+      ),
+      _StepDraft(
+        type: 'RECEIPT',
+        title: '구매 인증',
+        instruction: '5,000원 이상 구매 후 영수증 사진을 찍어주세요. (금액은 사장님이 수정)',
+      ),
+      _StepDraft(
+        type: 'SNAPSHOT',
+        title: '메뉴 인증샷',
+        instruction: '주문한 메뉴와 함께 인증샷을 남겨주세요!',
+      ),
+    ],
+  ),
+];
 
 class _StepHeader extends StatelessWidget {
   final String title;
