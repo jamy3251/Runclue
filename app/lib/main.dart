@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'app.dart';
 import 'config/supabase_config.dart';
 
@@ -11,6 +12,9 @@ Future<void> main() async {
   // 전역 에러 핸들링 — 크래시 방지
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    // 상대 시간 한국어 ("3분 전") — 미등록 시 영어로 표시되던 문제 수정
+    timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     // 지도: flutter_map(OSM)으로 교체 (2026-06-12) — 네이티브 SDK 초기화 불필요,
     // 전 플랫폼(Android/iOS/웹/데스크톱) 동일 동작 + API 키 불요

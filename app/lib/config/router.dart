@@ -26,6 +26,7 @@ import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/onboarding/nickname_setup_screen.dart';
 import '../screens/play/play_hub_screen.dart';
 import '../screens/clans/clan_war_screen.dart';
+import '../screens/clans/clan_detail_screen.dart';
 import '../screens/progress/my_progress_screen.dart';
 import '../screens/biz/biz_landing_screen.dart';
 import '../screens/landing/why_runclue_screen.dart';
@@ -399,6 +400,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'clanWar',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ClanWarScreen(),
+      ),
+
+      // 클랜 상세 + 채팅 (042)
+      GoRoute(
+        path: '/clans/:id',
+        name: 'clanDetail',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) =>
+            ClanDetailScreen(clanId: state.pathParameters['id']!),
       ),
 
       // 내 교환 내역

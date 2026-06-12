@@ -211,7 +211,10 @@ class _MyClanCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
+    return InkWell(
+      onTap: () => context.push('/clans/${clan['id']}'),
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [
@@ -261,6 +264,7 @@ class _MyClanCard extends ConsumerWidget {
             child: const Text('탈퇴'),
           ),
         ],
+      ),
       ),
     );
   }
@@ -339,7 +343,10 @@ class _ClanRankTile extends StatelessWidget {
       3 => '🥉',
       _ => null,
     };
-    return Container(
+    return InkWell(
+      onTap: () => context.push('/clans/${row['clan_id']}'),
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
@@ -404,6 +411,7 @@ class _ClanRankTile extends StatelessWidget {
             ),
           ],
         ],
+      ),
       ),
     );
   }
