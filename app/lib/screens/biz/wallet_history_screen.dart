@@ -64,6 +64,85 @@ class WalletHistoryScreen extends ConsumerWidget {
               ),
             const SizedBox(height: 16),
 
+            // ── 방문→구매 전환 리포트 (K5) — "광고비 대비 매출" 증명 ──
+            Builder(builder: (context) {
+              final conv =
+                  ref.watch(purchaseConversionProvider).valueOrNull ??
+                      const [];
+              if (conv.isEmpty) return const SizedBox.shrink();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _SectionHeader(
+                      title: '방문 → 구매 전환', count: conv.length,),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Text(
+                      '클루에 "구매 영수증 인증" 스텝을 넣으면 방문이 실제 매출로 이어졌는지 측정됩니다',
+                      style: GoogleFonts.notoSansKr(
+                          fontSize: 11, color: AppColors.textMuted,),
+                    ),
+                  ),
+                  ...conv.map((r) {
+                    final pct =
+                        (r['conversion_pct'] as num?)?.toDouble() ?? 0;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10,),
+                      decoration: BoxDecoration(
+                        color: AppColors.bgSurface,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              r['title'] as String? ?? '?',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.notoSansKr(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,),
+                            ),
+                          ),
+                          Text(
+                            '방문 ${r['visitors']} · 구매 ${r['purchase_proofs']}',
+                            style: GoogleFonts.notoSansKr(
+                                fontSize: 11,
+                                color: AppColors.textMuted,),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3,),
+                            decoration: BoxDecoration(
+                              color: (pct >= 30
+                                      ? AppColors.brandGreen
+                                      : AppColors.brandYellow)
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '$pct%',
+                              style: GoogleFonts.notoSansKr(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w900,
+                                color: pct >= 30
+                                    ? AppColors.brandGreen
+                                    : AppColors.brandYellow,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 16),
+                ],
+              );
+            }),
+
             // ── 가게 매출 (Step 16) ──
             _SectionHeader(title: '가게 매출 (다이아)', count: revenue.length),
             ...revenue.map((r) => _RevenueTile(row: r)),

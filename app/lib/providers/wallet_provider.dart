@@ -41,3 +41,11 @@ final storeRevenueSumProvider = FutureProvider<int>((ref) async {
   if (userId == null) return 0;
   return ref.watch(walletServiceProvider).storeRevenueSum(userId);
 });
+
+/// K5 — 내 클루별 방문→구매 전환 리포트.
+final purchaseConversionProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final userId = ref.watch(currentUserIdProvider);
+  if (userId == null) return [];
+  return ref.watch(walletServiceProvider).purchaseConversion(userId);
+});

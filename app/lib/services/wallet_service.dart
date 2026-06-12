@@ -68,6 +68,23 @@ class WalletService {
     return List<Map<String, dynamic>>.from(rows);
   }
 
+  /// 방문→구매 전환 리포트 (K5) — 내 클루별 방문자/구매인증/전환율.
+  /// security_invoker 뷰라 RLS로 본인 클루만 반환됨.
+  Future<List<Map<String, dynamic>>> purchaseConversion(String ownerId,
+      {int limit = 20,}) async {
+    try {
+      final rows = await _client
+          .from('clue_purchase_conversion_v1')
+          .select('clue_id, title, visitors, purchase_proofs, conversion_pct')
+          .eq('creator_id', ownerId)
+          .order('visitors', ascending: false)
+          .limit(limit);
+      return List<Map<String, dynamic>>.from(rows);
+    } catch (_) {
+      return [];
+    }
+  }
+
   /// 가게 매출 합계.
   Future<int> storeRevenueSum(String ownerId) async {
     final rows = await _client
