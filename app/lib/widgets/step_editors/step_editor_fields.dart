@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart' show CircleMarker;
+import 'package:latlong2/latlong.dart';
+
+import '../common/osm_map.dart';
 
 /// Step 타입별 세부 필드를 제공하는 위젯.
 /// _showAddStepDialog()에서 타입 선택 후 동적으로 표시한다.
@@ -35,11 +38,9 @@ class _CheckpointFieldsState extends State<CheckpointFields> {
           height: 200,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _selectedLocation,
-                zoom: 16,
-              ),
+            child: OsmMap(
+              center: _selectedLocation,
+              zoom: 16,
               onTap: (latLng) {
                 setState(() {
                   _selectedLocation = latLng;
@@ -47,25 +48,17 @@ class _CheckpointFieldsState extends State<CheckpointFields> {
                   widget.data['target_longitude'] = latLng.longitude;
                 });
               },
-              markers: {
-                Marker(
-                  markerId: const MarkerId('target'),
-                  position: _selectedLocation,
-                ),
-              },
-              circles: {
-                Circle(
-                  circleId: const CircleId('radius'),
-                  center: _selectedLocation,
+              markers: [osmPin(_selectedLocation)],
+              circles: [
+                CircleMarker(
+                  point: _selectedLocation,
                   radius: _radius,
-                  fillColor: Colors.blue.withOpacity(0.1),
-                  strokeColor: Colors.blue,
-                  strokeWidth: 1,
+                  useRadiusInMeter: true,
+                  color: Colors.blue.withValues(alpha: 0.1),
+                  borderColor: Colors.blue,
+                  borderStrokeWidth: 1,
                 ),
-              },
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              zoomControlsEnabled: false,
+              ],
             ),
           ),
         ),

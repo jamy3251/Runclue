@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart' show MapController;
 import 'package:geocoding/geocoding.dart' as geocoding;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../config/theme.dart';
 import '../../services/location_service.dart';
+import 'osm_map.dart';
 
 /// Result returned from the location picker.
 class LocationResult {
@@ -47,7 +49,7 @@ class LocationPickerModal extends StatefulWidget {
 }
 
 class _LocationPickerModalState extends State<LocationPickerModal> {
-  GoogleMapController? _mapController;
+  final MapController _mapController = MapController();
   final _searchController = TextEditingController();
   final _locationService = LocationService();
 
@@ -65,45 +67,20 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
 
   Timer? _debounceTimer;
 
-  // Dark map style
-  static const String _darkMapStyle = '''
-[
-  {"elementType":"geometry","stylers":[{"color":"#1d1d2b"}]},
-  {"elementType":"labels.text.fill","stylers":[{"color":"#8e8e93"}]},
-  {"elementType":"labels.text.stroke","stylers":[{"color":"#1d1d2b"}]},
-  {"featureType":"administrative","elementType":"geometry","stylers":[{"visibility":"off"}]},
-  {"featureType":"poi","stylers":[{"visibility":"off"}]},
-  {"featureType":"road","elementType":"geometry.fill","stylers":[{"color":"#2c2c3a"}]},
-  {"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#1d1d2b"}]},
-  {"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#3a3a4a"}]},
-  {"featureType":"transit","stylers":[{"visibility":"off"}]},
-  {"featureType":"water","elementType":"geometry","stylers":[{"color":"#0e0e1a"}]},
-  {"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#4e4e5e"}]}
-]
-''';
-
-  Timer? _mapInitTimer;
-
   @override
   void initState() {
     super.initState();
+    // flutter_map은 순수 Flutter 렌더링 — SDK 실패 폴백 타이머 불필요
     _goToCurrentLocation(initial: true);
-    // 4초 안에 onMapCreated 콜백이 안 오면 지도 SDK 실패로 간주 → 수동 입력 모드로 전환
-    _mapInitTimer = Timer(const Duration(seconds: 4), () {
-      if (mounted && _mapController == null) {
-        setState(() => _isMapAvailable = false);
-      }
-    });
   }
 
   @override
   void dispose() {
-    _mapInitTimer?.cancel();
     _searchController.dispose();
     _latController.dispose();
     _lngController.dispose();
     _manualAddressController.dispose();
-    _mapController?.dispose();
+    _mapController.dispose();
     _debounceTimer?.cancel();
     _locationService.dispose();
     super.dispose();
@@ -121,11 +98,9 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
         _lngController.text = position.longitude.toStringAsFixed(6);
       });
 
-      if (_mapController != null) {
-        _mapController!.animateCamera(
-          CameraUpdate.newLatLngZoom(newPos, 16),
-        );
-      }
+      try {
+        _mapController.move(newPos, 16);
+      } catch (_) {/* 맵 미렌더 상태면 무시 */}
 
       _reverseGeocode(newPos);
     } catch (e) {
@@ -140,8 +115,8 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
     }
   }
 
-  void _onCameraMove(CameraPosition position) {
-    _centerPosition = position.target;
+  void _onCenterChanged(LatLng center) {
+    _centerPosition = center;
     if (!_isMoving) {
       setState(() => _isMoving = true);
     }
@@ -149,15 +124,11 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
     // Debounce reverse geocoding
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      _reverseGeocode(position.target);
+      _reverseGeocode(center);
       if (mounted) {
         setState(() => _isMoving = false);
       }
     });
-  }
-
-  void _onCameraIdle() {
-    // Handled by debounce timer
   }
 
   Future<void> _reverseGeocode(LatLng position) async {
@@ -201,9 +172,9 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
         final loc = locations.first;
         final newPos = LatLng(loc.latitude, loc.longitude);
         setState(() => _centerPosition = newPos);
-        _mapController?.animateCamera(
-          CameraUpdate.newLatLngZoom(newPos, 16),
-        );
+        try {
+          _mapController.move(newPos, 16);
+        } catch (_) {/* 맵 미렌더 상태면 무시 */}
         _reverseGeocode(newPos);
       } else {
         if (mounted) {
@@ -263,26 +234,12 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
   Widget _buildMapView() {
     return Stack(
       children: [
-        // Google Map
-        GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: _centerPosition,
-            zoom: 16,
-          ),
-          onMapCreated: (controller) {
-            _mapController = controller;
-            _mapInitTimer?.cancel();
-            try {
-              controller.setMapStyle(_darkMapStyle);
-            } catch (_) {/* 스타일 적용 실패는 무시 */}
-          },
-          onCameraMove: _onCameraMove,
-          onCameraIdle: _onCameraIdle,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
-          zoomControlsEnabled: false,
-          mapToolbarEnabled: false,
-          compassEnabled: false,
+        // OSM 지도 (flutter_map — 전 플랫폼 호환, 다크 타일)
+        OsmMap(
+          controller: _mapController,
+          center: _centerPosition,
+          zoom: 16,
+          onPositionChanged: _onCenterChanged,
         ),
 
         // Center pin

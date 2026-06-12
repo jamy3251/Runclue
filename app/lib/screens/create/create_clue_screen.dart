@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../config/supabase_safe.dart';
@@ -17,6 +17,7 @@ import '../../services/clue_service.dart';
 import '../../services/step_service.dart';
 import '../../services/storage_service.dart';
 import '../../widgets/common/location_picker_modal.dart';
+import '../../widgets/common/osm_map.dart';
 
 /// Screen 04 · 클루 만들기 — 명세 v2.0 §4.4
 /// 5단계 위저드: 기본정보 → 매장·위치 → 단계 → 보상·분배 → 미리보기
@@ -30,22 +31,6 @@ class CreateClueScreen extends ConsumerStatefulWidget {
 class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
   static const int _totalSteps = 5;
   int _currentStep = 0;
-
-  static const String _darkMapStyle = '''
-[
-  {"elementType":"geometry","stylers":[{"color":"#1d1d2b"}]},
-  {"elementType":"labels.text.fill","stylers":[{"color":"#8e8e93"}]},
-  {"elementType":"labels.text.stroke","stylers":[{"color":"#1d1d2b"}]},
-  {"featureType":"administrative","elementType":"geometry","stylers":[{"visibility":"off"}]},
-  {"featureType":"poi","stylers":[{"visibility":"off"}]},
-  {"featureType":"road","elementType":"geometry.fill","stylers":[{"color":"#2c2c3a"}]},
-  {"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#1d1d2b"}]},
-  {"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#3a3a4a"}]},
-  {"featureType":"transit","stylers":[{"visibility":"off"}]},
-  {"featureType":"water","elementType":"geometry","stylers":[{"color":"#0e0e1a"}]},
-  {"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#4e4e5e"}]}
-]
-''';
 
   // ── Step 1: 기본 정보 ──
   final _titleController = TextEditingController();
@@ -744,14 +729,10 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         const SizedBox(height: 16),
         const _DarkLabel('지도에서 위치 선택 *'),
         const SizedBox(height: 8),
-        // 미니맵 미리보기 — 지도 SDK 활성화됐으면 정상 표시, 안 되면 카드 폴백
+        // 미니맵 미리보기 — flutter_map(OSM, 전 플랫폼)
         GestureDetector(
           onTap: _pickLocationFromMap,
-          child: _MapPreview(
-            lat: _lat,
-            lng: _lng,
-            darkStyle: _darkMapStyle,
-          ),
+          child: _MapPreview(lat: _lat, lng: _lng),
         ),
         const SizedBox(height: 8),
         Container(
@@ -2484,31 +2465,19 @@ class _DarkInput extends StatelessWidget {
 class _MapPreview extends StatefulWidget {
   final double lat;
   final double lng;
-  final String darkStyle;
-  const _MapPreview({
-    required this.lat,
-    required this.lng,
-    required this.darkStyle,
-  });
+  const _MapPreview({required this.lat, required this.lng});
 
   @override
   State<_MapPreview> createState() => _MapPreviewState();
 }
 
 class _MapPreviewState extends State<_MapPreview> {
-  // 미니 GoogleMap을 비활성화 — SurfaceView가 일부 디바이스(Note 9 등)에서 GPU 노이즈 유발.
-  // 폴백 카드만 사용하고, 실제 지도는 풀스크린 picker(Hybrid Composition 적용)에서만.
-  final bool _mapFailed = true;
-  Timer? _initTimer;
-
-  @override
-  void dispose() {
-    _initTimer?.cancel();
-    super.dispose();
-  }
+  // flutter_map(OSM) 사용 — 순수 Flutter 렌더링이라 SurfaceView GPU 노이즈 없음.
+  // 기존 GoogleMap 비활성화 폴백을 제거하고 실제 미니맵을 복원 (2026-06-12).
 
   @override
   Widget build(BuildContext context) {
+    final point = LatLng(widget.lat, widget.lng);
     return Container(
       height: 180,
       decoration: BoxDecoration(
@@ -2519,89 +2488,34 @@ class _MapPreviewState extends State<_MapPreview> {
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          if (!_mapFailed)
-            AbsorbPointer(
-              child: GoogleMap(
-                key: ValueKey('preview_${widget.lat}_${widget.lng}'),
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(widget.lat, widget.lng),
-                  zoom: 16,
-                ),
-                markers: {
-                  Marker(
-                    markerId: const MarkerId('store'),
-                    position: LatLng(widget.lat, widget.lng),
-                  ),
-                },
-                zoomControlsEnabled: false,
-                myLocationButtonEnabled: false,
-                mapToolbarEnabled: false,
-                onMapCreated: (controller) {
-                  _initTimer?.cancel();
-                  try {
-                    controller.setMapStyle(widget.darkStyle);
-                  } catch (_) {}
-                },
+          AbsorbPointer(
+            child: OsmMap(
+              key: ValueKey('preview_${widget.lat}_${widget.lng}'),
+              center: point,
+              zoom: 16,
+              interactive: false,
+              markers: [osmPin(point, color: AppColors.brandYellow)],
+            ),
+          ),
+          Positioned(
+            left: 12,
+            bottom: 12,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(9999),
               ),
-            )
-          else
-            // 폴백: 격자 카드
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppColors.bgSurface,
-                      AppColors.brandYellow.withValues(alpha: 0.08),
-                      AppColors.brandBlue.withValues(alpha: 0.06),
-                    ],
-                  ),
+              child: Text(
+                '${widget.lat.toStringAsFixed(4)}, ${widget.lng.toStringAsFixed(4)}',
+                style: GoogleFonts.firaMono(
+                  fontSize: 11,
+                  color: Colors.white,
                 ),
-                child: CustomPaint(painter: _GridPainter()),
               ),
             ),
-          // 폴백일 때 중앙 핀
-          if (_mapFailed)
-            Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.brandYellow,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.brandYellow.withValues(alpha: 0.5),
-                          blurRadius: 20,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(Icons.location_on,
-                        size: 28, color: Colors.black,),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6,),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(9999),
-                    ),
-                    child: Text(
-                      '${widget.lat.toStringAsFixed(4)}, ${widget.lng.toStringAsFixed(4)}',
-                      style: GoogleFonts.firaMono(
-                        fontSize: 11,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          ),
           // 가독성 오버레이
           Positioned.fill(
             child: IgnorePointer(
@@ -2654,42 +2568,6 @@ class _MapPreviewState extends State<_MapPreview> {
   }
 }
 
-class _GridPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.brandYellow.withValues(alpha: 0.08)
-      ..strokeWidth = 0.5;
-
-    const step = 24.0;
-    for (double x = 0; x < size.width; x += step) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-    for (double y = 0; y < size.height; y += step) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-
-    // 중심 십자
-    final centerPaint = Paint()
-      ..color = AppColors.brandBlue.withValues(alpha: 0.3)
-      ..strokeWidth = 1;
-    canvas.drawLine(
-      Offset(size.width / 2 - 16, size.height / 2),
-      Offset(size.width / 2 + 16, size.height / 2),
-      centerPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width / 2, size.height / 2 - 16),
-      Offset(size.width / 2, size.height / 2 + 16),
-      centerPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-/// 시작/종료 날짜 picker tile.
 class _DatePickerTile extends StatelessWidget {
   final String label;
   final DateTime? value;

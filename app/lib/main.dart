@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app.dart';
 import 'config/supabase_config.dart';
@@ -15,16 +12,8 @@ Future<void> main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    // Google Maps: Android에서 Hybrid Composition 강제
-    // SurfaceView 모드가 일부 디바이스(Note 9 등)에서 GPU 노이즈/터치 크래시 유발
-    if (Platform.isAndroid) {
-      try {
-        final mapsImplementation = GoogleMapsFlutterPlatform.instance;
-        if (mapsImplementation is GoogleMapsFlutterAndroid) {
-          mapsImplementation.useAndroidViewSurface = true;
-        }
-      } catch (_) {/* 패키지 미가용 시 무시 */}
-    }
+    // 지도: flutter_map(OSM)으로 교체 (2026-06-12) — 네이티브 SDK 초기화 불필요,
+    // 전 플랫폼(Android/iOS/웹/데스크톱) 동일 동작 + API 키 불요
 
     // Supabase 초기화 — 환경변수 누락 시 release 빌드에선 명확한 에러 화면.
     // 과거에 .env 빠진 채로 APK 빌드해서 회원가입/로그인 모두 실패한 사고가 있었음.
