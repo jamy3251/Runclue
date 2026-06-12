@@ -159,6 +159,14 @@ class _DiamondShopScreenState extends ConsumerState<DiamondShopScreen>
             Text('패키지',
                 style: GoogleFonts.notoSansKr(
                     fontSize: 14, fontWeight: FontWeight.w900,),),
+            const SizedBox(height: 4),
+            // K2 효용 가시화 — 보너스 = 기프티콘을 정가보다 싸게 사는 셈
+            Text(
+              '💡 충전 보너스만큼 기프티콘을 정가보다 싸게 교환하는 셈이에요\n'
+              '예: +10% 패키지로 4,500원 기프티콘 → 약 4,090원에 구매한 효과',
+              style: GoogleFonts.notoSansKr(
+                  fontSize: 11, color: AppColors.brandGreen, height: 1.5,),
+            ),
             const SizedBox(height: 8),
             packages.when(
               loading: () => const Center(

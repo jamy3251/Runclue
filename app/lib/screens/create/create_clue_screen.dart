@@ -391,6 +391,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
           case 'SNAPSHOT':
           case 'GROUP_PHOTO':
           case 'PARTY_MISSION':
+          case 'RECEIPT':
             stepData['validation_type'] = 'manual';
             break;
           case 'LIST':
@@ -964,6 +965,7 @@ class _CreateClueScreenState extends ConsumerState<CreateClueScreen> {
         'LIST' => '체크리스트',
         'GROUP_PHOTO' => '단체 인증샷',
         'PARTY_MISSION' => '파티 미션',
+        'RECEIPT' => '구매 영수증 인증',
         _ => type,
       };
 
@@ -1699,6 +1701,9 @@ class _AddStepSheetState extends State<_AddStepSheet> {
         Icons.groups, AppColors.brandGreen),
     ('PARTY_MISSION', '파티 미션', '지정 미션 수행 인증 (응원·포즈 등)',
         Icons.celebration, AppColors.brandRed),
+    // 사장 ROI 측정 — 방문→구매 전환 지표 (K5)
+    ('RECEIPT', '구매 영수증 인증', '영수증 사진 — 지시문에 최소 금액 명시',
+        Icons.receipt_long, AppColors.brandBlue),
   ];
 
   File? _referenceImage;

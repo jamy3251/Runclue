@@ -534,6 +534,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
       case 'SNAPSHOT':
       case 'GROUP_PHOTO':
       case 'PARTY_MISSION':
+      case 'RECEIPT':
         return _buildSnapshotContent();
       case 'QUEST':
         return _buildQuestContent();
@@ -1256,6 +1257,7 @@ class _CluePlayScreenState extends ConsumerState<CluePlayScreen> {
         case 'SNAPSHOT':
         case 'GROUP_PHOTO':
         case 'PARTY_MISSION':
+        case 'RECEIPT':
           evidenceData['type'] = 'photo';
           final image = _capturedImage;
           if (image != null) {

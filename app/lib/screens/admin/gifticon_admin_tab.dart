@@ -141,9 +141,12 @@ class GifticonAdminTab extends ConsumerWidget {
               _field(stock, '재고', number: true),
               _field(image, '이미지 URL (선택)'),
               const SizedBox(height: 4),
-              Text('환율 가이드: 1다이아 ≈ 10원',
+              Text(
+                  '가격 룰: 다이아 가격 = 정가 ÷ 10 (1다이아=10원 기준).\n'
+                  '마진은 충전 보너스(≤10%)가 도매할인율(~10%)을 넘지 않는 데서 나옴 — '
+                  '도매가율이 90%를 넘는 상품은 등록 금지.',
                   style: GoogleFonts.notoSansKr(
-                      fontSize: 11, color: AppColors.textMuted,),),
+                      fontSize: 11, color: AppColors.textMuted, height: 1.5,),),
             ],
           ),
         ),

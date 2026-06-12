@@ -50,6 +50,8 @@ class StepTypeIcon extends StatelessWidget {
         return const _StepTypeConfig(Icons.groups, Colors.green);
       case 'PARTY_MISSION':
         return const _StepTypeConfig(Icons.celebration, Colors.red);
+      case 'RECEIPT':
+        return const _StepTypeConfig(Icons.receipt_long, Colors.blue);
       default:
         return const _StepTypeConfig(Icons.help_outline, Colors.grey);
     }
