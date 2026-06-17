@@ -1,0 +1,27 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/home"
+  to = "/home/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/create"
+  to = "/create/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/join"
+  to = "/join/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/mypage"
+  to = "/mypage/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200

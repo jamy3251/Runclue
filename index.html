@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="RunClue - 앱 흐름을 기준으로 만든 웹 프로토타입">
+    <title>RunClue Web</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIINfQK8U8d9R2mG4xyPBUE0Y6+q+CBuy6w="
+      crossorigin=""
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <button class="brand" type="button" data-route="/">
+          <span class="brand-mark">R</span>
+          <span>RUNCLUE</span>
+        </button>
+        <nav class="public-nav" aria-label="랜딩 메뉴">
+          <button type="button" data-scroll="features">기능</button>
+          <button type="button" data-scroll="flow">흐름</button>
+          <button type="button" data-scroll="auth">로그인</button>
+        </nav>
+        <nav class="app-nav" aria-label="앱 메뉴" hidden>
+          <button type="button" data-route="/home">발견</button>
+          <button type="button" data-route="/create">만들기</button>
+          <button type="button" data-route="/join">참여</button>
+          <button type="button" data-route="/mypage">마이</button>
+          <button type="button" data-route="/admin">관리자</button>
+        </nav>
+      </header>
+
+      <main>
+        <section class="view landing-view" data-view="landing">
+          <div class="hero">
+            <div class="hero-copy">
+              <span class="eyebrow">WEB VERSION OF THE APP FLOW</span>
+              <h1>
+                <span>방문하자,</span>
+                <span>풀자,</span>
+                <span>벌자.</span>
+              </h1>
+              <p>
+                앱에서 클루를 발견하고, 만들고, 참여하는 흐름을 웹에서도 바로 확인할 수 있게 구성했습니다.
+                운영자는 웹 관리자 화면에서 새 클루를 승인합니다.
+              </p>
+              <div class="hero-actions">
+                <button class="primary-action" type="button" data-scroll="auth">로그인하고 시작</button>
+                <button class="secondary-action" type="button" data-demo-login>데모로 보기</button>
+              </div>
+            </div>
+
+            <aside class="auth-panel" id="auth" aria-label="로그인 및 회원가입">
+              <div class="panel-head">
+                <span>RUNCLUE</span>
+                <strong>로그인 / 회원가입</strong>
+              </div>
+              <div class="auth-tabs" role="tablist" aria-label="인증 모드">
+                <button class="tab active" type="button" data-mode="signin">로그인</button>
+                <button class="tab" type="button" data-mode="signup">회원가입</button>
+              </div>
+              <form class="auth-form" id="authForm">
+                <label class="field signup-only" for="nickname">
+                  <span>닉네임</span>
+                  <input id="nickname" name="nickname" type="text" autocomplete="nickname" placeholder="런클루에서 사용할 이름">
+                </label>
+                <label class="field" for="email">
+                  <span>아이디(이메일)</span>
+                  <input id="email" name="email" type="email" autocomplete="email" placeholder="example@email.com" required>
+                </label>
+                <label class="field" for="password">
+                  <span>비밀번호</span>
+                  <span class="password-wrap">
+                    <input id="password" name="password" type="password" autocomplete="current-password" placeholder="6자 이상" required minlength="6">
+                    <button class="toggle-password" type="button" aria-label="비밀번호 보기">보기</button>
+                  </span>
+                </label>
+                <button class="primary-action full" id="submitButton" type="submit">크루 합류하기</button>
+              </form>
+              <div class="auth-links">
+                <button type="button" id="resetPasswordButton">비밀번호 찾기</button>
+                <span></span>
+                <button type="button" id="modeSwitchButton">회원가입</button>
+              </div>
+              <div class="social-row">
+                <button type="button" data-provider="kakao">카카오</button>
+                <button type="button" data-provider="naver">네이버</button>
+                <button type="button" data-provider="google">Google</button>
+              </div>
+              <p class="auth-note">데모로 보기 버튼은 DB 권한 없이 화면 흐름만 확인합니다.</p>
+              <div class="auth-message" id="authMessage" role="status" aria-live="polite"></div>
+            </aside>
+          </div>
+
+          <section class="landing-band" id="features">
+            <article>
+              <strong>발견</strong>
+              <span>승인된 클루를 앱 홈처럼 카드와 상태로 탐색합니다.</span>
+            </article>
+            <article>
+              <strong>만들기</strong>
+              <span>클루를 생성하면 기본 상태가 승인 대기가 됩니다.</span>
+            </article>
+            <article>
+              <strong>참여</strong>
+              <span>승인된 클루만 참여 가능하고 정원과 중복 참여를 확인합니다.</span>
+            </article>
+            <article>
+              <strong>승인</strong>
+              <span>관리자는 대기 클루를 승인하거나 반려합니다.</span>
+            </article>
+          </section>
+
+          <section class="flow-section" id="flow">
+            <h2>앱 흐름을 웹으로 그대로 연결</h2>
+            <ol>
+              <li><span>01</span><strong>랜딩 + 인증</strong><em>서비스 소개와 로그인/회원가입을 첫 화면에서 처리</em></li>
+              <li><span>02</span><strong>클루 발견</strong><em>로그인 후 승인된 클루를 탐색</em></li>
+              <li><span>03</span><strong>클루 만들기</strong><em>생성 즉시 승인 대기로 전환</em></li>
+              <li><span>04</span><strong>관리자 승인</strong><em>승인된 클루만 참여 화면에 노출</em></li>
+            </ol>
+          </section>
+        </section>
+
+        <section class="view dashboard-view" data-view="dashboard" hidden>
+          <aside class="side-panel">
+            <div class="profile-summary">
+              <span class="avatar" id="userAvatar">R</span>
+              <div>
+                <strong id="userName">런클루 크루</strong>
+                <small id="userEmail">demo@runclue.app</small>
+              </div>
+            </div>
+            <button type="button" data-route="/home">클루 발견</button>
+            <button type="button" data-route="/create">클루 만들기</button>
+            <button type="button" data-route="/join">클루 참여</button>
+            <button type="button" data-route="/mypage">마이페이지</button>
+            <button type="button" data-route="/admin">관리자 승인</button>
+            <label class="admin-toggle">
+              <input id="adminToggle" type="checkbox" disabled>
+              <span>실제 관리자 권한</span>
+            </label>
+            <button class="logout-button" type="button" id="logoutButton">로그아웃</button>
+          </aside>
+
+          <section class="workspace">
+            <section class="app-page" data-page="/home">
+              <div class="page-title">
+                <span>DISCOVER</span>
+                <h2>클루 발견</h2>
+                <p>앱의 홈처럼 승인된 클루를 탐색하고 참여 흐름으로 이동합니다.</p>
+              </div>
+              <div class="metric-grid">
+                <article><strong id="approvedCount">0</strong><span>활성 클루</span></article>
+                <article><strong id="pendingCount">0</strong><span>승인 대기</span></article>
+                <article><strong id="joinedCount">0</strong><span>내 참여</span></article>
+              </div>
+              <div class="map-panel" id="discoverMapPanel">
+                <div class="map-panel-head">
+                  <div>
+                    <strong>주변 클루 지도</strong>
+                    <span>앱의 OSM 지도 흐름과 같은 위치 데이터를 표시합니다.</span>
+                  </div>
+                  <button class="map-ghost-button" type="button" data-map-locate>내 위치</button>
+                </div>
+                <div class="web-map" id="discoverMap" aria-label="클루 위치 지도"></div>
+              </div>
+              <div class="clue-grid" id="homeClues"></div>
+            </section>
+
+            <section class="app-page" data-page="/create" hidden>
+              <div class="page-title">
+                <span>CREATE</span>
+                <h2>클루 만들기</h2>
+                <p>새 클루는 바로 공개되지 않고 관리자 승인 대기 상태로 등록됩니다.</p>
+              </div>
+              <form class="create-form" id="createForm">
+                <label class="field">
+                  <span>클루 제목</span>
+                  <input id="clueTitle" required placeholder="예: 성수 카페 숨은 시그니처 찾기">
+                </label>
+                <label class="field">
+                  <span>장소</span>
+                  <input id="cluePlace" required placeholder="예: 성수동 12길">
+                </label>
+                <div class="field wide">
+                  <span>지도 위치</span>
+                  <div class="location-picker">
+                    <div class="web-map create-map" id="createMap" aria-label="클루 생성 위치 선택 지도"></div>
+                    <div class="location-tools">
+                      <button class="map-ghost-button" type="button" data-use-current-location>내 위치 사용</button>
+                      <span id="selectedLocationText">서울시청 기준 위치가 선택되어 있습니다.</span>
+                    </div>
+                  </div>
+                </div>
+                <label class="field">
+                  <span>인증 반경(m)</span>
+                  <input id="clueRadius" type="number" min="10" max="1000" value="50">
+                </label>
+                <label class="field">
+                  <span>카테고리</span>
+                  <select id="clueCategory">
+                    <option value="adventure">탐험</option>
+                    <option value="quiz">퀴즈</option>
+                    <option value="education">교육</option>
+                    <option value="life_help">생활</option>
+                    <option value="promotion">프로모션</option>
+                    <option value="workshop">워크숍</option>
+                    <option value="broadcast">방송</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>모집 인원</span>
+                  <input id="clueCapacity" type="number" min="1" max="99" value="8">
+                </label>
+                <label class="field wide">
+                  <span>클루 설명</span>
+                  <textarea id="clueDescription" required placeholder="참여자가 수행할 미션과 보상을 적어주세요."></textarea>
+                </label>
+                <button class="primary-action" type="submit">승인 대기로 등록</button>
+              </form>
+            </section>
+
+            <section class="app-page" data-page="/join" hidden>
+              <div class="page-title">
+                <span>JOIN</span>
+                <h2>클루 참여</h2>
+                <p>승인된 클루만 참여 가능하며, 정원과 중복 참여 상태를 확인합니다.</p>
+              </div>
+              <div class="clue-list" id="joinClues"></div>
+            </section>
+
+            <section class="app-page" data-page="/mypage" hidden>
+              <div class="page-title">
+                <span>MYPAGE</span>
+                <h2>회원정보 수정</h2>
+                <p>앱 마이페이지 기준으로 닉네임, 자기소개, 관심 카테고리를 수정합니다.</p>
+              </div>
+              <form class="profile-form" id="profileForm">
+                <label class="field">
+                  <span>닉네임</span>
+                  <input id="profileNickname" value="런클루 크루">
+                </label>
+                <label class="field">
+                  <span>관심 카테고리</span>
+                  <input id="profileInterests" value="카페, 맛집, 캠퍼스">
+                </label>
+                <label class="field wide">
+                  <span>자기소개</span>
+                  <textarea id="profileBio">새로운 장소와 미션을 발견하는 것을 좋아합니다.</textarea>
+                </label>
+                <button class="primary-action" type="submit">회원정보 저장</button>
+              </form>
+            </section>
+
+            <section class="app-page" data-page="/admin" hidden>
+              <div class="page-title">
+                <span>ADMIN</span>
+                <h2>클루 승인 관리</h2>
+                <p>Supabase profiles.role이 admin인 계정만 승인 대기 클루를 처리합니다.</p>
+              </div>
+              <div class="permission-card" id="adminDenied">
+                <strong>관리자 권한이 필요합니다.</strong>
+                <span>현재 로그인 계정의 profiles.role 값을 admin으로 설정해야 접근할 수 있습니다.</span>
+              </div>
+              <div class="admin-board" id="adminBoard" hidden>
+                <div class="clue-list" id="adminClues"></div>
+              </div>
+            </section>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="app.js"></script>
+  </body>
+</html>
